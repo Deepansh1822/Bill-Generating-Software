@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Groups | SFP Billing</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <style>
+        .category-img {
+            width: 56px;
+            height: 56px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-btn {
+            background: #f1f5f9;
+            color: var(--text-muted);
+        }
+
+        .edit-btn {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .delete-btn {
+            background: #fff1f2;
+            color: #e11d48;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-panel {
+            background: var(--white);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8fafc;
+            text-align: left;
+            padding: 16px;
+            font-size: 13px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 18px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header-section h1 {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .count-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .count-pill.empty {
+            background: #f1f5f9;
+            color: var(--text-muted);
+        }
+
+        .search-bar-wrapper {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .search-bar-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        #categorySearch {
+            width: 100%;
+            padding: 13px 16px 13px 44px;
+            border-radius: 14px;
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-main);
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        #categorySearch:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        #categorySearch::placeholder {
+            color: #b0bec5;
+        }
+
+        /* === Stat Card === */
+        .stat-card-strip {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.07);
+            min-width: 200px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.13);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--primary-light));
+            border-radius: 20px 0 0 20px;
+        }
+
+        .stat-icon-wrap {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .stat-info .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1;
+        }
+
+        .stat-info .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .add-btn {
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .add-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Modal Styles */
+        .sfp-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 500000;
+            pointer-events: none;
+        }
+
+        .sfp-modal-overlay.active {
+            display: flex;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 32px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        .modal-card h2 {
+            margin-bottom: 24px;
+            font-weight: 800;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            outline: none;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .secondary-btn {
+            background: #f1f5f9;
+            color: var(--text-main);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='categories')}"></div>
+
+    <div class="main-content">
+        <div class="header-section">
+            <div>
+                <h1>Item Groups</h1>
+            </div>
+            <button class="add-btn" onclick="openModal()">
+                <i class="fa-solid fa-plus"></i>
+                Add Item Group
+            </button>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stat-card-strip">
+            <div class="stat-card">
+                <div class="stat-icon-wrap">
+                    <i class="fa-solid fa-tags"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number" id="categoryCounter">-</div>
+                    <div class="stat-label">Total Item Groups</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrap"
+                    style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); color: #059669;">
+                    <i class="fa-solid fa-box"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number" id="stockCounter">-</div>
+                    <div class="stat-label">Total Products</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-bar-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="categorySearch" placeholder="Search item groups by name or description...">
+        </div>
+
+        <div class="card-panel">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Item Group Name</th>
+                        <th>Description</th>
+                        <th>Products</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="categoryTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <!-- Modal -->
+    <div class="sfp-modal-overlay" id="categoryModal">
+        <div class="modal-card">
+            <h2 id="modalTitle">Add New Item Group</h2>
+            <form id="categoryForm">
+                <input type="hidden" id="categoryId">
+                <div class="form-group">
+                    <label>Item Group Name</label>
+                    <input type="text" id="categoryName" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="categoryDescription" rows="4" required
+                        placeholder="Describe the items in this group..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Group Image</label>
+                    <input type="file" id="categoryImage" accept="image/*">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="secondary-btn" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="add-btn">Save Group</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const apiBase = '/billing-app/api';
+        const els = {
+            tbody: document.getElementById('categoryTableBody'),
+            modal: document.getElementById('categoryModal'),
+            form: document.getElementById('categoryForm'),
+            title: document.getElementById('modalTitle'),
+            id: document.getElementById('categoryId'),
+            name: document.getElementById('categoryName'),
+            desc: document.getElementById('categoryDescription'),
+            image: document.getElementById('categoryImage')
+        };
+
+        const loadData = () => {
+            Promise.all([
+                fetch(`${apiBase}/getAllCategories`).then(r => r.json()),
+                fetch(`${apiBase}/getAllStocks`).then(r => r.json()).catch(() => [])
+            ]).then(([categories, stocks]) => {
+                // Update stat cards
+                const counter = document.getElementById('categoryCounter');
+                const stockCtr = document.getElementById('stockCounter');
+                if (counter) counter.innerText = categories.length;
+                if (stockCtr) stockCtr.innerText = stocks.length;
+
+                // Build a map: categoryId -> count of stocks
+                const countMap = {};
+                stocks.forEach(s => {
+                    const catId = s.stockCategories?.id;
+                    if (catId) countMap[catId] = (countMap[catId] || 0) + 1;
+                });
+
+                els.tbody.innerHTML = categories.map(cat => {
+                    const count = countMap[cat.id] || 0;
+                    const pillClass = count > 0 ? 'count-pill' : 'count-pill empty';
+                    return `
+                        <tr>
+                            <td><img src="${cat.categoryImage ? 'data:image/png;base64,' + cat.categoryImage : 'https://via.placeholder.com/64'}" class="category-img"></td>
+                            <td style="font-weight: 600;">${cat.categoryName}</td>
+                            <td style="color: var(--text-muted); max-width: 300px;">${cat.categoryDescription}</td>
+                            <td><span class="${pillClass}"><i class="fa-solid fa-box" style="font-size:10px;"></i> ${count}</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="action-btn view-btn" title="View" onclick="viewCategory(${cat.id})"><i class="fa-solid fa-eye"></i></button>
+                                    <button class="action-btn edit-btn" title="Edit" onclick="editCategory(${cat.id})"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn delete-btn" title="Delete" onclick="deleteCategory(${cat.id})"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            });
+        };
+
+        const openModal = () => {
+            els.title.innerText = 'Add New Item Group';
+            els.form.reset();
+            els.id.value = '';
+            els.form.querySelectorAll('input, textarea').forEach(el => el.disabled = false);
+            els.form.querySelector('button[type="submit"]').style.display = 'block';
+            els.modal.classList.add('active');
+        };
+
+        const closeModal = () => els.modal.classList.remove('active');
+
+        const editCategory = (id) => {
+            fetch(`${apiBase}/getCategoryById/${id}`)
+                .then(res => res.json())
+                .then(cat => {
+                    if (cat) {
+                        els.title.innerText = 'Edit Item Group'; // Fix: Changed from 'Add New Item Group' to 'Edit Item Group'
+                        els.id.value = cat.id;
+                        els.name.value = cat.categoryName;
+                        els.desc.value = cat.categoryDescription;
+                        els.form.querySelectorAll('input, textarea').forEach(el => el.disabled = false);
+                        els.form.querySelector('button[type="submit"]').style.display = 'block';
+                        els.modal.classList.add('active');
+                    }
+                });
+        };
+
+        const viewCategory = (id) => {
+            window.location.href = `/billing-app/api/CategoryDetails?id=${id}`;
+        };
+
+        const deleteCategory = (id) => {
+            if (confirm('Are you sure you want to delete this group? All associated items will also be affected.')) {
+                fetch(`${apiBase}/deleteCategory/${id}`, { method: 'DELETE' })
+                    .then(res => res.ok && loadData());
+            }
+        };
+
+        els.form.onsubmit = (e) => {
+            e.preventDefault();
+            const id = els.id.value;
+            const name = els.name.value;
+
+            const processSave = (base64Image = null) => {
+                const data = {
+                    categoryName: name,
+                    categoryDescription: els.desc.value,
+                    categoryImage: base64Image
+                };
+
+                const url = id ? `/updateCategory/${id}` : '/saveCategory';
+                const method = id ? 'PUT' : 'POST';
+
+                fetch(`${apiBase}${url}`, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(res => {
+                    if (res.ok) {
+                        closeModal();
+                        loadData();
+                    } else {
+                        alert('Failed to save category.');
+                    }
+                });
+            };
+
+            const imageFile = els.image.files[0];
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = () => processSave(reader.result.split(',')[1]);
+                reader.readAsDataURL(imageFile);
+            } else {
+                processSave();
+            }
+        };
+
+        // Real-time search/filter
+        document.getElementById('categorySearch').addEventListener('input', function () {
+            const query = this.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#categoryTableBody tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        });
+
+        window.onclick = (e) => (e.target == els.modal) && closeModal();
+        loadData();
+    </script>
+</body>
+
+</html>

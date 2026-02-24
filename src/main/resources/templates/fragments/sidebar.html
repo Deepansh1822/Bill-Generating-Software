@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:fragment="sidebar-css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            :root {
+                --primary: #6366f1;
+                --primary-light: #818cf8;
+                --sidebar: #0f172a;
+                --sidebar-hover: #1e293b;
+                --bg-body: #f8fafc;
+                --white: #ffffff;
+                --border: #e2e8f0;
+                --text-main: #1e293b;
+                --text-muted: #64748b;
+                --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                background-color: var(--bg-body);
+                font-family: 'Outfit', sans-serif;
+                min-height: 100vh;
+            }
+
+            aside {
+                width: 280px;
+                background: var(--sidebar);
+                color: white;
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 999999 !important;
+                pointer-events: auto !important;
+                transition: var(--transition);
+                overflow-y: auto;
+                box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .main-content {
+                margin-left: 280px;
+                padding: 40px;
+                transition: var(--transition);
+                min-height: 100vh;
+                width: calc(100% - 280px);
+            }
+
+            .sidebar-header {
+                padding: 32px 24px;
+            }
+
+            .sidebar-brand {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                text-decoration: none;
+                color: white;
+            }
+
+            .sidebar-logo {
+                width: 42px;
+                height: 42px;
+                background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                font-size: 1.25rem;
+                box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            }
+
+            .nav-menu {
+                list-style: none;
+                padding: 0 16px;
+                flex: 1;
+            }
+
+            .nav-item {
+                margin-bottom: 4px;
+            }
+
+            .nav-link {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 14px 16px;
+                border-radius: 12px;
+                color: #94a3b8;
+                text-decoration: none;
+                transition: var(--transition);
+                font-weight: 500;
+                position: relative;
+                overflow: hidden;
+                width: 100%;
+                cursor: pointer;
+                pointer-events: auto;
+            }
+
+            .nav-link:hover {
+                background: var(--sidebar-hover);
+                color: white;
+                transform: translateX(4px);
+            }
+
+            .nav-link.active {
+                background: var(--primary);
+                color: white;
+                box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            }
+
+            .nav-icon {
+                font-size: 1.2rem;
+                width: 24px;
+                text-align: center;
+            }
+
+            .nav-badge {
+                margin-left: auto;
+                background: #f59e0b;
+                color: white;
+                font-size: 0.7rem;
+                padding: 2px 10px;
+                border-radius: 20px;
+                font-weight: 700;
+            }
+
+            .sidebar-footer {
+                margin-top: auto;
+                padding: 24px 16px;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .logout-link {
+                color: #f87171 !important;
+            }
+
+            .logout-link:hover {
+                background: rgba(248, 113, 113, 0.1) !important;
+            }
+
+            /* Dropdown nav styles */
+            .nav-dropdown-toggle {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 14px 16px;
+                border-radius: 12px;
+                color: #94a3b8;
+                text-decoration: none;
+                transition: var(--transition);
+                font-weight: 500;
+                width: 100%;
+                cursor: pointer;
+                border: none;
+                background: transparent;
+                font-family: inherit;
+                font-size: inherit;
+                text-align: left;
+                pointer-events: auto;
+            }
+
+            .nav-dropdown-toggle:hover {
+                background: var(--sidebar-hover);
+                color: white;
+                transform: translateX(4px);
+            }
+
+            .nav-dropdown-toggle.open {
+                background: rgba(99, 102, 241, 0.15);
+                color: var(--primary-light);
+            }
+
+            .nav-dropdown-arrow {
+                margin-left: auto;
+                font-size: 0.75rem;
+                transition: transform 0.3s ease;
+            }
+
+            .nav-dropdown-toggle.open .nav-dropdown-arrow {
+                transform: rotate(180deg);
+            }
+
+            .nav-submenu {
+                list-style: none;
+                overflow: hidden;
+                max-height: 0;
+                transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                padding-left: 0;
+            }
+
+            .nav-submenu.open {
+                max-height: 200px;
+            }
+
+            .nav-sublink {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 16px 10px 44px;
+                border-radius: 10px;
+                color: #64748b;
+                text-decoration: none;
+                font-weight: 500;
+                font-size: 0.9rem;
+                transition: var(--transition);
+                cursor: pointer;
+            }
+
+            .nav-sublink:hover {
+                background: var(--sidebar-hover);
+                color: #cbd5e1;
+            }
+
+            .nav-sublink.active {
+                color: white;
+                background: rgba(99, 102, 241, 0.2);
+            }
+
+            .nav-sublink::before {
+                content: '';
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: currentColor;
+                flex-shrink: 0;
+            }
+
+            @media (max-width: 1024px) {
+                aside {
+                    width: 80px;
+                }
+
+                .main-content {
+                    margin-left: 80px;
+                    width: calc(100% - 80px);
+                    padding: 24px;
+                }
+
+                .sidebar-brand span,
+                .nav-link span,
+                .nav-badge {
+                    display: none;
+                }
+
+                .sidebar-header {
+                    padding: 32px 12px;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .nav-link {
+                    justify-content: center;
+                    padding: 14px;
+                }
+
+                .nav-icon {
+                    margin: 0;
+                }
+            }
+
+            /* Custom scrollbar for sidebar */
+            aside::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            aside::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+            }
+        </style>
+    </div>
+</head>
+
+<body>
+    <aside th:fragment="sidebar(activePage)">
+        <div class="sidebar-header">
+            <a href="/billing-app/api/Dashboard" class="sidebar-brand">
+                <div class="sidebar-logo">B</div>
+                <span style="font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px;">SFP Billing</span>
+            </a>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="/billing-app/api/Dashboard" class="nav-link"
+                    th:classappend="${activePage == 'dashboard' ? 'active' : ''}">
+                    <i class="fa-solid fa-house nav-icon"></i>
+                    <span>Overview</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/billing-app/api/ManageAccessRequests" class="nav-link"
+                    th:classappend="${activePage == 'access-requests' ? 'active' : ''}">
+                    <i class="fa-solid fa-user-check nav-icon"></i>
+                    <span>Requests</span>
+                    <span class="nav-badge" id="sidebar-pending-badge" style="display: none;">0</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/billing-app/api/Reports" class="nav-link"
+                    th:classappend="${activePage == 'reports' ? 'active' : ''}">
+                    <i class="fa-solid fa-chart-column nav-icon"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <!-- Inventory Dropdown -->
+            <li class="nav-item">
+                <button class="nav-dropdown-toggle" id="inv-toggle"
+                    th:classappend="${activePage == 'stocks' or activePage == 'categories' ? 'open' : ''}">
+                    <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                    <span>Inventory</span>
+                    <i class="fa-solid fa-chevron-down nav-dropdown-arrow"></i>
+                </button>
+                <ul class="nav-submenu" id="inv-submenu"
+                    th:classappend="${activePage == 'stocks' or activePage == 'categories' ? 'open' : ''}">
+                    <li>
+                        <a href="/billing-app/api/ManageStocks" class="nav-sublink"
+                            th:classappend="${activePage == 'stocks' ? 'active' : ''}">
+                            Products & Services
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/billing-app/api/ManageCategories" class="nav-sublink"
+                            th:classappend="${activePage == 'categories' ? 'active' : ''}">
+                            Item Groups
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-users nav-icon"></i>
+                    <span>Clients</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#" class="nav-link">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span>Settings</span>
+            </a>
+            <a href="/billing-app/api/MainDashboard" class="nav-link logout-link">
+                <i class="fa-solid fa-right-from-bracket nav-icon"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+        <script th:inline="javascript">
+            // Toggle the Inventory dropdown
+            const invToggle = document.getElementById('inv-toggle');
+            const invSubmenu = document.getElementById('inv-submenu');
+            if (invToggle && invSubmenu) {
+                invToggle.addEventListener('click', function () {
+                    invToggle.classList.toggle('open');
+                    invSubmenu.classList.toggle('open');
+                });
+            }
+
+            // Ensure ALL sidebar nav links always navigate correctly,
+            // even if CSS overlays or stacking contexts intercept pointer events visually.
+            document.querySelector('aside').addEventListener('click', function (e) {
+                const link = e.target.closest('a.nav-link, a.nav-sublink');
+                if (link && link.href && link.href !== '#' && !link.href.endsWith('#')) {
+                    e.stopPropagation();
+                    window.location.href = link.href;
+                }
+            }, true); // capture phase — fires before any overlay can eat it
+
+            // Update the pending badge if possible
+            fetch('/billing-app/api/admin/pending-requests')
+                .then(res => res.json())
+                .then(data => {
+                    const pending = data.filter(u => u.status === 'PENDING').length;
+                    const badge = document.getElementById('sidebar-pending-badge');
+                    if (badge && pending > 0) {
+                        badge.innerText = pending;
+                        badge.style.display = 'block';
+                    }
+                }).catch(() => { });
+        </script>
+    </aside>
+</body>
+
+</html>

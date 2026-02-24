@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products & Services | SFP Billing</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <style>
+        .category-img {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stock-qty {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .qty-ok {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .qty-low {
+            background: #ffe4e6;
+            color: #991b1b;
+        }
+
+        .type-badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .type-product {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .type-service {
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-btn {
+            background: #f1f5f9;
+            color: var(--text-muted);
+        }
+
+        .edit-btn {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .delete-btn {
+            background: #fff1f2;
+            color: #e11d48;
+        }
+
+        .card-panel {
+            background: var(--white);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8fafc;
+            text-align: left;
+            padding: 16px;
+            font-size: 13px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header-section h1 {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .add-btn {
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        /* Modal Styles */
+        .sfp-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 500000;
+            pointer-events: none;
+        }
+
+        .sfp-modal-overlay.active {
+            display: flex;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 32px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .type-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 8px;
+            background: #f1f5f9;
+            border-radius: 14px;
+        }
+
+        .type-opt {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .type-opt.active {
+            background: white;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            outline: none;
+            font-size: 14px;
+        }
+
+        .conditional-field {
+            display: none;
+        }
+
+        .conditional-field.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='stocks')}"></div>
+
+    <div class="main-content">
+        <div class="header-section">
+            <h1>Products & Services</h1>
+            <button class="add-btn" onclick="openModal()">
+                <i class="fa-solid fa-plus"></i> Add New Entry
+            </button>
+        </div>
+
+        <div class="card-panel">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Details</th>
+                        <th>Type</th>
+                        <th>Item Group</th>
+                        <th>Code (HSN/SAC)</th>
+                        <th>Price</th>
+                        <th>Stock Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="stockTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <!-- Modal -->
+    <div class="sfp-modal-overlay" id="stockModal">
+        <div class="modal-card">
+            <h2 id="modalTitle" style="margin-bottom: 20px;">Add New Entry</h2>
+
+            <div class="type-selector">
+                <div class="type-opt active" id="opt-product" onclick="setType('PRODUCT')">
+                    <i class="fa-solid fa-box"></i> Product
+                </div>
+                <div class="type-opt" id="opt-service" onclick="setType('SERVICE')">
+                    <i class="fa-solid fa-handshake"></i> Service
+                </div>
+            </div>
+
+            <form id="stockForm">
+                <input type="hidden" id="stockId">
+                <input type="hidden" id="stockType" value="PRODUCT">
+
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Name</label>
+                        <input type="text" id="itemName" required placeholder="e.g. Dell Monitor or Website Dev">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="categoryId" required></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Unit Price (₹)</label>
+                        <input type="number" step="0.01" id="unitPrice" required>
+                    </div>
+
+                    <!-- Product Only Fields -->
+                    <div class="form-group conditional-field field-product show">
+                        <label>HSN Code</label>
+                        <input type="text" id="hsnCode" placeholder="Enter HSN Code">
+                    </div>
+                    <div class="form-group conditional-field field-product show">
+                        <label>Available Quantity</label>
+                        <input type="number" id="availableQuantity" value="0">
+                    </div>
+
+                    <!-- Service Only Fields -->
+                    <div class="form-group conditional-field field-service" style="grid-column: span 2;">
+                        <label>SAC Code</label>
+                        <input type="text" id="sacCode" placeholder="Enter SAC Code (Service Accounting Code)">
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Description</label>
+                        <textarea id="itemDescription" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>CGST (%)</label>
+                        <input type="number" step="0.01" id="cgstRate" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>SGST (%)</label>
+                        <input type="number" step="0.01" id="sgstRate" value="0">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>IGST (%)</label>
+                        <input type="number" step="0.01" id="igstRate" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Image (Optional)</label>
+                    <input type="file" id="stockImage" accept="image/*">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="secondary-btn" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="add-btn">Save Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const apiBase = '/billing-app/api';
+        const els = {
+            tbody: document.getElementById('stockTableBody'),
+            modal: document.getElementById('stockModal'),
+            form: document.getElementById('stockForm'),
+            typeInput: document.getElementById('stockType'),
+            idInput: document.getElementById('stockId')
+        };
+
+        const setType = (type) => {
+            els.typeInput.value = type;
+            document.querySelectorAll('.type-opt').forEach(el => el.classList.remove('active'));
+            document.getElementById(`opt-${type.toLowerCase()}`).classList.add('active');
+
+            document.querySelectorAll('.conditional-field').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll(`.field-${type.toLowerCase()}`).forEach(el => el.classList.add('show'));
+        };
+
+        const loadData = () => {
+            fetch(`${apiBase}/getAllCategories`).then(res => res.json()).then(cats => {
+                document.getElementById('categoryId').innerHTML = cats.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
+            });
+
+            fetch(`${apiBase}/getAllStocks`).then(res => res.json()).then(stocks => {
+                els.tbody.innerHTML = stocks.map(stk => {
+                    const isProduct = stk.stockType === 'PRODUCT' || !stk.stockType;
+                    const code = isProduct ? (stk.hsnCode || '-') : (stk.sacCode || '-');
+                    const img = stk.stockImage ? `data:image/png;base64,${stk.stockImage}` : 'https://via.placeholder.com/48';
+
+                    return `
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <img src="${img}" class="category-img">
+                                    <span style="font-weight: 600;">${stk.itemName}</span>
+                                </div>
+                            </td>
+                            <td><span class="type-badge ${isProduct ? 'type-product' : 'type-service'}">${stk.stockType || 'PRODUCT'}</span></td>
+                            <td>${stk.stockCategories?.categoryName || 'N/A'}</td>
+                            <td><code style="font-weight: 700; color: var(--text-main);">${code}</code></td>
+                            <td style="font-weight: 700;">₹${Number(stk.unitPrice || 0).toFixed(2)}</td>
+                            <td>
+                                ${isProduct ? `<span class="stock-qty ${stk.availableQuantity < 10 ? 'qty-low' : 'qty-ok'}">${stk.availableQuantity} in stock</span>` : '<span style="color: var(--text-muted);">Billable Service</span>'}
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <button class="action-btn view-btn" onclick="viewStock(${stk.id})"><i class="fa-solid fa-eye"></i></button>
+                                    <button class="action-btn edit-btn" onclick="editStock(${stk.id})"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn delete-btn" onclick="deleteStock(${stk.id})"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            });
+        };
+
+        const viewStock = (id) => {
+            window.location.href = `/billing-app/api/StockDetails?id=${id}`;
+        };
+
+        const openModal = () => {
+            els.form.reset();
+            els.idInput.value = '';
+            setType('PRODUCT');
+            els.modal.classList.add('active');
+        };
+
+        const closeModal = () => els.modal.classList.remove('active');
+
+        const editStock = (id) => {
+            fetch(`${apiBase}/getStockById/${id}`).then(res => res.json()).then(stk => {
+                els.idInput.value = stk.id;
+                document.getElementById('itemName').value = stk.itemName;
+                document.getElementById('categoryId').value = stk.stockCategories?.id || '';
+                document.getElementById('unitPrice').value = stk.unitPrice;
+                document.getElementById('itemDescription').value = stk.itemDescription;
+                document.getElementById('cgstRate').value = stk.cgstRate || 0;
+                document.getElementById('sgstRate').value = stk.sgstRate || 0;
+                document.getElementById('igstRate').value = stk.igstRate || 0;
+
+                if (stk.stockType === 'SERVICE') {
+                    setType('SERVICE');
+                    document.getElementById('sacCode').value = stk.sacCode || '';
+                } else {
+                    setType('PRODUCT');
+                    document.getElementById('hsnCode').value = stk.hsnCode || '';
+                    document.getElementById('availableQuantity').value = stk.availableQuantity || 0;
+                }
+                els.modal.classList.add('active');
+            });
+        };
+
+        const deleteStock = (id) => {
+            if (confirm('Delete this entry?')) {
+                fetch(`${apiBase}/deleteStock/${id}`, { method: 'DELETE' }).then(() => loadData());
+            }
+        };
+
+        els.form.onsubmit = async (e) => {
+            e.preventDefault();
+            const id = els.idInput.value;
+            const type = els.typeInput.value;
+
+            const data = {
+                itemName: document.getElementById('itemName').value,
+                stockType: type,
+                unitPrice: parseFloat(document.getElementById('unitPrice').value),
+                itemDescription: document.getElementById('itemDescription').value,
+                cgstRate: parseFloat(document.getElementById('cgstRate').value || 0),
+                sgstRate: parseFloat(document.getElementById('sgstRate').value || 0),
+                igstRate: parseFloat(document.getElementById('igstRate').value || 0),
+                stockCategories: { id: parseInt(document.getElementById('categoryId').value) }
+            };
+
+            if (type === 'PRODUCT') {
+                data.hsnCode = document.getElementById('hsnCode').value;
+                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value);
+                data.sacCode = null;
+            } else {
+                data.sacCode = document.getElementById('sacCode').value;
+                data.hsnCode = null;
+                data.availableQuantity = 0;
+            }
+
+            const imageFile = document.getElementById('stockImage').files[0];
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = async () => {
+                    data.stockImage = reader.result.split(',')[1];
+                    await saveToServer(id, data);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                await saveToServer(id, data);
+            }
+        };
+
+        const saveToServer = async (id, data) => {
+            const url = id ? `${apiBase}/updateStock/${id}` : `${apiBase}/saveStock`;
+            const method = id ? 'PUT' : 'POST';
+
+            const res = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                closeModal();
+                loadData();
+            } else {
+                alert('Error saving data');
+            }
+        };
+
+        window.onclick = (e) => (e.target == els.modal) && closeModal();
+        loadData();
+    </script>
+</body>
+
+</html>

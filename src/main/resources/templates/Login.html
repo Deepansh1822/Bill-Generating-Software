@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | BillMaster</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --background: #f8f9fc;
+            --text-main: #334155;
+            --text-light: #94a3b8;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(67, 97, 238, 0.03) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(76, 201, 240, 0.03) 0px, transparent 50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 400px;
+            padding: 3rem 2.5rem;
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 24px;
+            font-weight: 800;
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 0.9375rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            padding-left: 4px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background-color: #fcfcfd;
+            font-size: 0.9375rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+            background-color: var(--white);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.2);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+        }
+
+        .forgot-pass {
+            display: block;
+            margin-top: 1.25rem;
+            font-size: 0.875rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signup-link {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .signup-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Forgot Password Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 28px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .modal-header {
+            margin-bottom: 2rem;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <div class="logo">B</div>
+        <div class="header">
+            <h1>Welcome Back</h1>
+            <p>Please enter your details to sign in</p>
+        </div>
+
+        <form action="/login" method="POST">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required
+                    title="Please enter a valid email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="login-btn">Sign In</button>
+            <a href="#" class="forgot-pass" id="forgotPassLink">Forgot Password?</a>
+        </form>
+
+        <div class="signup-link">
+            Don't have access? <a href="/billing-app/api/RequestAccess">Request Access</a>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <div class="modal-header">
+                <h2>Reset Password</h2>
+                <p>Enter your secret key to reset password</p>
+            </div>
+            <form id="forgotForm">
+                <div class="form-group">
+                    <label for="resetEmail">Email Address</label>
+                    <input type="email" id="resetEmail" placeholder="Enter registered email" required>
+                </div>
+                <div class="form-group">
+                    <label for="resetSecretKey">Secret Key</label>
+                    <input type="password" id="resetSecretKey" placeholder="Enter your secret key" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="login-btn">Reset Password</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const form = document.querySelector('form');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Stop normal form submission
+
+            const formData = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+
+            fetch('/billing-app/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.token) {
+                        localStorage.setItem('jwtToken', data.token);
+                        alert('Login successful!');
+                        window.location.href = '/billing-app/api/MainDashboard';
+                    } else {
+                        alert(data.message || 'Login failed');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+        });
+
+        // Modal Logic
+        const resetModal = document.getElementById('forgotModal');
+        const forgotLink = document.getElementById('forgotPassLink');
+        const closeModal = document.getElementById('closeModal');
+        const forgotForm = document.getElementById('forgotForm');
+
+        forgotLink.onclick = function (e) {
+            e.preventDefault();
+            resetModal.style.display = 'flex';
+        }
+
+        closeModal.onclick = function () {
+            resetModal.style.display = 'none';
+        }
+
+        window.onclick = function (event) {
+            if (event.target == resetModal) {
+                resetModal.style.display = 'none';
+            }
+        }
+
+        forgotForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const resetData = {
+                email: document.getElementById('resetEmail').value,
+                secretKey: document.getElementById('resetSecretKey').value,
+                newPassword: document.getElementById('newPassword').value
+            };
+
+            fetch('/billing-app/api/forgot-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(resetData),
+            })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    if (data.includes("successfully")) {
+                        resetModal.style.display = 'none';
+                        forgotForm.reset();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error resetting password');
+                });
+        });
+    </script>
+
+</body>
+
+</html>

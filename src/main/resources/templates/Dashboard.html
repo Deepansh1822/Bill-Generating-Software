@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Central | Enterprise Dashboard</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .welcome-text h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .welcome-text p {
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* --- Stats Grid --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .trend {
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .trend.up {
+            color: #10b981;
+        }
+
+        /* --- Quick Actions / Bill Types --- */
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .billing-types {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .bill-type-card {
+            background: white;
+            padding: 32px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .bill-type-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            transform: scale(1.02);
+        }
+
+        .bill-type-info h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .bill-type-info p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 250px;
+        }
+
+        .bill-type-btn {
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- Lists Section --- */
+        .bottom-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .client-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        .status {
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status.paid {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .client-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 16px;
+            background: #f8fafc;
+            transition: background 0.2s;
+        }
+
+        .client-item:hover {
+            background: #f1f5f9;
+        }
+
+        @media (max-width: 1024px) {
+            .billing-types {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='dashboard')}"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="welcome-text">
+                <h1>Welcome back, Admin!</h1>
+                <p>Here's what's happening with your business today.</p>
+            </div>
+            <div class="user-profile">
+                <div class="avatar" style="background: #eef2ff; color: var(--primary);">AD</div>
+                <div style="font-size: 0.9rem; font-weight: 700;">Admin User</div>
+                <span style="font-size: 0.8rem; color: #94a3b8;">▼</span>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: #eef2ff; color: var(--primary);">💰</div>
+                </div>
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value">₹12,45,000</div>
+                <div class="trend up">▲ 12.5% vs last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: #ecfdf5; color: var(--success);">📄</div>
+                </div>
+                <div class="stat-label">Requests Sent</div>
+                <div class="stat-value">1,280</div>
+                <div class="trend up">▲ 8.2% vs last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: #fffbeb; color: var(--warning);">⏳</div>
+                </div>
+                <div class="stat-label">Pending Payments</div>
+                <div class="stat-value">₹84,200</div>
+                <div class="trend" style="color: var(--danger);">▼ 3.1% high risk</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon"
+                        style="background: white; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.05); color: #6366f1;">
+                        🧾</div>
+                </div>
+                <div class="stat-label">Billing Breakdown</div>
+                <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                        <span>📦 Product:</span>
+                        <span style="font-weight: 700;">₹8.2L</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                        <span>💼 Service:</span>
+                        <span style="font-weight: 700;">₹4.2L</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Billing Types -->
+        <h2 class="section-title">🚀 Create New Bill</h2>
+        <div class="billing-types">
+            <!-- Product Bill -->
+            <a href="/billing-app/api/ManageStocks" class="bill-type-card">
+                <div class="bill-type-info">
+                    <div style="font-size: 2rem; margin-bottom: 12px;">📦</div>
+                    <h3>Product Bill</h3>
+                    <p>Dynamic billing for Pharma, Electronics & General products with inventory tracking.</p>
+                </div>
+                <div class="bill-type-btn" style="background: #0ea5e9;">Create Product Bill</div>
+            </a>
+            <!-- Service Bill -->
+            <a href="#" class="bill-type-card">
+                <div class="bill-type-info">
+                    <div style="font-size: 2rem; margin-bottom: 12px;">💼</div>
+                    <h3>Service Bill</h3>
+                    <p>Milestone, Hourly, and Unit-based service billing for agencies and freelancers.</p>
+                </div>
+                <div class="bill-type-btn" style="background: #0ea5e9;">Create Service Bill</div>
+            </a>
+        </div>
+
+        <!-- Bottom Sections -->
+        <div class="bottom-sections">
+            <div class="card" style="background: linear-gradient(to right, #ffffff, #f0f9ff);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-weight: 800;">🏆 Elite Clients</h3>
+                    <a href="#"
+                        style="font-size: 0.8rem; color: var(--primary); font-weight: 700; text-decoration: none;">View
+                        All Clients →</a>
+                </div>
+                <div class="client-grid">
+                    <div class="client-item" style="background: white; padding: 20px; border: 1px solid var(--border);">
+                        <div class="avatar" style="background: #e0f2fe; color: #0369a1; width: 44px; height: 44px;">TS
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 1rem; font-weight: 800;">TechSoft Systems</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">₹4.2L Revenue</div>
+                        </div>
+                        <div
+                            style="background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 800;">
+                            ★ 4.9</div>
+                    </div>
+                    <div class="client-item" style="background: white; padding: 20px; border: 1px solid var(--border);">
+                        <div class="avatar" style="background: #fef2f2; color: #991b1b; width: 44px; height: 44px;">GP
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 1rem; font-weight: 800;">Global Pharma</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">₹2.8L Revenue</div>
+                        </div>
+                        <div
+                            style="background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 800;">
+                            ★ 4.8</div>
+                    </div>
+                    <div class="client-item" style="background: white; padding: 20px; border: 1px solid var(--border);">
+                        <div class="avatar" style="background: #ecfdf5; color: #065f46; width: 44px; height: 44px;">RN
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 1rem; font-weight: 800;">Retail Nation</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">₹1.5L Revenue</div>
+                        </div>
+                        <div
+                            style="background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 800;">
+                            ★ 4.7</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Invoices Full Width -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-weight: 800;">📜 Recent Requests</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" placeholder="Search invoice..."
+                            style="padding: 6px 15px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.8rem; width: 200px;">
+                        <button class="status paid" style="border: none; cursor: pointer;">Download All</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Request</th>
+                                <th>Type</th>
+                                <th>Client</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight: 700;">#INV-2026-001</td>
+                                <td><span
+                                        style="font-size: 0.7rem; padding: 2px 8px; background: #eef2ff; color: var(--primary); border-radius: 4px; font-weight: 700;">SERVICE</span>
+                                </td>
+                                <td>ABC Tech Solutions</td>
+                                <td>Feb 21, 2026</td>
+                                <td>₹45,000.00</td>
+                                <td><span class="status paid">Paid</span></td>
+                                <td><a href="#"
+                                        style="text-decoration:none; color:var(--primary); font-weight:700; font-size:0.8rem; border:1px solid var(--primary); padding:4px 12px; border-radius:6px;">View
+                                        Bill</a></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 700;">#INV-2026-002</td>
+                                <td><span
+                                        style="font-size: 0.7rem; padding: 2px 8px; background: #eef2ff; color: var(--primary); border-radius: 4px; font-weight: 700;">PRODUCT</span>
+                                </td>
+                                <td>Global Pharma Ltd</td>
+                                <td>Feb 20, 2026</td>
+                                <td>₹12,400.00</td>
+                                <td><span class="status pending">Pending</span></td>
+                                <td><a href="#"
+                                        style="text-decoration:none; color:var(--primary); font-weight:700; font-size:0.8rem; border:1px solid var(--primary); padding:4px 12px; border-radius:6px;">View
+                                        Bill</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

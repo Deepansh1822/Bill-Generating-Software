@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Details | SFP Billing</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <style>
+        .details-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            transform: translateX(-4px);
+        }
+
+        .category-profile {
+            background: var(--white);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            margin-bottom: 32px;
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+
+        .category-hero-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 24px;
+            object-fit: cover;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border: 4px solid white;
+        }
+
+        .category-info h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .category-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            max-width: 600px;
+        }
+
+        .stat-badges {
+            display: flex;
+            gap: 16px;
+        }
+
+        .stat-badge {
+            background: #f1f5f9;
+            padding: 10px 18px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .stat-badge i {
+            color: var(--primary);
+        }
+
+        .products-section h2 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-panel {
+            background: var(--white);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8fafc;
+            text-align: left;
+            padding: 16px 24px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .product-link {
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .product-link:hover {
+            text-decoration: underline;
+        }
+
+        .type-badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .type-product {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .type-service {
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='categories')}"></div>
+
+    <div class="main-content">
+        <div class="details-container">
+            <a href="/billing-app/api/ManageCategories" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to Item Groups
+            </a>
+
+            <div class="category-profile">
+                <img id="categoryHeroImg" src="https://via.placeholder.com/200" class="category-hero-img">
+                <div class="category-info">
+                    <h1 id="categoryName">-</h1>
+                    <p class="category-description" id="categoryDescription">No description available.</p>
+                    <div class="stat-badges" id="productCount">
+                        <div class="stat-badge">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                            <span>Loading items...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="products-section">
+                <h2><i class="fa-solid fa-list-ul"></i> Items in this Group</h2>
+                <div class="card-panel">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Type</th>
+                                <th>Code</th>
+                                <th>Sale Price</th>
+                                <th>In Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                                    Loading items...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const urlParams = new URLSearchParams(window.location.search);
+        const catId = urlParams.get('id');
+
+        if (!catId) {
+            window.location.href = '/billing-app/api/ManageCategories';
+        }
+
+        const loadCategoryDetails = () => {
+            // Fetch Category Details
+            fetch(`/billing-app/api/getCategoryById/${catId}`)
+                .then(res => res.json())
+                .then(cat => {
+                    document.getElementById('categoryName').innerText = cat.categoryName;
+                    document.getElementById('categoryDescription').innerText = cat.categoryDescription || 'No description provided for this category.';
+                    if (cat.categoryImage) {
+                        document.getElementById('categoryHeroImg').src = 'data:image/png;base64,' + cat.categoryImage;
+                    }
+
+                    // Fetch Stocks to filter for this category
+                    return fetch('/billing-app/api/getAllStocks');
+                })
+                .then(res => res.json())
+                .then(stocks => {
+                    const filteredStocks = stocks.filter(s => s.stockCategories && s.stockCategories.id == catId);
+
+                    const products = filteredStocks.filter(s => s.stockType === 'PRODUCT');
+                    const services = filteredStocks.filter(s => s.stockType === 'SERVICE');
+
+                    document.getElementById('productCount').innerHTML = `
+                        <div class="stat-badge">
+                            <i class="fa-solid fa-box" style="color: #2563eb;"></i>
+                            <span>${products.length} Products</span>
+                        </div>
+                        <div class="stat-badge">
+                            <i class="fa-solid fa-hand-holding-hand" style="color: #7c3aed;"></i>
+                            <span>${services.length} Services</span>
+                        </div>
+                    `;
+
+                    const tbody = document.getElementById('productsTableBody');
+                    if (filteredStocks.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">No items found in this group.</td></tr>';
+                    } else {
+                        tbody.innerHTML = filteredStocks.map(s => `
+                            <tr>
+                                <td>
+                                    <a href="/billing-app/api/StockDetails?id=${s.id}" class="product-link">${s.itemName}</a>
+                                </td>
+                                <td>
+                                    <span class="type-badge type-${(s.stockType || 'PRODUCT').toLowerCase()}">${s.stockType || 'PRODUCT'}</span>
+                                </td>
+                                <td style="font-family: monospace;">${s.hsnCode || s.sacCode || '-'}</td>
+                                <td style="font-weight: 700;">₹ ${parseFloat(s.unitPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                                <td>
+                                    ${s.stockType === 'PRODUCT' ? (s.availableQuantity || 0) + ' ' + (s.unit || 'Units') : 'N/A'}
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('Error loading category details.');
+                });
+        };
+
+        loadCategoryDetails();
+    </script>
+</body>
+
+</html>

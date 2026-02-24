@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Access | BillMaster</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --background: #f1f5f9;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .back-link {
+            display: inline-block;
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            overflow: hidden;
+            min-height: 600px;
+        }
+
+        /* Left Side Image Section */
+        .card-image {
+            flex: 1;
+            background: linear-gradient(rgba(67, 97, 238, 0.8), rgba(63, 55, 201, 0.8)),
+                url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=1000');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            color: white;
+        }
+
+        .card-image h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .card-image p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Right Side Form Section */
+        .card-content {
+            flex: 1.2;
+            padding: 50px;
+            background: var(--white);
+        }
+
+        .header {
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-row-triple {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background-color: #f8fafc;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            background-color: var(--white);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(67, 97, 238, 0.3);
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .card {
+                flex-direction: column;
+            }
+
+            .card-image {
+                padding: 40px;
+                min-height: 250px;
+            }
+
+            .card-image h2 {
+                font-size: 1.8rem;
+            }
+
+            .card-content {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <a href="/billing-app/api/MainDashboard" class="back-link">← Back to Dashboard</a>
+
+        <div class="card">
+            <!-- Left Side Image -->
+            <div class="card-image">
+                <h2>Empower Your Business Assets</h2>
+                <p>Join thousands of businesses that use BillMaster to simplify their financial workflows and track
+                    growth in real-time.</p>
+            </div>
+
+            <!-- Right Side Form -->
+            <div class="card-content">
+                <div class="header">
+                    <h1>Request Access</h1>
+                    <p>Tell us about your business to get started.</p>
+                </div>
+
+                <form action="/saveAccessRequests" method="POST">
+                    <div class="form-group">
+                        <label for="companyName">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" placeholder="e.g. John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="designation">Designation</label>
+                        <input type="text" id="designation" name="designation" placeholder="e.g. CEO / Owner" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="companyName">Company Name</label>
+                        <input type="text" id="companyName" name="companyName" placeholder="e.g. Acme Billing Ltd"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Mobile Number</label>
+                        <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="+91 XXXXX XXXXX" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="name@company.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="companyType">Business Type</label>
+                        <select id="companyType" name="companyType" required>
+                            <option value="">Choose Your Business Type</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Wholesale">Wholesale</option>
+                            <option value="Service">Service</option>
+                            <option value="Manufacturing">Manufacturing</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="secretKey">Recovery Secret Key</label>
+                        <input type="password" id="secretKey" name="secretKey"
+                            placeholder="A word or code to recover password" required>
+                        <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 5px;">Remember this! You'll
+                            need it if you forget your password.</p>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Register My Business</button>
+                </form>
+
+                <p class="footer-text">Our team will verify your details and activate your account within 24 hours.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.querySelector('form');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Stop normal form submission
+
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                designation: document.getElementById('designation').value,
+                companyName: document.getElementById('companyName').value,
+                mobileNumber: document.getElementById('mobileNumber').value,
+                email: document.getElementById('email').value,
+                companyType: document.getElementById('companyType').value,
+                secretKey: document.getElementById('secretKey').value
+            };
+
+            fetch('/billing-app/api/saveAccessRequests', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Access request submitted successfully! We will notify you once approved.');
+                    form.reset(); // Clear form
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+        });
+    </script>
+
+</body>
+
+</html>

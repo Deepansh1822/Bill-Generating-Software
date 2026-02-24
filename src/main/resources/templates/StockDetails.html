@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Details | SFP Billing</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <style>
+        .details-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            transform: translateX(-4px);
+        }
+
+        .detail-card {
+            background: var(--white);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .item-identity {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .item-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .item-titles h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .type-badge {
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .type-product {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .type-service {
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .detail-section h3 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .price-tag {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .stock-status {
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-ok {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .status-low {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            color: #991b1b;
+        }
+
+        .status-icon {
+            font-size: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='stocks')}"></div>
+
+    <div class="main-content">
+        <div class="details-container">
+            <a href="/billing-app/api/ManageStocks" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to Products & Services
+            </a>
+
+            <div class="detail-card">
+                <div class="detail-header">
+                    <div class="item-identity">
+                        <div class="item-icon" id="itemIcon">
+                            <i class="fa-solid fa-box"></i>
+                        </div>
+                        <div class="item-titles">
+                            <h1 id="itemName">-</h1>
+                            <div class="badge-row">
+                                <span class="type-badge" id="itemTypeBadge">-</span>
+                                <span class="type-badge" style="background:#f1f5f9; color:#475569;"
+                                    id="itemCategory">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button class="add-btn" id="editBtn" style="padding: 10px 20px;">
+                            <i class="fa-solid fa-pen"></i> Edit Details
+                        </button>
+                    </div>
+                </div>
+
+                <div class="detail-grid">
+                    <!-- General Details -->
+                    <div class="detail-section">
+                        <h3>General Information</h3>
+                        <div class="info-row">
+                            <span class="info-label">HSN/SAC Code</span>
+                            <span class="info-value" id="itemCode">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Unit of Measure</span>
+                            <span class="info-value" id="itemUnit">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Tax Preference</span>
+                            <span class="info-value" id="taxPreference">-</span>
+                        </div>
+
+                        <div id="stockStatusBox" class="stock-status">
+                            <div class="status-icon" id="statusIcon">
+                                <i class="fa-solid fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; font-size: 18px;" id="statusText">In Stock</div>
+                                <div style="font-size: 13px; opacity: 0.8;" id="statusSubtext">Current Level: 25 Units
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing & Tax -->
+                    <div class="detail-section">
+                        <h3>Pricing & Taxation</h3>
+                        <div class="info-row">
+                            <span class="info-label">Sale Price</span>
+                            <span class="price-tag" id="salePrice">₹ 0.00</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Purchase Price</span>
+                            <span class="info-value" id="purchasePrice">₹ 0.00</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">CGST Rate</span>
+                            <span class="info-value" id="cgstRate">0%</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">SGST Rate</span>
+                            <span class="info-value" id="sgstRate">0%</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">IGST Rate</span>
+                            <span class="info-value" id="igstRate">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const urlParams = new URLSearchParams(window.location.search);
+        const stockId = urlParams.get('id');
+
+        if (!stockId) {
+            window.location.href = '/billing-app/api/ManageStocks';
+        }
+
+        const fetchStockDetails = () => {
+            fetch(`/billing-app/api/getStockById/${stockId}`)
+                .then(res => res.json())
+                .then(stock => {
+                    document.title = `${stock.itemName} | SFP Billing`;
+                    document.getElementById('itemName').innerText = stock.itemName;
+                    document.getElementById('itemCode').innerText = stock.hsnCode || stock.sacCode || 'N/A';
+                    document.getElementById('itemUnit').innerText = 'Units'; // Default as model doesn't have it
+                    document.getElementById('taxPreference').innerText = 'Taxable';
+
+                    document.getElementById('salePrice').innerText = `₹ ${parseFloat(stock.unitPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+                    document.getElementById('purchasePrice').parentElement.style.display = 'none'; // Only one price in model
+
+                    document.getElementById('cgstRate').innerText = `${stock.cgstRate}%`;
+                    document.getElementById('sgstRate').innerText = `${stock.sgstRate}%`;
+                    document.getElementById('igstRate').innerText = `${stock.igstRate}%`;
+
+                    const type = stock.stockType || 'PRODUCT';
+                    const typeBadge = document.getElementById('itemTypeBadge');
+                    typeBadge.innerText = type;
+                    typeBadge.className = `type-badge type-${type.toLowerCase()}`;
+
+                    const iconBox = document.getElementById('itemIcon');
+                    iconBox.innerHTML = type === 'PRODUCT' ? '<i class="fa-solid fa-box"></i>' : '<i class="fa-solid fa-hand-holding-hand"></i>';
+
+                    document.getElementById('itemCategory').innerText = stock.stockCategories ? stock.stockCategories.categoryName : 'Uncategorized';
+
+                    // Stock Level Status
+                    const statusBox = document.getElementById('stockStatusBox');
+                    const statusIcon = document.getElementById('statusIcon');
+                    const statusText = document.getElementById('statusText');
+                    const statusSubtext = document.getElementById('statusSubtext');
+
+                    if (type === 'SERVICE') {
+                        statusBox.style.display = 'none';
+                    } else {
+                        const current = stock.availableQuantity || 0;
+                        const low = 5; // Default threshold
+                        statusSubtext.innerText = `Current Level: ${current} Units`;
+
+                        if (current <= low) {
+                            statusBox.className = 'stock-status status-low';
+                            statusIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                            statusText.innerText = 'Low Stock';
+                        } else {
+                            statusBox.className = 'stock-status status-ok';
+                            statusIcon.innerHTML = '<i class="fa-solid fa-check-circle"></i>';
+                            statusText.innerText = 'Stock Level Healthy';
+                        }
+                    }
+
+                    document.getElementById('editBtn').onclick = () => {
+                        window.location.href = `/billing-app/api/ManageStocks?edit=${stockId}`;
+                    };
+                })
+                .catch(err => {
+                    console.error('Error fetching stock:', err);
+                    alert('Error loading stock details.');
+                });
+        };
+
+        fetchStockDetails();
+    </script>
+</body>
+
+</html>

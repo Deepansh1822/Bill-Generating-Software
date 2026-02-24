@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Requests | SFP Billing</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <style>
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header-section h1 {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .stat-card p {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .total-requests {
+            border-top: 4px solid var(--primary);
+        }
+
+        .approved-requests {
+            border-top: 4px solid #10b981;
+        }
+
+        .pending-requests {
+            border-top: 4px solid #f59e0b;
+        }
+
+        /* Table Section */
+        .card-panel {
+            background: var(--white);
+            border-radius: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8fafc;
+            padding: 18px 24px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .user-info span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .pending {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .approved {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-approve {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .btn-reject {
+            background: #ffe4e6;
+            color: #991b1b;
+        }
+
+        .btn-review {
+            background: #f1f5f9;
+            color: var(--text-muted);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 100000;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .modal[style*="display: flex"],
+        .modal[style*="display: block"] {
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 28px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .detail-item p {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(0, 0, 0, 0.05);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='access-requests')}"></div>
+
+    <div class="main-content">
+        <div class="header-section">
+            <div>
+                <h1>Access Requests</h1>
+                <p style="color: var(--text-muted); margin-top: 4px;">Manage incoming business registration requests</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card total-requests">
+                <h3>Total Requests</h3>
+                <p id="stat-total">-</p>
+            </div>
+            <div class="stat-card pending-requests">
+                <h3>Pending</h3>
+                <p id="stat-pending">-</p>
+            </div>
+            <div class="stat-card approved-requests">
+                <h3>Approved</h3>
+                <p id="stat-approved">-</p>
+            </div>
+        </div>
+
+        <div class="card-panel">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Business Details</th>
+                        <th>Applicant</th>
+                        <th>Contact Info</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="table-content">
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                                <div class="spinner"></div>
+                                <p style="color: var(--text-muted);">Loading requests...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalUserId" style="font-weight: 800;">Request Details</h2>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <label>Full Name</label>
+                    <p id="modalFullName">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Designation</label>
+                    <p id="modalDesignation">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Company Name</label>
+                    <p id="modalCompanyName">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Company Type</label>
+                    <p id="modalCompanyType">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Email Address</label>
+                    <p id="modalEmail">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Mobile Number</label>
+                    <p id="modalMobile">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Requested Role</label>
+                    <p id="modalRole">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Generated Username</label>
+                    <p id="modalUsername" style="color: var(--primary); font-weight: 800;">-</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentTab = urlParams.get('tab');
+
+        const fetchData = async () => {
+            try {
+                const response = await fetch("/billing-app/api/admin/pending-requests");
+                const data = await response.json();
+                updateStats(data);
+                renderTable(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('table-content').innerHTML = `
+                    <tr><td colspan="6" style="text-align:center; padding:40px; color:var(--danger);">⚠️ Error loading data.</td></tr>
+                `;
+            }
+        };
+
+        const updateStats = (data) => {
+            const total = data.length;
+            const pending = data.filter(u => u.status === 'PENDING').length;
+            const approved = data.filter(u => u.status === 'APPROVED').length;
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-pending').innerText = pending;
+            document.getElementById('stat-approved').innerText = approved;
+        };
+
+        const renderTable = (data) => {
+            const tableBody = document.getElementById('table-content');
+            tableBody.innerHTML = '';
+
+            let filteredData = (currentTab === 'clients')
+                ? data.filter(u => u.status === 'APPROVED')
+                : data.filter(u => u.status === 'PENDING');
+
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:60px; color:var(--text-muted);">No requests found.</td></tr>`;
+                return;
+            }
+
+            filteredData.forEach(user => {
+                const row = document.createElement('tr');
+                row.id = `row-${user.id}`;
+
+                row.innerHTML = `
+                    <td>
+                        <div class="user-info">
+                            <strong>${user.companyName}</strong>
+                            <span>${user.companyType}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="user-info">
+                            <strong>${user.fullName}</strong>
+                            <span>${user.designation}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="user-info">
+                            <strong>${user.email}</strong>
+                            <span>${user.mobileNumber}</span>
+                        </div>
+                    </td>
+                    <td>${user.role || 'User'}</td>
+                    <td><span class="status-badge ${user.status.toLowerCase()}">${user.status}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-review" onclick="openModal('${user.id}', '${user.fullName}', '${user.designation}', '${user.companyName}', '${user.companyType}', '${user.email}', '${user.mobileNumber}', '${user.role}', '${user.username}')"><i class="fa-solid fa-eye"></i> Review</button>
+                            ${user.status === 'PENDING' ? `
+                                <button class="btn btn-approve" onclick="handleAction(${user.id}, 'approve')"><i class="fa-solid fa-check"></i></button>
+                                <button class="btn btn-reject" onclick="handleAction(${user.id}, 'reject')"><i class="fa-solid fa-xmark"></i></button>
+                            ` : ''}
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        };
+
+        const handleAction = (userId, action) => {
+            if (!confirm(`Are you sure you want to ${action} this request?`)) return;
+            fetch(`/billing-app/api/admin/${action}/${userId}`, { method: "POST" })
+                .then(res => {
+                    if (res.ok) {
+                        const row = document.getElementById(`row-${userId}`);
+                        if (row) {
+                            row.style.opacity = '0';
+                            setTimeout(() => { fetchData(); }, 300);
+                        }
+                    } else {
+                        alert(`Failed to ${action} request.`);
+                    }
+                });
+        };
+
+        const openModal = (userId, fullName, designation, companyName, companyType, email, mobileNumber, role, username) => {
+            document.getElementById('modalUserId').innerText = "Request #" + userId;
+            document.getElementById('modalFullName').innerText = fullName;
+            document.getElementById('modalDesignation').innerText = designation;
+            document.getElementById('modalCompanyName').innerText = companyName;
+            document.getElementById('modalCompanyType').innerText = companyType;
+            document.getElementById('modalEmail').innerText = email;
+            document.getElementById('modalMobile').innerText = mobileNumber;
+            document.getElementById('modalRole').innerText = role || 'User';
+            document.getElementById('modalUsername').innerText = username || 'Pending';
+            document.getElementById('reviewModal').style.display = 'flex';
+        };
+
+        const closeModal = () => { document.getElementById('reviewModal').style.display = 'none'; };
+        window.onclick = (e) => { if (e.target == document.getElementById('reviewModal')) closeModal(); };
+
+        fetchData();
+    </script>
+</body>
+
+</html>

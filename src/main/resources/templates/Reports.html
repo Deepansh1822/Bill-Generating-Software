@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Reports | SFP Billing</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <style>
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header-section h1 {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .card-panel {
+            background: var(--white);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8fafc;
+            text-align: left;
+            padding: 16px;
+            font-size: 13px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 18px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        .invoice-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .invoice-link:hover {
+            text-decoration: underline;
+        }
+
+        .amount {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .date {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .btn-view {
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-view:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='reports')}"></div>
+
+    <div class="main-content">
+        <div class="header-section">
+            <div>
+                <h1>Billing Reports</h1>
+                <p id="totalCount" style="color: var(--text-muted); margin-top: 4px;">Loading reports...</p>
+            </div>
+            <button class="secondary-btn" onclick="window.print()">
+                <i class="fa-solid fa-print"></i> Print Summary
+            </button>
+        </div>
+
+        <div class="card-panel">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Recipient</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="reportsTable">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i> Loading data...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        async function loadReports() {
+            try {
+                const response = await fetch('/billing-app/api/reports/bills/all');
+                const bills = await response.json();
+
+                const tableBody = document.getElementById('reportsTable');
+                document.getElementById('totalCount').innerText = `${bills.length} invoices generated in total.`;
+
+                if (bills.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No reports found.</td></tr>';
+                    return;
+                }
+
+                tableBody.innerHTML = bills.map(bill => `
+                    <tr>
+                        <td><a href="/billing-app/api/Reports/BillDetail/${bill.id}" class="invoice-link">#${bill.invoiceNumber}</a></td>
+                        <td>
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-weight: 600;">${bill.recipientBillingInfo?.recipientName || 'N/A'}</span>
+                                <span style="font-size: 12px; color: var(--text-muted);">${bill.recipientBillingInfo?.recipientCompanyName || '-'}</span>
+                            </div>
+                        </td>
+                        <td class="amount">₹${Number(bill.stockTotalAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                        <td class="date">${bill.stockCreatedAt || 'N/A'}</td>
+                        <td>
+                            <a href="/billing-app/api/Reports/BillDetail/${bill.id}" class="btn-view">
+                                <i class="fa-solid fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error fetching reports:', error);
+                document.getElementById('reportsTable').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--danger);">Failed to load data.</td></tr>';
+            }
+        }
+
+        window.onload = loadReports;
+    </script>
+</body>
+
+</html>
