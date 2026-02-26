@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Clients | SFP Billing</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            background-color: #f8fafc;
+            min-height: 100vh;
+            padding: 2.5rem;
+        }
+
+        .header-section {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .page-title h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.025em;
+        }
+
+        .page-title p {
+            color: #64748b;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 2.5rem;
+        }
+
+        .summary-card {
+            background: var(--white);
+            padding: 20px 24px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .icon-blue {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .icon-green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .icon-purple {
+            background: #f3e8ff;
+            color: #7e22ce;
+        }
+
+        .summary-info h4 {
+            font-size: 0.8125rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .summary-info .count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .summary-info .sublabel {
+            font-size: 0.725rem;
+            color: #94a3b8;
+            margin-top: 2px;
+            font-weight: 500;
+            display: block;
+        }
+
+        .search-area {
+            background: var(--white);
+            padding: 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .search-input-wrapper input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+        }
+
+        .search-input-wrapper input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .client-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .client-card {
+            background: var(--white);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .client-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #6366f1;
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .client-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .client-initials {
+            width: 52px;
+            height: 52px;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .client-name-box h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .client-name-box p {
+            font-size: 0.8125rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .role-badge {
+            padding: 6px 12px;
+            background: #f1f5f9;
+            color: #475569;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.875rem;
+            color: #475569;
+        }
+
+        .info-row i {
+            width: 18px;
+            color: #6366f1;
+            font-size: 0.9rem;
+        }
+
+        .card-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #6366f1;
+            background: #eef2ff;
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+
+        .loader-box {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 100px 0;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .client-card {
+            animation: fadeInUp 0.5s ease backwards;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='clients')}"></div>
+
+    <div class="main-content">
+        <div class="header-section">
+            <div class="page-title">
+                <h1>Manage Clients</h1>
+                <p>Track your business growth and client network</p>
+            </div>
+        </div>
+
+        <div class="stats-summary">
+            <div class="summary-card">
+                <div class="summary-icon icon-blue">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="summary-info">
+                    <h4>Total Clients</h4>
+                    <div class="count" id="totalCount">0</div>
+                    <span class="sublabel">Total approved users</span>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon icon-green">
+                    <i class="fa-solid fa-building"></i>
+                </div>
+                <div class="summary-info">
+                    <h4>Active Businesses</h4>
+                    <div class="count" id="businessCount">0</div>
+                    <span class="sublabel">Unique company entities</span>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon icon-purple">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <div class="summary-info">
+                    <h4>Joined Recently</h4>
+                    <div class="count" id="recentCount">0</div>
+                    <span class="sublabel">Last 30 days growth</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-area">
+            <div class="search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="clientSearch" placeholder="Search by name, company, email or industry...">
+            </div>
+        </div>
+
+        <div class="client-grid" id="clientGrid">
+            <div class="loader-box">
+                <div class="spinner"></div>
+                <p style="color: #64748b; font-weight: 500;">Fetching client data...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const grid = document.getElementById('clientGrid');
+        const searchInput = document.getElementById('clientSearch');
+        let allClients = [];
+
+        const init = async () => {
+            try {
+                const response = await fetch('/billing-app/api/getAllClients');
+                allClients = await response.json();
+                updateStats();
+                renderClients(allClients);
+            } catch (error) {
+                grid.innerHTML = `<div class="loader-box" style="color: #ef4444;">Failed to load clients. Please check your connection.</div>`;
+            }
+        };
+
+        const updateStats = () => {
+            document.getElementById('totalCount').innerText = allClients.length;
+            const uniqueCompanies = [...new Set(allClients.map(c => c.companyName))].length;
+            document.getElementById('businessCount').innerText = uniqueCompanies;
+
+            // Count joined in last 30 days
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const recent = allClients.filter(c => new Date(c.createdAt) > thirtyDaysAgo).length;
+            document.getElementById('recentCount').innerText = recent;
+        };
+
+        const renderClients = (clients) => {
+            if (clients.length === 0) {
+                grid.innerHTML = `<div class="loader-box" style="color: #64748b;">No clients found matching your criteria.</div>`;
+                return;
+            }
+
+            grid.innerHTML = clients.map((client, index) => {
+                const date = client.createdAt ? new Date(client.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                }) : 'Not available';
+
+                const avatar = client.clientImage
+                    ? `<div class="client-initials" style="background-image: url(${client.clientImage}); background-size: cover; background-position: center;"></div>`
+                    : `<div class="client-initials">${client.fullName.charAt(0)}</div>`;
+
+                return `
+                    <div class="client-card" style="animation-delay: ${index * 0.05}s">
+                        <div class="card-top">
+                            <div class="client-profile">
+                                ${avatar}
+                                <div class="client-name-box">
+                                    <h3>${client.fullName}</h3>
+                                    <p>${client.designation || 'Client'}</p>
+                                </div>
+                            </div>
+                            <span class="role-badge">Approved</span>
+                        </div>
+
+                        <div class="card-content">
+                            <div class="info-row">
+                                <i class="fa-solid fa-building"></i>
+                                <span>${client.companyName}</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fa-solid fa-envelope"></i>
+                                <span>${client.email}</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fa-solid fa-phone"></i>
+                                <span>${client.mobileNumber}</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fa-solid fa-calendar-day"></i>
+                                <span>Joined: ${date}</span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <span class="tag"><b>Company Type:</b> ${client.companyType || 'Product'}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allClients.filter(c =>
+                c.fullName.toLowerCase().includes(query) ||
+                c.companyName.toLowerCase().includes(query) ||
+                c.email.toLowerCase().includes(query) ||
+                (c.companyType && c.companyType.toLowerCase().includes(query))
+            );
+            renderClients(filtered);
+        });
+
+        init();
+    </script>
+</body>
+
+</html>

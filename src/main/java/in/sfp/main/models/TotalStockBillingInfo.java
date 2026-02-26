@@ -1,10 +1,28 @@
 package in.sfp.main.models;
 
-import jakarta.persistence.*;
-import lombok.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "stock_billing_info")
@@ -27,9 +45,20 @@ public class TotalStockBillingInfo {
     private String totalSGSTAmount;
     private String totalIGSTAmount;
     private String stockTotalAmount; // Grand Total
+    private String amountInWords;
 
     private String advancedPayment;
     private String balancePayment;
+
+    // Snapshot of who generated the bill (bill-by)
+    private String billByFullName;
+    private String billByDesignation;
+    private String billByMobileNumber;
+    private String billByEmail;
+
+    // Snapshot of company info at time of billing
+    private String companyName;
+    private String companyType;
 
     private LocalTime stockCreatedAt;
 

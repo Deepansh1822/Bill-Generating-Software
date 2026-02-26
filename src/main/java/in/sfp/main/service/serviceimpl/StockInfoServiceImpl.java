@@ -17,12 +17,33 @@ public class StockInfoServiceImpl implements StockInfoService {
 
     @Override
     public StockInfo saveStock(StockInfo stock) {
+        if (stock.getCreatedBy() == null) {
+            stock.setCreatedBy(getCurrentUser());
+        }
         return stockInfoRepository.save(stock);
+    }
+
+    private String getCurrentUser() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+            return auth.getName();
+        }
+        return "System";
     }
 
     @Override
     public List<StockInfo> getAllStocks() {
         return stockInfoRepository.findAll();
+    }
+
+    @Override
+    public List<StockInfo> getAllStocksByUser(String email, String role) {
+        if ("ADMIN".equalsIgnoreCase(role)) {
+            return stockInfoRepository.findAll();
+        } else {
+            return stockInfoRepository.findByCreatedBy(email);
+        }
     }
 
     @Override
@@ -53,6 +74,13 @@ public class StockInfoServiceImpl implements StockInfoService {
             existingStock.setSgstRate(stock.getSgstRate());
             existingStock.setIgstRate(stock.getIgstRate());
             existingStock.setStockCategories(stock.getStockCategories());
+            existingStock.setSacCode(stock.getSacCode());
+            existingStock.setStockType(stock.getStockType());
+            existingStock.setUnit(stock.getUnit());
+            existingStock.setTaxable(stock.isTaxable());
+            existingStock.setCreatedBy(stock.getCreatedBy());
+            existingStock.setUpdatedBy(getCurrentUser());
+
             if (stock.getStockImage() != null) {
                 existingStock.setStockImage(stock.getStockImage());
             }

@@ -9,4 +9,6 @@ public interface BillingReportService {
     TotalStockBillingInfo getBillDetailByInvoiceNumber(String invoiceNumber);
 
     List<TotalStockBillingInfo> getAllBills();
+
+    List<TotalStockBillingInfo> getAllBillsByUser(String email, String role);
 }

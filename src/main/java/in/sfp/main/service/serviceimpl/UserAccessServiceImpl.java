@@ -1,14 +1,16 @@
 package in.sfp.main.service.serviceimpl;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
 import in.sfp.main.models.UserAccessInfo;
 import in.sfp.main.repository.UserAccessRepo;
 import in.sfp.main.service.UserAccessService;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 public class UserAccessServiceImpl implements UserAccessService {
@@ -26,7 +28,31 @@ public class UserAccessServiceImpl implements UserAccessService {
     public UserAccessInfo saveUsersAccessInfo(UserAccessInfo usersAccess) {
         usersAccess.setStatus("PENDING");
         usersAccess.setRole("CLIENT");
-        return usersAccessRepo.save(usersAccess);
+        UserAccessInfo saved = usersAccessRepo.save(usersAccess);
+
+        // Send an acknowledgement email to the client confirming request received
+        try {
+            SimpleMailMessage msg = new SimpleMailMessage();
+            msg.setTo(saved.getEmail());
+            msg.setSubject("SFP Billing - Access Request Received");
+            StringBuilder body = new StringBuilder();
+            body.append("Hello ");
+            body.append(saved.getFullName() != null ? saved.getFullName() : "");
+            body.append(",\n\n");
+            body.append("Thanks for requesting access to SFP Billing. We have received your request and will review it shortly.\n\n");
+            body.append("Submitted details:\n");
+            body.append("Company Name: ").append(saved.getCompanyName() != null ? saved.getCompanyName() : "-").append("\n");
+            body.append("Company Type: ").append(saved.getCompanyType() != null ? saved.getCompanyType() : "-").append("\n");
+            body.append("Email: ").append(saved.getEmail()).append("\n");
+            body.append("Mobile: ").append(saved.getMobileNumber() != null ? saved.getMobileNumber() : "-").append("\n\n");
+            body.append("We'll notify you when your account is approved.\n\nRegards,\nSFP Team");
+            msg.setText(body.toString());
+            mailSender.send(msg);
+        } catch (Exception ex) {
+            System.out.println("Failed to send acknowledgement email: " + ex.getMessage());
+        }
+
+        return saved;
     }
 
     @Override
@@ -104,6 +130,11 @@ public class UserAccessServiceImpl implements UserAccessService {
             adminInfo.setPassword(passwordEncoder.encode(adminInfo.getPassword()));
         }
         return usersAccessRepo.save(adminInfo);
+    }
+
+    @Override
+    public List<UserAccessInfo> getAllClients() {
+        return usersAccessRepo.findByRole("CLIENT");
     }
 
     private void sendSetupEmail(String email, String username, String token) {

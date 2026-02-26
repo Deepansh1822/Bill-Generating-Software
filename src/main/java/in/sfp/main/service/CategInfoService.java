@@ -10,6 +10,8 @@ public interface CategInfoService {
 
     List<CategInfo> getAllCategories();
 
+    List<CategInfo> getAllCategoriesByUser(String email, String role);
+
     CategInfo getCategoryById(Long id);
 
     CategInfo getCategoryByName(String categoryName);

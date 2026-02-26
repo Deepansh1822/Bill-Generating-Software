@@ -22,4 +22,5 @@ public interface UserAccessRepo extends JpaRepository<UserAccessInfo, Long> {
 
     UserAccessInfo findByEmailAndSecretKey(String email, String secretKey);
 
+    List<UserAccessInfo> findByRole(String role);
 }

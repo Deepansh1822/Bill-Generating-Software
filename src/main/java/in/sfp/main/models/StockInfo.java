@@ -1,6 +1,6 @@
 package in.sfp.main.models;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,21 +35,26 @@ public class StockInfo {
     private double sgstRate; // for both product and service
     private double igstRate; // for both product and service
 
+    private String unit; // e.g. Pcs, Box, Kg, Hr
+    private boolean taxable; // true/false
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private CategInfo stockCategories;
 
-    private LocalTime createdAt; // for both product and service
-    private LocalTime updatedAt; // for both product and service
+    private LocalDateTime createdAt; // for both product and service
+    private String createdBy;
+    private LocalDateTime updatedAt; // for both product and service
+    private String updatedBy;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalTime.now();
+        createdAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
 }

@@ -7,6 +7,31 @@
     <title>Category Details | SFP Billing</title>
     <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
     <style>
+        .category-img {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stock-qty {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .qty-ok {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .qty-low {
+            background: #ffe4e6;
+            color: #991b1b;
+        }
+
         .details-container {
             max-width: 1100px;
             margin: 0 auto;
@@ -152,6 +177,225 @@
             background: #f5f3ff;
             color: #7c3aed;
         }
+
+        /* Toolbar styles */
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .filter-select {
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            outline: none;
+            background: white;
+            font-family: inherit;
+            cursor: pointer;
+            min-width: 140px;
+        }
+
+        .add-btn {
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Modal Styles */
+        .sfp-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 500000;
+            pointer-events: none;
+        }
+
+        .sfp-modal-overlay.active {
+            display: flex;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 32px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .type-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 8px;
+            background: #f1f5f9;
+            border-radius: 14px;
+        }
+
+        .type-opt {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .type-opt.active {
+            background: white;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            outline: none;
+            font-size: 14px;
+        }
+
+        .conditional-field {
+            display: none;
+        }
+
+        .conditional-field.show {
+            display: block;
+        }
+
+        .secondary-btn {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .secondary-btn:hover {
+            background: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .view-btn {
+            background: #f1f5f9;
+            color: var(--text-muted);
+        }
+
+        .edit-btn {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .delete-btn {
+            background: #fff1f2;
+            color: #e11d48;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(0.95);
+        }
     </style>
 </head>
 
@@ -160,7 +404,7 @@
 
     <div class="main-content">
         <div class="details-container">
-            <a href="/billing-app/api/ManageCategories" class="back-link">
+            <a href="/billing-app/api/ManageCategories" class="back-link" id="backBtn">
                 <i class="fa-solid fa-arrow-left"></i> Back to Item Groups
             </a>
 
@@ -175,20 +419,63 @@
                             <span>Loading items...</span>
                         </div>
                     </div>
+                    <!-- Audit Meta Info -->
+                    <div class="audit-meta"
+                        style="margin-top: 24px; font-size: 13px; color: var(--text-muted); display: flex; gap: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
+                        <span title="Created Info">
+                            <i class="fa-solid fa-clock" style="color: var(--primary); margin-right: 6px;"></i>
+                            <span style="font-weight: 600; color: var(--text-main);">Created:</span>
+                            <span id="createdAt">-</span>
+                            <span style="margin: 0 4px; opacity: 0.5;">|</span>
+                            <span>by <span id="createdBy"
+                                    style="font-weight: 600; color: var(--primary);">System</span></span>
+                        </span>
+                        <span id="updatedMeta" style="display: none;">
+                            <i class="fa-solid fa-pen-to-square" style="color: #059669; margin-right: 6px;"></i>
+                            <span style="font-weight: 600; color: var(--text-main);">Last Update:</span>
+                            <span id="updatedAt">-</span>
+                            <span style="margin: 0 4px; opacity: 0.5;">|</span>
+                            <span>by <span id="updatedBy" style="font-weight: 600; color: #059669;">System</span></span>
+                        </span>
+                    </div>
                 </div>
             </div>
 
             <div class="products-section">
-                <h2><i class="fa-solid fa-list-ul"></i> Items in this Group</h2>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+                    <h2><i class="fa-solid fa-list-ul"></i> Items in this Group</h2>
+                    <button class="add-btn" id="addItemBtn" th:if="${userRole != 'ADMIN'}">
+                        <i class="fa-solid fa-plus"></i> Add Item
+                    </button>
+                </div>
+
+                <div class="table-toolbar">
+                    <div class="filter-group">
+                        <div class="search-wrapper">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="itemSearch" placeholder="Filter items by name or code...">
+                        </div>
+                        <select id="typeFilter" class="filter-select">
+                            <option value="ALL">All Types</option>
+                            <option value="PRODUCT">Products Only</option>
+                            <option value="SERVICE">Services Only</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="card-panel">
                     <table>
                         <thead>
                             <tr>
-                                <th>Item Name</th>
+                                <th>Details</th>
                                 <th>Type</th>
+                                <th>Item Group</th>
                                 <th>Code</th>
-                                <th>Sale Price</th>
-                                <th>In Stock</th>
+                                <th>Unit</th>
+                                <th>Tax</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="productsTableBody">
@@ -204,71 +491,400 @@
         </div>
     </div>
 
+    <!-- Edit Stock Modal (Mirrored from ManageStocks) -->
+    <div class="sfp-modal-overlay" id="stockModal">
+        <div class="modal-card">
+            <h2 id="modalTitle" style="margin-bottom: 20px;">Edit Item</h2>
+
+            <div class="type-selector">
+                <div class="type-opt active" id="opt-product" onclick="setType('PRODUCT')">
+                    <i class="fa-solid fa-box"></i> Product
+                </div>
+                <div class="type-opt" id="opt-service" onclick="setType('SERVICE')">
+                    <i class="fa-solid fa-handshake"></i> Service
+                </div>
+            </div>
+
+            <form id="stockForm">
+                <input type="hidden" id="stockId">
+                <input type="hidden" id="stockType" value="PRODUCT">
+                <input type="hidden" id="createdBy">
+                <input type="hidden" id="createdAt">
+
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Item Name</label>
+                        <input type="text" id="itemName" required placeholder="e.g. Dell Monitor or Website Dev">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Item Group</label>
+                        <select id="categoryId" required></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sale Price (₹)</label>
+                        <input type="number" step="0.01" id="unitPrice" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Unit of Measure</label>
+                        <select id="itemUnit">
+                            <option value="Pcs">Pcs (Pieces)</option>
+                            <option value="Box">Box</option>
+                            <option value="Kg">Kg (Kilogram)</option>
+                            <option value="Ltr">Ltr (Liter)</option>
+                            <option value="Mtr">Mtr (Meter)</option>
+                            <option value="Nos">Nos (Numbers)</option>
+                            <option value="Hr">Hr (Hour)</option>
+                            <option value="Service">Service</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tax Preference</label>
+                        <select id="taxPreference">
+                            <option value="true">Taxable</option>
+                            <option value="false">Tax Exempt</option>
+                        </select>
+                    </div>
+
+                    <!-- Quantity & Code Fields -->
+                    <div class="form-group conditional-field field-product show">
+                        <label>HSN Code</label>
+                        <input type="text" id="hsnCode" placeholder="Enter HSN Code">
+                    </div>
+                    <div class="form-group conditional-field field-service" style="grid-column: span 2;">
+                        <label>SAC Code</label>
+                        <input type="text" id="sacCode" placeholder="Enter SAC Code (Service Accounting Code)">
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label id="qtyLabel">Current Stock / Base Unit</label>
+                        <input type="number" id="availableQuantity" value="1">
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Description</label>
+                        <textarea id="itemDescription" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>CGST (%)</label>
+                        <input type="number" step="0.01" id="cgstRate" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>SGST (%)</label>
+                        <input type="number" step="0.01" id="sgstRate" value="0">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>IGST (%)</label>
+                        <input type="number" step="0.01" id="igstRate" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Image (Optional)</label>
+                    <input type="file" id="stockImage" accept="image/*">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="secondary-btn" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="add-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script th:inline="javascript">
+        const userRole = /*[[${userRole}]]*/ 'CLIENT';
+        const userName = /*[[${userName}]]*/ 'User';
+        const apiBase = '/billing-app/api';
         const urlParams = new URLSearchParams(window.location.search);
         const catId = urlParams.get('id');
+        let allItems = [];
 
         if (!catId) {
             window.location.href = '/billing-app/api/ManageCategories';
         }
 
+        const els = {
+            tbody: document.getElementById('productsTableBody'),
+            modal: document.getElementById('stockModal'),
+            form: document.getElementById('stockForm'),
+            typeInput: document.getElementById('stockType'),
+            idInput: document.getElementById('stockId')
+        };
+
+        const setType = (type) => {
+            els.typeInput.value = type;
+            document.querySelectorAll('.type-opt').forEach(el => el.classList.remove('active'));
+            document.getElementById(`opt-${type.toLowerCase()}`).classList.add('active');
+
+            document.querySelectorAll('.conditional-field').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll(`.field-${type.toLowerCase()}`).forEach(el => el.classList.add('show'));
+
+            // Dynamic Label
+            const label = document.getElementById('qtyLabel');
+            if (label) {
+                label.innerText = type === 'PRODUCT' ? 'Current Stock Level' : 'Base Billing Unit (Qty)';
+            }
+        };
+
+        const formatDate = (dateArr) => {
+            if (!dateArr) return '-';
+            if (typeof dateArr === 'string') {
+                const d = new Date(dateArr);
+                return d.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+            }
+            if (Array.isArray(dateArr)) {
+                const [year, month, day, hour = 0, minute = 0] = dateArr;
+                const d = new Date(year, month - 1, day, hour, minute);
+                return d.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+            }
+            return '-';
+        };
+
         const loadCategoryDetails = () => {
+            // Fetch All Categories for modal dropdown
+            fetch(`${apiBase}/getAllCategories`).then(res => res.json()).then(cats => {
+                document.getElementById('categoryId').innerHTML = cats.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
+            });
+
             // Fetch Category Details
-            fetch(`/billing-app/api/getCategoryById/${catId}`)
+            fetch(`${apiBase}/getCategoryById/${catId}`)
                 .then(res => res.json())
                 .then(cat => {
                     document.getElementById('categoryName').innerText = cat.categoryName;
                     document.getElementById('categoryDescription').innerText = cat.categoryDescription || 'No description provided for this category.';
+
+                    document.getElementById('createdAt').innerText = formatDate(cat.categoryCreatedAt);
+                    document.getElementById('createdBy').innerText = cat.categoryCreatedBy || 'System';
+
+                    if (cat.categoryUpdatedAt) {
+                        document.getElementById('updatedMeta').style.display = 'flex';
+                        document.getElementById('updatedAt').innerText = formatDate(cat.categoryUpdatedAt);
+                        document.getElementById('updatedBy').innerText = cat.categoryUpdatedBy || 'System';
+                    } else {
+                        document.getElementById('updatedMeta').style.display = 'none';
+                    }
+
                     if (cat.categoryImage) {
                         document.getElementById('categoryHeroImg').src = 'data:image/png;base64,' + cat.categoryImage;
                     }
 
-                    // Fetch Stocks to filter for this category
-                    return fetch('/billing-app/api/getAllStocks');
+                    return fetch(`${apiBase}/getAllStocks`);
                 })
                 .then(res => res.json())
                 .then(stocks => {
-                    const filteredStocks = stocks.filter(s => s.stockCategories && s.stockCategories.id == catId);
+                    allItems = stocks.filter(s => s.stockCategories && s.stockCategories.id == catId);
 
-                    const products = filteredStocks.filter(s => s.stockType === 'PRODUCT');
-                    const services = filteredStocks.filter(s => s.stockType === 'SERVICE');
+                    const products = allItems.filter(s => s.stockType === 'PRODUCT' || !s.stockType);
+                    const services = allItems.filter(s => s.stockType === 'SERVICE');
 
                     document.getElementById('productCount').innerHTML = `
                         <div class="stat-badge">
                             <i class="fa-solid fa-box" style="color: #2563eb;"></i>
-                            <span>${products.length} Products</span>
+                            <span>${products.length} ${products.length === 1 ? 'Product' : 'Products'}</span>
                         </div>
                         <div class="stat-badge">
-                            <i class="fa-solid fa-hand-holding-hand" style="color: #7c3aed;"></i>
-                            <span>${services.length} Services</span>
+                            <i class="fa-solid fa-handshake" style="color: #7c3aed;"></i>
+                            <span>${services.length} ${services.length === 1 ? 'Service' : 'Services'}</span>
                         </div>
                     `;
 
-                    const tbody = document.getElementById('productsTableBody');
-                    if (filteredStocks.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">No items found in this group.</td></tr>';
-                    } else {
-                        tbody.innerHTML = filteredStocks.map(s => `
-                            <tr>
-                                <td>
-                                    <a href="/billing-app/api/StockDetails?id=${s.id}" class="product-link">${s.itemName}</a>
-                                </td>
-                                <td>
-                                    <span class="type-badge type-${(s.stockType || 'PRODUCT').toLowerCase()}">${s.stockType || 'PRODUCT'}</span>
-                                </td>
-                                <td style="font-family: monospace;">${s.hsnCode || s.sacCode || '-'}</td>
-                                <td style="font-weight: 700;">₹ ${parseFloat(s.unitPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                                <td>
-                                    ${s.stockType === 'PRODUCT' ? (s.availableQuantity || 0) + ' ' + (s.unit || 'Units') : 'N/A'}
-                                </td>
-                            </tr>
-                        `).join('');
-                    }
+                    renderTable(allItems);
                 })
                 .catch(err => {
                     console.error('Error:', err);
                     alert('Error loading category details.');
                 });
+        };
+
+        const renderTable = (items) => {
+            els.tbody.innerHTML = items.length === 0
+                ? '<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 40px;">No matching items found.</td></tr>'
+                : items.map(s => {
+                    const isProduct = s.stockType === 'PRODUCT' || !s.stockType;
+                    const code = isProduct ? (s.hsnCode || '-') : (s.sacCode || '-');
+                    const img = s.stockImage ? `data:image/png;base64,${s.stockImage}` : 'https://via.placeholder.com/48';
+                    const taxType = s.taxable ? 'Taxable' : 'Exempt';
+                    const taxColor = s.taxable ? '#059669' : '#64748b';
+
+                    return `
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <img src="${img}" class="category-img">
+                                    <span style="font-weight: 600;">${s.itemName}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="type-badge ${isProduct ? 'type-product' : 'type-service'}">${s.stockType || 'PRODUCT'}</span>
+                            </td>
+                            <td>${s.stockCategories?.categoryName || 'N/A'}</td>
+                            <td><code style="font-weight: 700; color: var(--text-main);">${code}</code></td>
+                            <td><span style="color: #6366f1; font-weight: 600;">${s.unit || (isProduct ? 'Pcs' : 'Service')}</span></td>
+                            <td><span style="color: ${taxColor}; font-weight: 700; font-size: 11px; text-transform: uppercase;">${taxType}</span></td>
+                            <td style="font-weight: 700;">₹ ${parseFloat(s.unitPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                            <td>
+                                ${isProduct
+                            ? `<span class="stock-qty ${s.availableQuantity < 10 ? 'qty-low' : 'qty-ok'}">${s.availableQuantity} ${s.unit || 'Pcs'}</span>`
+                            : `<span class="stock-qty" style="background: #f5f3ff; color: #7c3aed;">${s.availableQuantity || 1} ${s.unit || 'Service'}</span>`}
+                            </td>
+                            <td>
+                                <div class="actions" style="justify-content: flex-end;">
+                                    <button onclick="viewStock(${s.id})" class="action-btn view-btn" title="View Details">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    ${userRole !== 'ADMIN' ? `
+                                        <button onclick="editStock(${s.id})" class="action-btn edit-btn" title="Edit Item">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button onclick="deleteStock(${s.id})" class="action-btn delete-btn" title="Delete Item">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+        };
+
+        const viewStock = (id) => {
+            window.location.href = `/billing-app/api/StockDetails?id=${id}`;
+        };
+
+        const applyFilters = () => {
+            const query = document.getElementById('itemSearch').value.toLowerCase();
+            const type = document.getElementById('typeFilter').value;
+
+            const filtered = allItems.filter(item => {
+                const matchQuery = item.itemName.toLowerCase().includes(query) ||
+                    (item.hsnCode && item.hsnCode.toLowerCase().includes(query)) ||
+                    (item.sacCode && item.sacCode.toLowerCase().includes(query));
+                const matchType = type === 'ALL' || (item.stockType || 'PRODUCT') === type;
+                return matchQuery && matchType;
+            });
+            renderTable(filtered);
+        };
+
+        const openModal = () => {
+            els.form.reset();
+            els.idInput.value = '';
+            document.getElementById('modalTitle').innerText = 'Add New Entry';
+            setType('PRODUCT');
+            document.getElementById('categoryId').value = catId;
+            els.modal.classList.add('active');
+        };
+
+        const closeModal = () => els.modal.classList.remove('active');
+
+        const editStock = (id) => {
+            fetch(`${apiBase}/getStockById/${id}`).then(res => res.json()).then(stk => {
+                document.getElementById('modalTitle').innerText = 'Edit Item';
+                els.idInput.value = stk.id;
+                document.getElementById('itemName').value = stk.itemName;
+                document.getElementById('categoryId').value = stk.stockCategories?.id || '';
+                document.getElementById('unitPrice').value = stk.unitPrice;
+                document.getElementById('itemDescription').value = stk.itemDescription;
+                document.getElementById('cgstRate').value = stk.cgstRate || 0;
+                document.getElementById('sgstRate').value = stk.sgstRate || 0;
+                document.getElementById('igstRate').value = stk.igstRate || 0;
+                document.getElementById('itemUnit').value = stk.unit || 'Pcs';
+                document.getElementById('taxPreference').value = stk.taxable !== undefined ? stk.taxable.toString() : 'true';
+                document.getElementById('createdBy').value = stk.createdBy || '';
+                document.getElementById('createdAt').value = stk.createdAt || '';
+
+                if (stk.stockType === 'SERVICE') {
+                    setType('SERVICE');
+                    document.getElementById('sacCode').value = stk.sacCode || '';
+                } else {
+                    setType('PRODUCT');
+                    document.getElementById('hsnCode').value = stk.hsnCode || '';
+                    document.getElementById('availableQuantity').value = stk.availableQuantity || 0;
+                }
+                els.modal.classList.add('active');
+            });
+        };
+
+        const deleteStock = (id) => {
+            if (confirm('Are you sure you want to delete this item?')) {
+                fetch(`${apiBase}/deleteStock/${id}`, { method: 'DELETE' }).then(() => loadCategoryDetails());
+            }
+        };
+
+        els.form.onsubmit = async (e) => {
+            e.preventDefault();
+            const id = els.idInput.value;
+            const type = els.typeInput.value;
+
+            const data = {
+                itemName: document.getElementById('itemName').value,
+                stockType: type,
+                unitPrice: parseFloat(document.getElementById('unitPrice').value),
+                itemDescription: document.getElementById('itemDescription').value,
+                cgstRate: parseFloat(document.getElementById('cgstRate').value || 0),
+                sgstRate: parseFloat(document.getElementById('sgstRate').value || 0),
+                igstRate: parseFloat(document.getElementById('igstRate').value || 0),
+                unit: document.getElementById('itemUnit').value,
+                taxable: document.getElementById('taxPreference').value === 'true',
+                stockCategories: { id: parseInt(document.getElementById('categoryId').value) },
+                createdBy: document.getElementById('createdBy').value || null,
+                createdAt: document.getElementById('createdAt').value || null
+            };
+
+            if (type === 'PRODUCT') {
+                data.hsnCode = document.getElementById('hsnCode').value;
+                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value) || 0;
+                data.sacCode = null;
+            } else {
+                data.sacCode = document.getElementById('sacCode').value;
+                data.hsnCode = null;
+                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value) || 1;
+            }
+
+            const imageFile = document.getElementById('stockImage').files[0];
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = async () => {
+                    data.stockImage = reader.result.split(',')[1];
+                    saveToServer(id, data);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                saveToServer(id, data);
+            }
+        };
+
+        const saveToServer = (id, data) => {
+            const url = id ? `${apiBase}/updateStock/${id}` : `${apiBase}/saveStock`;
+            const method = id ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) {
+                    closeModal();
+                    loadCategoryDetails();
+                } else {
+                    alert('Error saving data');
+                }
+            });
+        };
+
+        document.getElementById('itemSearch').addEventListener('input', applyFilters);
+        document.getElementById('typeFilter').addEventListener('change', applyFilters);
+        document.getElementById('addItemBtn').onclick = openModal;
+        window.onclick = (e) => (e.target == els.modal) && closeModal();
+
+        document.getElementById('backBtn').onclick = function (e) {
+            e.preventDefault();
+            window.location.href = this.href;
         };
 
         loadCategoryDetails();

@@ -1,6 +1,6 @@
 package in.sfp.main.models;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -46,18 +46,22 @@ public class UserAccessInfo {
 
     private String secretKey; // For password recovery
 
-    private LocalTime createdAt;
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String clientImage;
 
-    private LocalTime updatedAt;
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalTime.now();
+        createdAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
 }

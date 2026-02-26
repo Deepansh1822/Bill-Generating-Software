@@ -44,7 +44,7 @@
                 top: 0;
                 left: 0;
                 height: 100vh;
-                z-index: 999999 !important;
+                z-index: 1000 !important;
                 pointer-events: auto !important;
                 transition: var(--transition);
                 overflow-y: auto;
@@ -288,6 +288,8 @@
 
 <body>
     <aside th:fragment="sidebar(activePage)">
+        <!-- Debug Marker -->
+        <div style="display:none" id="sidebar-loaded-marker"></div>
         <div class="sidebar-header">
             <a href="/billing-app/api/Dashboard" class="sidebar-brand">
                 <div class="sidebar-logo">B</div>
@@ -302,7 +304,14 @@
                     <span>Overview</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" th:if="${userRole == 'CLIENT'}">
+                <a href="/billing-app/api/GenerateBill" class="nav-link"
+                    th:classappend="${activePage == 'generate-bill' ? 'active' : ''}">
+                    <i class="fa-solid fa-file-invoice nav-icon"></i>
+                    <span>Generate Bill</span>
+                </a>
+            </li>
+            <li class="nav-item" th:if="${userRole == 'ADMIN'}">
                 <a href="/billing-app/api/ManageAccessRequests" class="nav-link"
                     th:classappend="${activePage == 'access-requests' ? 'active' : ''}">
                     <i class="fa-solid fa-user-check nav-icon"></i>
@@ -341,21 +350,23 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
+            <li class="nav-item" th:if="${userRole == 'ADMIN'}">
+                <a href="/billing-app/api/ManageClients" class="nav-link"
+                    th:classappend="${activePage == 'clients' ? 'active' : ''}">
                     <i class="fa-solid fa-users nav-icon"></i>
                     <span>Clients</span>
                 </a>
             </li>
         </ul>
         <div class="sidebar-footer">
-            <a href="#" class="nav-link">
-                <i class="fa-solid fa-gear nav-icon"></i>
-                <span>Settings</span>
+            <a href="/billing-app/api/Profile" class="nav-link"
+                th:classappend="${activePage == 'profile' ? 'active' : ''}">
+                <i class="fa-solid fa-user-gear nav-icon"></i>
+                <span>My Profile</span>
             </a>
-            <a href="/billing-app/api/MainDashboard" class="nav-link logout-link">
-                <i class="fa-solid fa-right-from-bracket nav-icon"></i>
-                <span>Logout</span>
+            <a href="#" class="nav-link">
+                <i class="fa-solid fa-circle-question nav-icon"></i>
+                <span>Help Support</span>
             </a>
         </div>
         <script th:inline="javascript">
@@ -379,17 +390,21 @@
                 }
             }, true); // capture phase — fires before any overlay can eat it
 
+            /*[# th:if="${userRole == 'ADMIN'}"]*/
             // Update the pending badge if possible
             fetch('/billing-app/api/admin/pending-requests')
                 .then(res => res.json())
                 .then(data => {
-                    const pending = data.filter(u => u.status === 'PENDING').length;
-                    const badge = document.getElementById('sidebar-pending-badge');
-                    if (badge && pending > 0) {
-                        badge.innerText = pending;
-                        badge.style.display = 'block';
+                    if (Array.isArray(data)) {
+                        const pending = data.filter(u => u.status === 'PENDING').length;
+                        const badge = document.getElementById('sidebar-pending-badge');
+                        if (badge && pending > 0) {
+                            badge.innerText = pending;
+                            badge.style.display = 'block';
+                        }
                     }
                 }).catch(() => { });
+            /*[/]*/
         </script>
     </aside>
 </body>

@@ -34,6 +34,16 @@ public class ReportsController {
 
     @GetMapping("/bills/all")
     public ResponseEntity<List<TotalStockBillingInfo>> getAllBills() {
-        return ResponseEntity.ok(reportService.getAllBills());
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        String email = auth.getName();
+        String role = auth.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .filter(a -> a.startsWith("ROLE_"))
+                .map(a -> a.substring(5))
+                .findFirst()
+                .orElse("CLIENT");
+
+        return ResponseEntity.ok(reportService.getAllBillsByUser(email, role));
     }
 }

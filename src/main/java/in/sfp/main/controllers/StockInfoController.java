@@ -25,7 +25,17 @@ public class StockInfoController {
 
     @GetMapping("/getAllStocks")
     public ResponseEntity<List<StockInfo>> getAllStocks() {
-        List<StockInfo> stocks = stockInfoService.getAllStocks();
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        String email = auth.getName();
+        String role = auth.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .filter(a -> a.startsWith("ROLE_"))
+                .map(a -> a.substring(5))
+                .findFirst()
+                .orElse("CLIENT");
+
+        List<StockInfo> stocks = stockInfoService.getAllStocksByUser(email, role);
         return ResponseEntity.ok(stocks);
     }
 

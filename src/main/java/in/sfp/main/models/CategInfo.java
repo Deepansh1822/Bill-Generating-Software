@@ -17,7 +17,7 @@ import jakarta.persistence.PreUpdate;
 
 import java.util.List;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "stock_categories")
@@ -34,19 +34,19 @@ public class CategInfo {
     private byte[] categoryImage;
     private String categoryName;
     private String categoryDescription;
-    private LocalTime categoryCreatedAt;
+    private LocalDateTime categoryCreatedAt;
     private String categoryCreatedBy;
-    private LocalTime categoryUpdatedAt;
+    private LocalDateTime categoryUpdatedAt;
     private String categoryUpdatedBy;
 
     @PrePersist
     protected void onCreate() {
-        categoryCreatedAt = LocalTime.now();
+        categoryCreatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        categoryUpdatedAt = LocalTime.now();
+        categoryUpdatedAt = LocalDateTime.now();
     }
 
     @JsonIgnore

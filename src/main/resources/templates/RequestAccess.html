@@ -181,6 +181,36 @@
             box-shadow: 0 15px 30px rgba(67, 97, 238, 0.3);
         }
 
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .submit-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .submit-btn.loading .spinner {
+            display: inline-block;
+        }
+
         .footer-text {
             text-align: center;
             margin-top: 30px;
@@ -259,14 +289,32 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="companyType">Business Type</label>
+                        <label for="companyType">Primary Business Industry</label>
                         <select id="companyType" name="companyType" required>
-                            <option value="">Choose Your Business Type</option>
-                            <option value="Retail">Retail</option>
-                            <option value="Wholesale">Wholesale</option>
-                            <option value="Service">Service</option>
-                            <option value="Manufacturing">Manufacturing</option>
+                            <option value="">Select Industry Type</option>
+                            <option value="Product Based (D2C / Brand)">Product Based (D2C / Brand)</option>
+                            <option value="Service Based (Agency / Consulting)">Service Based (Agency / Consulting)
+                            </option>
+                            <option value="Retail / Shop (B2C)">Retail / Shop (B2C)</option>
+                            <option value="Wholesale / Trading (B2B)">Wholesale / Trading (B2B)</option>
+                            <option value="Manufacturing / Industrial">Manufacturing / Industrial</option>
+                            <option value="Hybrid (Combination of Both)">Hybrid (Combination of Both)</option>
                         </select>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>Business Profile Image (Optional)</label>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-top: 8px;">
+                            <label for="clientImageInput"
+                                style="cursor: pointer; padding: 10px 20px; background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 10px; font-size: 0.85rem; color: #475569; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span>Choose Image</span>
+                            </label>
+                            <input type="file" id="clientImageInput" accept="image/*" style="display: none;">
+                            <div id="imagePreview"
+                                style="width: 45px; height: 45px; border-radius: 8px; background: #f1f5f9; display: none; background-size: cover; background-position: center; border: 1px solid #e2e8f0;">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -277,7 +325,10 @@
                             need it if you forget your password.</p>
                     </div>
 
-                    <button type="submit" class="submit-btn">Register My Business</button>
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <div class="spinner"></div>
+                        <span>Register My Business</span>
+                    </button>
                 </form>
 
                 <p class="footer-text">Our team will verify your details and activate your account within 24 hours.</p>
@@ -287,9 +338,32 @@
 
     <script>
         const form = document.querySelector('form');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('span');
+        const clientImageInput = document.getElementById('clientImageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        let base64Image = null;
+
+        // Handle image selection and base64 conversion
+        clientImageInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    base64Image = event.target.result;
+                    imagePreview.style.backgroundImage = `url(${base64Image})`;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
         form.addEventListener('submit', function (e) {
             e.preventDefault(); // Stop normal form submission
+
+            // Show loading state
+            submitBtn.classList.add('loading');
+            btnText.innerText = 'Processing...';
 
             const formData = {
                 fullName: document.getElementById('fullName').value,
@@ -298,7 +372,8 @@
                 mobileNumber: document.getElementById('mobileNumber').value,
                 email: document.getElementById('email').value,
                 companyType: document.getElementById('companyType').value,
-                secretKey: document.getElementById('secretKey').value
+                secretKey: document.getElementById('secretKey').value,
+                clientImage: base64Image
             };
 
             fetch('/billing-app/api/saveAccessRequests', {
@@ -308,14 +383,25 @@
                 },
                 body: JSON.stringify(formData),
             })
-                .then(response => response.json())
-                .then(data => {
-                    alert('Access request submitted successfully! We will notify you once approved.');
-                    form.reset(); // Clear form
+                .then(async response => {
+                    const data = await response.json();
+                    if (response.ok) {
+                        alert('Access request submitted successfully! We will notify you once approved.');
+                        form.reset(); // Clear form
+                        // Redirect to MainDashboard as requested
+                        window.location.href = '/billing-app/api/MainDashboard';
+                    } else {
+                        alert(data.message || 'Registration failed. Please try again.');
+                    }
                 })
                 .catch((error) => {
                     console.error('Error:', error);
                     alert('An error occurred. Please try again.');
+                })
+                .finally(() => {
+                    // Remove loading state
+                    submitBtn.classList.remove('loading');
+                    btnText.innerText = 'Register My Business';
                 });
         });
     </script>

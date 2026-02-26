@@ -33,4 +33,13 @@ public class BillingReportServiceImpl implements BillingReportService {
     public List<TotalStockBillingInfo> getAllBills() {
         return stockRepo.findAll();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TotalStockBillingInfo> getAllBillsByUser(String email, String role) {
+        if ("ADMIN".equalsIgnoreCase(role)) {
+            return stockRepo.findAll();
+        }
+        return stockRepo.findByStockCreatedBy(email);
+    }
 }

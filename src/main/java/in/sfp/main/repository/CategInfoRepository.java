@@ -10,4 +10,5 @@ public interface CategInfoRepository extends JpaRepository<CategInfo, Long> {
 
     CategInfo findByCategoryName(String categoryName);
 
+    java.util.List<CategInfo> findByCategoryCreatedBy(String categoryCreatedBy);
 }

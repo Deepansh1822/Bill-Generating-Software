@@ -1,0 +1,2202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Bill | SFP Billing</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .main-content {
+            background-color: #f8fafc;
+            min-height: 100vh;
+            padding: 2rem 2.5rem;
+        }
+
+        /* ---- Page Header ---- */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-header-left h1 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: #1e293b;
+        }
+
+        .page-header-left p {
+            color: #64748b;
+            margin-top: 4px;
+            font-size: 0.95rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-outline {
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #475569;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-outline:hover {
+            border-color: #6366f1;
+            color: #6366f1;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary-action {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ---- Bill Container ---- */
+        .bill-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 28px;
+            align-items: flex-start;
+        }
+
+        .bill-paper {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #e2e8f0;
+            padding: 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            font-size: 14px;
+        }
+
+        .bill-sidebar-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .sidebar-card h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ---- Invoice Header ---- */
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .invoice-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .invoice-logo {
+            width: 320px;
+            height: 192px;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #eef2ff, #eef2ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #0f172a;
+            font-size: 3.2rem;
+            border: 1px solid #e6eefc;
+            overflow: hidden;
+            flex-shrink: 0;
+            margin: 0 auto
+        }
+
+        .invoice-brand-text h2 {
+            font-size: 1.25rem;
+            margin: 0;
+            color: #0f172a;
+        }
+
+        .invoice-brand-text div {
+            color: #475569
+        }
+
+        .party-grid {
+            display: flex;
+            gap: 20px;
+        }
+
+        .party-card {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 14px;
+            flex: 1;
+            border: 1px solid #e6eefc
+        }
+
+        .party-label {
+            font-size: 0.85rem;
+            color: #334155;
+            font-weight: 700;
+            margin-bottom: 6px
+        }
+
+        .party-name {
+            font-weight: 700;
+            margin-bottom: 6px
+        }
+
+        .bank-details-section {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px dashed #e6eefc;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start
+        }
+
+        .bank-block {
+            flex: 1;
+            min-width: 220px;
+            background: #fff;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #eef2ff
+        }
+
+        .bank-block h4 {
+            margin: 0 0 6px 0;
+            font-size: 0.95rem
+        }
+
+        .bank-row {
+            font-size: 0.9rem;
+            color: #0f172a;
+            margin-bottom: 6px
+        }
+
+        .invoice-type-heading {
+            font-weight: 800;
+            font-size: 1rem;
+            color: #0f172a;
+            margin-top: 8px;
+            text-align: center
+        }
+
+        .invoice-brand-text h2 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1e293b;
+            text-align: center;
+            margin: 0;
+        }
+
+        .invoice-brand-text span {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            font-weight: 500;
+            display: block;
+            text-align: center;
+        }
+
+        .invoice-meta {
+            text-align: center;
+        }
+
+        .invoice-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #6366f1;
+            letter-spacing: -0.025em;
+        }
+
+        .invoice-date-info {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .invoice-date-info span {
+            font-weight: 600;
+            color: #475569;
+        }
+
+        /* ---- Party Details ---- */
+        .party-grid {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .party-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px 24px;
+            border: 1px dashed #e2e8f0;
+        }
+
+        .party-card.no-bg {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        /* Right-align contact person title and details when needed */
+        .party-card.contact-right {
+            text-align: right;
+        }
+
+        .party-card.contact-right .party-label {
+            justify-content: flex-end;
+        }
+
+        .party-card.contact-right .party-name,
+        .party-card.contact-right .party-detail {
+            text-align: right;
+        }
+
+        .party-card.editable:hover {
+            border-color: #6366f1;
+            background: #f5f3ff;
+            cursor: pointer;
+        }
+
+        .party-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #94a3b8;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .party-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .party-detail {
+            font-size: 0.825rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* ---- Items Table ---- */
+        .items-section {
+            margin-bottom: 32px;
+        }
+
+        .items-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .items-section-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .add-item-btn {
+            padding: 8px 16px;
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #dcfce7;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .add-item-btn:hover {
+            background: #dcfce7;
+            transform: translateY(-1px);
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .items-table thead th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #94a3b8;
+            font-weight: 700;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .items-table thead th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .items-table thead th:last-child {
+            border-radius: 0 12px 0 0;
+            text-align: right;
+        }
+
+        .items-table tbody td {
+            padding: 14px 16px;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        .items-table tbody tr:hover {
+            background: #fafbff;
+        }
+
+        .items-table .item-name {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .items-table .item-desc {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .items-table .amount-col {
+            text-align: right;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .items-table .tax-col {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .item-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-family: 'Outfit', sans-serif;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        .item-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .item-input-sm {
+            width: 80px;
+            text-align: center;
+        }
+
+        .item-input-price {
+            width: 100px;
+            text-align: right;
+        }
+
+        .remove-item-btn {
+            background: none;
+            border: none;
+            color: #e11d48;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .remove-item-btn:hover {
+            background: #fff1f2;
+        }
+
+        /* ---- Totals ---- */
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 32px;
+        }
+
+        .totals-box {
+            width: 320px;
+        }
+
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.875rem;
+            color: #475569;
+        }
+
+        .totals-row.grand-total {
+            padding: 14px 0;
+            margin-top: 8px;
+            border-top: 2px solid #1e293b;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .totals-row span:last-child {
+            font-weight: 600;
+        }
+
+        /* ---- Notes & Terms ---- */
+        .bill-footer-section {
+            border-top: 1px solid #f1f5f9;
+            padding-top: 24px;
+        }
+
+        .bill-footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .bill-footer-block label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .bill-footer-block textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-family: 'Outfit', sans-serif;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.2s;
+            color: #475569;
+        }
+
+        .bill-footer-block textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* ---- Sidebar Form Fields ---- */
+        .form-field {
+            margin-bottom: 14px;
+        }
+
+        .form-field label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fcfcfd;
+            color: #1e293b;
+        }
+
+        .form-field textarea {
+            resize: vertical;
+            line-height: 1.6;
+            min-height: 120px;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), 0 4px 12px rgba(99, 102, 241, 0.05);
+        }
+
+        .form-field input:hover,
+        .form-field select:hover,
+        .form-field textarea:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+        }
+
+        /* ---- Tax Summary Card ---- */
+        .tax-summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 0.825rem;
+            color: #64748b;
+        }
+
+        .tax-summary-row span:last-child {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .tax-divider {
+            border: none;
+            border-top: 1px solid #f1f5f9;
+            margin: 8px 0;
+        }
+
+        /* ---- Payment Status card ---- */
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 8px;
+        }
+
+        .payment-option:hover {
+            background: #f8fafc;
+        }
+
+        .payment-option.active {
+            border-color: #6366f1;
+            background: #f5f3ff;
+            color: #4338ca;
+            font-weight: 600;
+        }
+
+        .payment-option input[type="radio"] {
+            accent-color: #6366f1;
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ---- Empty state ---- */
+        .empty-items {
+            text-align: center;
+            padding: 48px 24px;
+            color: #94a3b8;
+        }
+
+        .empty-items i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: #cbd5e1;
+        }
+
+        .empty-items p {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .empty-items .hint {
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        /* ---- Stock Search Dropdown ---- */
+        .stock-search-wrapper {
+            position: relative;
+        }
+
+        .stock-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            max-height: 220px;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: none;
+        }
+
+        .stock-dropdown.show {
+            display: block;
+        }
+
+        .stock-dropdown-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            transition: background 0.15s;
+        }
+
+        .stock-dropdown-item:hover {
+            background: #f5f3ff;
+        }
+
+        .stock-dropdown-item .stock-name {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .stock-dropdown-item .stock-price {
+            color: #6366f1;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .stock-dropdown-item .stock-meta {
+            font-size: 0.72rem;
+            color: #94a3b8;
+        }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 1200px) {
+            .bill-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .bill-sidebar-panel {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .bill-paper {
+                padding: 20px;
+            }
+
+            .party-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .invoice-header {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .invoice-meta {
+                text-align: left;
+            }
+
+            .bill-footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---- Print Styles ---- */
+        @media print {
+            @page {
+                size: portrait;
+                margin: 10mm;
+            }
+
+            body {
+                background: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            aside,
+            .bill-sidebar-panel,
+            .page-header,
+            .add-item-btn,
+            .remove-item-btn,
+            .stock-search-wrapper,
+            .header-actions,
+            .mobile-nav,
+            .items-table th:last-child,
+            .items-table td:last-child {
+                display: none !important;
+            }
+
+            .invoice-header,
+            .invoice-brand,
+            .invoice-meta {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                text-align: center !important;
+                width: 100% !important;
+            }
+
+            .invoice-dates {
+                display: flex !important;
+                justify-content: center !important;
+                width: 100% !important;
+            }
+
+            .main-content {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+
+            .bill-layout {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            .bill-paper {
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+                padding: 15mm !important;
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+
+            /* Keep the grids strictly aligned as in UI */
+            .party-grid {
+                display: grid !important;
+                grid-template-columns: 3fr 2fr !important;
+                gap: 24px !important;
+            }
+
+            .invoice-header {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: flex-start !important;
+                border-bottom: 2px solid #f1f5f9 !important;
+                padding-bottom: 24px !important;
+            }
+
+            .items-table thead th {
+                background-color: #f8fafc !important;
+                color: #1e293b !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+        }
+
+        /* ---- Toast notification ---- */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: white;
+            z-index: 99999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='generate-bill')}"></div>
+
+    <div class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Generate Invoice</h1>
+                <p>Create a professional invoice for your products or services</p>
+            </div>
+            <div class="header-actions">
+                <a href="/billing-app/api/Dashboard" class="btn-outline">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </a>
+                <button class="btn-outline" onclick="clearBill()">
+                    <i class="fa-solid fa-rotate-left"></i> Reset
+                </button>
+                <button class="btn-outline" onclick="window.print()">
+                    <i class="fa-solid fa-print"></i> Print
+                </button>
+                <button class="btn-primary-action" id="saveBillBtn" onclick="saveBill()">
+                    <i class="fa-solid fa-file-invoice"></i> Save & Generate
+                </button>
+            </div>
+        </div>
+
+        <div class="bill-layout">
+            <!-- ========== BILL PAPER ========== -->
+            <div class="bill-paper">
+                <!-- Invoice Header (centered layout) -->
+                <div class="invoice-header" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                    <div class="invoice-brand"
+                        style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;width:100%">
+                        <div class="invoice-logo" id="invoiceLogo">B</div>
+                        <div class="invoice-brand-text" style="text-align:center;">
+                            <h2 id="businessNameDisplay"
+                                th:text="${userFullName != null and userFullName != '' ? userFullName : 'Your Business'}">
+                                Your Business</h2>
+                            <div id="businessTypeDisplay" style="font-size:0.95rem;color:#64748b;margin-bottom:4px;">
+                                Company</div>
+                            <div id="businessAddressDisplay" style="font-size:0.9rem;color:#334155;">Company address
+                                goes here</div>
+                            <div
+                                style="margin-top:6px;font-size:0.85rem;color:#334155;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+                                <span id="businessGstDisplay"></span>
+                                <span id="businessAdCode"></span>
+                            </div>
+                            <div
+                                style="margin-top:2px;font-size:0.85rem;color:#334155;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+                                <span id="businessIecCode"></span>
+                                <span id="businessPan"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="invoice-meta" style="text-align:center;">
+                        <div id="invoiceTypeHeading" class="invoice-type-heading">Tax Invoice</div>
+                        <div class="invoice-number" id="invoiceNumberDisplay">#INV-0001</div>
+                        <div class="invoice-dates"
+                            style="display:flex;gap:18px;justify-content:center;margin-top:6px;align-items:center;">
+                            <div class="invoice-date-info">Date: <span id="invoiceDateDisplay">--</span></div>
+                            <span style="width: 1px; height: 12px; background: #cbd5e1; display: inline-block;"></span>
+                            <div class="invoice-date-info">Due: <span id="dueDateDisplay">--</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- From / To -->
+                <div class="party-grid">
+                    <div class="party-card no-bg">
+                        <div class="party-label"><i class="fa-solid fa-file-invoice"
+                                style="margin-right: 6px; color: #6366f1;"></i> Bill To</div>
+                        <div class="party-name" id="toName">—</div>
+                        <div class="party-detail" id="toBusinessDisplay"></div>
+                        <div class="party-detail" id="toAddress"><i class="fa-solid fa-location-dot"
+                                style="margin-right: 6px; color: #6366f1;"></i>Add recipient details in the sidebar →
+                        </div>
+                        <div class="party-detail" id="toGST"><i class="fa-solid fa-file-invoice"
+                                style="margin-right: 6px; color: #6366f1;"></i>GSTIN: </div>
+                        <div class="party-detail" id="toPhoneDisplay"><i class="fa-solid fa-phone"
+                                style="margin-right: 6px; color: #6366f1;"></i>Phone: </div>
+                        <div class="party-detail" id="toEmailDisplay"><i class="fa-solid fa-envelope"
+                                style="margin-right: 6px; color: #6366f1;"></i>Email: </div>
+                        <div class="party-detail" id="toADDisplay"></div>
+                        <div class="party-detail" id="toIECDisplay"></div>
+                        <div class="party-detail" id="toPANDisplay"></div>
+                    </div>
+                    <div class="party-card no-bg contact-right">
+                        <div class="party-label"><i class="fa-solid fa-user-tie"
+                                style="margin-right: 6px; color: #6366f1;"></i> Contact Person</div>
+                        <div class="party-name" id="contactName">Contact Name</div>
+                        <div class="party-detail" id="contactPhone"><i class="fa-solid fa-phone"
+                                style="margin-right: 6px; color: #6366f1;"></i> Phone</div>
+                        <div class="party-detail" id="contactEmail"><i class="fa-solid fa-envelope"
+                                style="margin-right: 6px; color: #6366f1;"></i> Email</div>
+                    </div>
+                </div>
+
+                <!-- Items Table -->
+                <div class="items-section">
+                    <div class="items-section-header">
+                        <h3><!--<i class="fa-solid fa-list-check" style="color: #6366f1;"></i>--> &nbsp;Invoice Items
+                        </h3>
+                        <div style="display: flex; gap: 8px;">
+                            <div class="stock-search-wrapper">
+                                <input type="text" class="item-input" id="stockSearchInput"
+                                    placeholder="Search stock to add..." style="width: 220px;" autocomplete="off">
+                                <div class="stock-dropdown" id="stockDropdown"></div>
+                            </div>
+                            <button class="add-item-btn" onclick="addEmptyRow()">
+                                <i class="fa-solid fa-plus"></i> Manual Entry
+                            </button>
+                        </div>
+                    </div>
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 28%;">Item</th>
+                                <th style="width: 8%;">HSN/SAC</th>
+                                <th style="width: 8%;">Qty</th>
+                                <th style="width: 10%;">Unit Price</th>
+                                <th style="width: 8%;">CGST%</th>
+                                <th style="width: 8%;">SGST%</th>
+                                <th style="width: 8%;">IGST%</th>
+                                <th style="width: 12%; text-align: right;">Amount</th>
+                                <th style="width: 5%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsBody">
+                            <!-- Items will be dynamically added here -->
+                        </tbody>
+                    </table>
+                    <div class="empty-items" id="emptyState">
+                        <i class="fa-solid fa-box-open"></i>
+                        <p>No items added yet</p>
+                        <span class="hint">Search your stock or add items manually</span>
+                    </div>
+                </div>
+
+                <!-- Totals -->
+                <div class="totals-section">
+                    <div class="totals-box">
+                        <div class="totals-row">
+                            <span>Subtotal</span>
+                            <span id="subtotalDisplay">₹0.00</span>
+                        </div>
+                        <div class="totals-row">
+                            <span>Total CGST</span>
+                            <span id="totalCGSTDisplay">₹0.00</span>
+                        </div>
+                        <div class="totals-row">
+                            <span>Total SGST</span>
+                            <span id="totalSGSTDisplay">₹0.00</span>
+                        </div>
+                        <div class="totals-row">
+                            <span>Total IGST</span>
+                            <span id="totalIGSTDisplay">₹0.00</span>
+                        </div>
+                        <div class="totals-row grand-total">
+                            <span>Grand Total</span>
+                            <span id="grandTotalDisplay">₹0.00</span>
+                        </div>
+                        <div class="totals-row"
+                            style="color: #64748b; font-size: 0.85rem; border-top: 1px dashed #e2e8f0; margin-top: 8px; padding-top: 8px;">
+                            <span>Advance Paid</span>
+                            <span id="advancePaidDisplay">₹0.00</span>
+                        </div>
+                        <div class="totals-row" style="font-weight: 700; color: #ef4444;">
+                            <span>Balance Due</span>
+                            <span id="balanceDueDisplay">₹0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="margin-top: 16px; padding: 12px 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); width: 320px; margin-left: auto;">
+                    <div
+                        style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px; letter-spacing: 0.05em;">
+                        Amount in Words</div>
+                    <div id="amountInWordsDisplay"
+                        style="font-size: 0.85rem; font-weight: 600; color: #1e293b; font-style: italic;">Zero Rupees
+                        Only</div>
+                </div>
+
+                <!-- Bank Details -->
+                <div class="party-grid"
+                    style="margin-top: 32px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 24px;">
+                    <div class="party-card no-bg">
+                        <div class="party-label"><i class="fa-solid fa-building-columns"
+                                style="margin-right: 6px; color: #6366f1;"></i> Bank Details</div>
+                        <div id="bankDetailsDisplay" class="party-detail">
+                            <!-- populated by renderBankList() -->
+                        </div>
+                    </div>
+                    <div class="party-card no-bg" style="text-align: justify;">
+                        <div class="party-label" style="justify-content: flex-end;"><i
+                                class="fa-solid fa-money-check-dollar" style="margin-right: 6px; color: #6366f1;"></i>
+                            Payment Instructions</div>
+                        <div id="paymentInstructionsDisplay" class="party-detail"
+                            style="line-height: 1.3; white-space: pre-line;">Please quote invoice number in the payment
+                            reference.
+                            For international transfers, please include all beneficiary
+                            details and use the provided IFSC/Swift code.</div>
+                    </div>
+                </div>
+
+                <!-- Thank You Message -->
+                <div style="text-align: center; margin-top: 32px; padding: 16px 0;">
+                    <div style="font-size: 1.85rem; color: #6366f1; margin-bottom: 6px;">
+                        <i class="fa-solid fa-handshake"></i>
+                    </div>
+                    <div style="font-weight: 700; color: #1e293b; font-size: 1.15rem; letter-spacing: -0.01em;">
+                        Thank you for doing business with us!
+                    </div>
+                </div>
+
+                <!-- Terms & Conditions Preview -->
+                <div
+                    style="margin-top: 16px; padding: 16px 20px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+                    <h4
+                        style="font-size: 10px; text-transform: uppercase; color: #94a3b8; margin-bottom: 8px; font-weight: 800; letter-spacing: 0.1em;">
+                        <i class="fa-solid fa-file-contract" style="margin-right: 6px;"></i> Terms & Conditions
+                    </h4>
+                    <div id="billTermsDisplay"
+                        style="font-size: 12px; color: #475569; line-height: 1.5; white-space: pre-line;">Payment is due
+                        upon receipt.</div>
+                </div>
+
+                <!-- Signature Block -->
+                <div style="margin-top: 48px; display: flex; flex-direction: column; align-items: flex-end;">
+                    <div style="width: 200px; border-top: 1px solid #cbd5e1; margin-bottom: 8px;"></div>
+                    <div style="font-weight: 700; color: #1e293b; font-size: 0.95rem;"><i class="fa-solid fa-signature"
+                            style="margin-right: 6px; color: #6366f1;"></i> Authorised Signature</div>
+                    <div style="font-size: 0.85rem; color: #64748b; margin-top: 2px;" id="signatureBusinessName">For
+                        Your Business</div>
+                </div>
+
+                <!-- Professional Bill Footer -->
+                <div id="billPaperFooter"
+                    style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; color: #64748b; font-size: 0.75rem; line-height: 1.8;">
+                    <div id="footerBusinessName"
+                        style="font-weight: 700; color: #1e293b; text-transform: uppercase; margin-bottom: 6px; font-size: 0.85rem;">
+                        YOUR BUSINESS NAME</div>
+
+                    <div
+                        style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 4px;">
+                        <span id="footerBusinessAddress"><i class="fa-solid fa-location-dot"
+                                style="margin-right: 4px; color: #94a3b8;"></i> Business Address, City, State,
+                            Pin</span>
+                    </div>
+
+                    <div
+                        style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 4px;">
+                        <span id="footerBusinessPhone"><i class="fa-solid fa-phone"
+                                style="margin-right: 4px; color: #94a3b8;"></i> +91 0000000000</span>
+                        <span id="footerBusinessEmail"><i class="fa-solid fa-envelope"
+                                style="margin-right: 4px; color: #94a3b8;"></i> contact@business.com</span>
+                    </div>
+
+
+
+                    <div
+                        style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #f1f5f9; color: #94a3b8; font-style: italic; font-size: 0.7rem;">
+                        This is a computer generated invoice, no signature required
+                    </div>
+                </div>
+            </div> <!-- End .bill-paper -->
+
+            <!-- ========== SIDEBAR PANEL ========== -->
+            <div class="bill-sidebar-panel">
+
+                <!-- Invoice Settings -->
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-gear" style="color: #6366f1;"></i> Invoice Essentials</h3>
+                    <div class="form-field">
+                        <label>Invoice Number</label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="invoiceNumber" value="" placeholder="INV-0001" style="flex:1">
+                            <button type="button" class="btn-outline" style="padding: 0 12px; height: 42px;"
+                                onclick="generateInvoiceNumber()" title="Generate unique number">
+                                <i class="fa-solid fa-rotate"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label>Invoice Date</label>
+                        <input type="date" id="invoiceDate">
+                    </div>
+                    <div class="form-field">
+                        <label>Due Date</label>
+                        <input type="date" id="dueDate">
+                    </div>
+                    <div class="form-field">
+                        <label>Invoice Type</label>
+                        <select id="invoiceType">
+                            <option value="tax">Tax Invoice</option>
+                            <option value="proforma">Proforma Invoice</option>
+                            <option value="quotation">Quotation</option>
+                            <option value="credit">Credit Note</option>
+                            <option value="debit">Debit Note</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- From (Sender) Details -->
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-building" style="color: #0ea5e9;"></i> Seller Business Information</h3>
+                    <div class="form-field">
+                        <label>Business Logo</label>
+                        <input type="file" id="fromBusinessLogoFile" accept="image/*">
+                    </div>
+                    <div class="form-field">
+                        <label>Business Name</label>
+                        <input type="text" id="fromBusinessName" placeholder="e.g. SFP Solutions Pvt Ltd"
+                            th:value="${businessInfo != null ? businessInfo.businessName : (userCompanyName != null ? userCompanyName : '')}">
+                    </div>
+                    <div class="form-field">
+                        <label>Business Type</label>
+                        <input type="text" id="fromBusinessType" placeholder="e.g. Pvt Ltd, LLP, Proprietor"
+                            th:value="${businessInfo != null ? businessInfo.businessType : (userCompanyType != null ? userCompanyType : '')}">
+                    </div>
+                    <div class="form-field">
+                        <label>Phone</label>
+                        <input type="text" id="fromPhone" placeholder="+91 98765 43210"
+                            th:value="${businessInfo != null ? businessInfo.businessNumber : ''}">
+                    </div>
+                    <div class="form-field">
+                        <label>Email</label>
+                        <input type="email" id="fromEmail" placeholder="business@example.com"
+                            th:value="${businessInfo != null ? businessInfo.businessEmail : ''}">
+                    </div>
+                    <div class="form-field">
+                        <label>Street Address</label>
+                        <input type="text" id="fromBusinessAddress" placeholder="Street, building, area"
+                            th:value="${businessInfo != null ? businessInfo.businessStreetAddress : ''}">
+                    </div>
+                    <div class="form-field" style="display:flex;gap:8px;">
+                        <div style="flex:1">
+                            <label>City</label>
+                            <input type="text" id="fromBusinessCity" placeholder="City"
+                                th:value="${businessInfo != null ? businessInfo.businessCity : ''}">
+                        </div>
+                        <div style="flex:1">
+                            <label>State</label>
+                            <input type="text" id="fromBusinessState" placeholder="State"
+                                th:value="${businessInfo != null ? businessInfo.businessState : ''}">
+                        </div>
+                    </div>
+                    <div class="form-field" style="display:flex;gap:8px;">
+                        <div style="flex:1">
+                            <label>Country</label>
+                            <input type="text" id="fromBusinessCountry" placeholder="Country"
+                                th:value="${businessInfo != null ? businessInfo.businessCountry : 'India'}">
+                        </div>
+                        <div style="flex:1">
+                            <label>Pincode</label>
+                            <input type="text" id="fromBusinessPin" placeholder="PIN code"
+                                th:value="${businessInfo != null ? businessInfo.pinCode : ''}">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label>GSTIN</label>
+                        <input type="text" id="fromGSTIN" placeholder="22AAAAA0000A1Z5"
+                            style="text-transform: uppercase;"
+                            th:value="${businessInfo != null ? businessInfo.businessGstNumber : ''}">
+                    </div>
+                    <div class="form-field">
+                        <label>AD Code</label>
+                        <input type="text" id="fromAdCode" placeholder="AD Code"
+                            th:value="${businessInfo != null ? businessInfo.adCode : ''}">
+                    </div>
+                    <div class="form-field">
+                        <label>IEC Code</label>
+                        <input type="text" id="fromIecCode" placeholder="IEC Code"
+                            th:value="${businessInfo != null ? businessInfo.iecCode : ''}">
+                    </div>
+                    <div class="form-field">
+                        <label>PAN No.</label>
+                        <input type="text" id="fromPanNumber" placeholder="PAN"
+                            th:value="${businessInfo != null ? businessInfo.panNumber : ''}"
+                            style="text-transform:uppercase;">
+                    </div>
+                </div><!-- End Seller Profile -->
+
+                <!-- Seller Contact Details -->
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-user-pen" style="color: #6366f1;"></i> Seller Contact Person Information
+                    </h3>
+                    <div class="form-field">
+                        <label>Contact Person</label>
+                        <input type="text" id="fromContactPerson" placeholder="Contact person name"
+                            th:value="${businessInfo != null ? businessInfo.contactPerson : ''}">
+                    </div>
+                    <div class="form-field">
+                        <label>Contact Person Phone</label>
+                        <input type="text" id="fromContactPersonPhone" placeholder="Contact person phone"
+                            th:value="${businessInfo != null ? businessInfo.contactPersonNumber : ''}">
+                    </div>
+                    <div class="form-field">
+                        <label>Contact Person Email</label>
+                        <input type="email" id="fromContactPersonEmail" placeholder="Contact person email"
+                            th:value="${businessInfo != null ? businessInfo.contactPersonEmail : ''}">
+                    </div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-university" style="color: #6366f1;"></i> Banking & Financials</h3>
+                    <div class="form-field">
+                        <div id="bankList" style="margin-bottom: 12px;"></div>
+                        <div style="display:flex;gap:8px;margin-top:8px;">
+                            <input type="text" id="bankHolder" placeholder="Account holder name" style="flex:1">
+                            <input type="text" id="bankName" placeholder="Bank name" style="flex:1">
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:8px;">
+                            <input type="text" id="bankAccount" placeholder="Account number" style="flex:1">
+                            <input type="text" id="bankIfsc" placeholder="IFSC code" style="flex:1">
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:8px;">
+                            <input type="text" id="bankBranch" placeholder="Branch name" style="flex:1">
+                            <button type="button" class="btn-outline" onclick="addBankDetail()">Add Bank</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- To (Recipient) Details -->
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-user-tie" style="color: #f59e0b;"></i> Client Billing Information</h3>
+                    <div class="form-field">
+                        <label>Recipient Name</label>
+                        <input type="text" id="toRecipientName" placeholder="e.g. John Doe">
+                    </div>
+                    <div class="form-field">
+                        <label>Business Name</label>
+                        <input type="text" id="toRecipientBusinessName" placeholder="e.g. ABC Tech Solutions">
+                    </div>
+                    <div class="form-field">
+                        <label>Phone</label>
+                        <input type="text" id="toPhone" placeholder="+91 98765 43210">
+                    </div>
+                    <div class="form-field">
+                        <label>Email</label>
+                        <input type="email" id="toEmail" placeholder="recipient@example.com">
+                    </div>
+                    <div class="form-field">
+                        <label>Street Address</label>
+                        <input type="text" id="toRecipientStreet" placeholder="Street, building, area">
+                    </div>
+                    <div class="form-field" style="display:flex;gap:8px;">
+                        <div style="flex:1">
+                            <label>City</label>
+                            <input type="text" id="toRecipientCity" placeholder="City">
+                        </div>
+                        <div style="flex:1">
+                            <label>State</label>
+                            <input type="text" id="toRecipientState" placeholder="State">
+                        </div>
+                    </div>
+                    <div class="form-field" style="display:flex;gap:8px;">
+                        <div style="flex:1">
+                            <label>Country</label>
+                            <input type="text" id="toRecipientCountry" placeholder="Country" value="India">
+                        </div>
+                        <div style="flex:1">
+                            <label>Pincode</label>
+                            <input type="text" id="toRecipientPin" placeholder="PIN code">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label>GSTIN</label>
+                        <input type="text" id="toGSTIN" placeholder="Recipient GSTIN"
+                            style="text-transform: uppercase;">
+                    </div>
+                    <div class="form-field">
+                        <label>AD Code</label>
+                        <input type="text" id="toADCode" placeholder="Recipient AD Code">
+                    </div>
+                    <div class="form-field">
+                        <label>IEC Code</label>
+                        <input type="text" id="toIECCode" placeholder="Recipient IEC Code">
+                    </div>
+                    <div class="form-field">
+                        <label>PAN No.</label>
+                        <input type="text" id="toPANNumber" placeholder="Recipient PAN"
+                            style="text-transform: uppercase;">
+                    </div>
+                </div>
+
+                <!-- Terms & Conditions Entry -->
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-file-contract" style="color: #6366f1;"></i> Terms & Conditions</h3>
+                    <div class="form-field">
+                        <textarea id="billTerms" placeholder="Terms and conditions...">Payment is due upon receipt.
+Late payments may attract interest.
+Goods once sold will not be taken back.</textarea>
+                    </div>
+                </div>
+
+                <!-- Payment Instructions Entry -->
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-credit-card" style="color: #6366f1;"></i> Payment Instructions</h3>
+                    <div class="form-field">
+                        <textarea id="paymentInstructions" placeholder="Payment reference, bank wire advice, etc...">Please quote invoice number in the payment reference.
+For international transfers, please include all beneficiary details and use the provided IFSC/Swift code.</textarea>
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-indian-rupee-sign" style="color: #10b981;"></i> Payment & Settlement</h3>
+                    <div class="form-field">
+                        <label>Advance Paid</label>
+                        <input type="number" id="advancePaid" value="0" min="0" step="0.01">
+                    </div>
+                    <label
+                        style="font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 8px; display: block;">Payment
+                        Status</label>
+                    <div class="payment-option active" onclick="selectPayment(this, 'unpaid')">
+                        <input type="radio" name="paymentStatus" value="unpaid" checked> Unpaid
+                    </div>
+                    <div class="payment-option" onclick="selectPayment(this, 'partial')">
+                        <input type="radio" name="paymentStatus" value="partial"> Partially Paid
+                    </div>
+                    <div class="payment-option" onclick="selectPayment(this, 'paid')">
+                        <input type="radio" name="paymentStatus" value="paid"> Fully Paid
+                    </div>
+                </div>
+
+                <!-- Tax Summary -->
+                <div class="sidebar-card"
+                    style="background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border-color: #ddd6fe;">
+                    <h3 style="color: #6366f1;"><i class="fa-solid fa-calculator"></i> Tax Summary</h3>
+                    <div class="tax-summary-row">
+                        <span>Subtotal</span>
+                        <span id="sideSubtotal">₹0.00</span>
+                    </div>
+                    <hr class="tax-divider">
+                    <div class="tax-summary-row">
+                        <span>CGST</span>
+                        <span id="sideCGST">₹0.00</span>
+                    </div>
+                    <div class="tax-summary-row">
+                        <span>SGST</span>
+                        <span id="sideSGST">₹0.00</span>
+                    </div>
+                    <div class="tax-summary-row">
+                        <span>IGST</span>
+                        <span id="sideIGST">₹0.00</span>
+                    </div>
+                    <hr class="tax-divider">
+                    <div class="tax-summary-row" style="font-weight: 800; font-size: 1rem; color: #4338ca;">
+                        <span>Grand Total</span>
+                        <span id="sideGrandTotal">₹0.00</span>
+                    </div>
+                    <hr class="tax-divider">
+                    <div class="tax-summary-row">
+                        <span>Advance</span>
+                        <span id="sideAdvance">₹0.00</span>
+                    </div>
+                    <div class="tax-summary-row" style="font-weight: 700; color: #e11d48;">
+                        <span>Balance Due</span>
+                        <span id="sideBalance">₹0.00</span>
+                    </div>
+                </div> <!-- End sidebar-card (Tax Summary) -->
+            </div> <!-- End .bill-sidebar-panel -->
+        </div> <!-- End .bill-layout -->
+    </div> <!-- End .bill-container -->
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script th:inline="javascript">
+        // ======================== DATA ========================
+        let billItems = [];
+        let stockCache = [];
+        let nextItemId = 1;
+        // Bank details stored as array of objects {holder, bank, account, ifsc, branch}
+        window.__bankDetails = window.__bankDetails || [];
+
+        // ======================== INIT ========================
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set today's date
+            const today = new Date();
+            const dateStr = today.toISOString().split('T')[0];
+            document.getElementById('invoiceDate').value = dateStr;
+
+            // Due date = today + 30 days
+            const due = new Date(today);
+            due.setDate(due.getDate() + 30);
+            document.getElementById('dueDate').value = due.toISOString().split('T')[0];
+
+            // Generate unique invoice number
+            generateInvoiceNumber();
+
+            // Load stock items
+            loadStocks();
+
+            // Logo file change
+            const logoFile = document.getElementById('fromBusinessLogoFile');
+            logoFile.addEventListener('change', async function () {
+                const f = this.files && this.files[0];
+                if (!f) return;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const data = e.target.result;
+                    // data is like data:image/png;base64,.... — store only base64 portion
+                    const idx = data.indexOf('base64,');
+                    window.__businessLogoBase64 = idx >= 0 ? data.substring(idx + 7) : data.replace(/^data:[^,]+,/, '');
+                    console.log('Logo file loaded, base64 length=', window.__businessLogoBase64 ? window.__businessLogoBase64.length : 0);
+                    updateBillDisplay();
+                };
+                reader.readAsDataURL(f);
+            });
+
+            // Bind live-update events
+            bindLiveUpdates();
+
+            // Initial render
+            updateBillDisplay();
+            renderBankList();
+        });
+
+        // ======================== STOCK LOADING ========================
+        async function loadStocks() {
+            try {
+                const res = await fetch('/billing-app/api/getAllStocks');
+                if (res.ok) {
+                    stockCache = await res.json();
+                }
+            } catch (e) {
+                console.warn('Could not fetch stocks:', e);
+            }
+        }
+
+        // ======================== STOCK SEARCH ========================
+        const searchInput = document.getElementById('stockSearchInput');
+        const stockDropdown = document.getElementById('stockDropdown');
+
+        searchInput.addEventListener('input', function () {
+            const q = this.value.toLowerCase().trim();
+            if (q.length < 1) {
+                stockDropdown.classList.remove('show');
+                return;
+            }
+            const matches = stockCache.filter(s =>
+                s.itemName.toLowerCase().includes(q) ||
+                (s.hsnCode && s.hsnCode.toLowerCase().includes(q)) ||
+                (s.sacCode && s.sacCode.toLowerCase().includes(q))
+            ).slice(0, 8);
+
+            if (matches.length === 0) {
+                stockDropdown.innerHTML = '<div style="padding: 16px; text-align: center; color: #94a3b8; font-size: 0.85rem;">No matching items found</div>';
+            } else {
+                stockDropdown.innerHTML = matches.map(s => `
+                    <div class="stock-dropdown-item" onclick="addStockItem(${s.id})">
+                        <div>
+                            <div class="stock-name">${s.itemName}</div>
+                            <div class="stock-meta">${s.stockType || ''} · ${s.hsnCode || s.sacCode || '—'} · ${s.unit || 'Pcs'}</div>
+                        </div>
+                        <div class="stock-price">₹${Number(s.unitPrice).toFixed(2)}</div>
+                    </div>
+                `).join('');
+            }
+            stockDropdown.classList.add('show');
+        });
+
+        searchInput.addEventListener('blur', function () {
+            setTimeout(() => stockDropdown.classList.remove('show'), 200);
+        });
+
+        // ======================== ADD ITEM FROM STOCK ========================
+        function addStockItem(stockId) {
+            const stock = stockCache.find(s => s.id === stockId);
+            if (!stock) return;
+
+            billItems.push({
+                id: nextItemId++,
+                itemName: stock.itemName,
+                itemDescription: stock.itemDescription || '',
+                hsnCode: stock.hsnCode || stock.sacCode || '',
+                quantity: 1,
+                unitPrice: stock.unitPrice || 0,
+                cgstRate: stock.cgstRate || 0,
+                sgstRate: stock.sgstRate || 0,
+                igstRate: stock.igstRate || 0,
+                fromStock: true,
+                stockId: stock.id
+            });
+
+            searchInput.value = '';
+            stockDropdown.classList.remove('show');
+            renderItems();
+            recalculate();
+        }
+
+        // ======================== ADD MANUAL ROW ========================
+        function addEmptyRow() {
+            billItems.push({
+                id: nextItemId++,
+                itemName: '',
+                itemDescription: '',
+                hsnCode: '',
+                quantity: 1,
+                unitPrice: 0,
+                cgstRate: 0,
+                sgstRate: 0,
+                igstRate: 0,
+                fromStock: false
+            });
+            renderItems();
+        }
+
+        // ======================== REMOVE ITEM ========================
+        function removeItem(itemId) {
+            billItems = billItems.filter(i => i.id !== itemId);
+            renderItems();
+            recalculate();
+        }
+
+        // ======================== RENDER ITEMS TABLE ========================
+        function renderItems() {
+            const tbody = document.getElementById('itemsBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (billItems.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            emptyState.style.display = 'none';
+
+            tbody.innerHTML = billItems.map((item, idx) => `
+                <tr>
+                    <td style="color: #94a3b8; font-weight: 600;">${idx + 1}</td>
+                    <td>
+                        <input class="item-input" type="text" value="${escapeHtml(item.itemName)}"
+                            placeholder="Item name" onchange="updateItem(${item.id}, 'itemName', this.value)">
+                        <input class="item-input" type="text" value="${escapeHtml(item.itemDescription)}"
+                            placeholder="Description (optional)" style="margin-top: 4px; font-size: 0.78rem; color: #64748b;"
+                            onchange="updateItem(${item.id}, 'itemDescription', this.value)">
+                    </td>
+                    <td><input class="item-input item-input-sm" type="text" value="${escapeHtml(item.hsnCode)}"
+                        placeholder="—" onchange="updateItem(${item.id}, 'hsnCode', this.value)"></td>
+                    <td><input class="item-input item-input-sm" type="number" value="${item.quantity}" min="1"
+                        onchange="updateItem(${item.id}, 'quantity', parseInt(this.value) || 1)"></td>
+                    <td><input class="item-input item-input-price" type="number" value="${item.unitPrice}" min="0" step="0.01"
+                        onchange="updateItem(${item.id}, 'unitPrice', parseFloat(this.value) || 0)"></td>
+                    <td><input class="item-input item-input-sm" type="number" value="${item.cgstRate}" min="0" step="0.01"
+                        onchange="updateItem(${item.id}, 'cgstRate', parseFloat(this.value) || 0)"></td>
+                    <td><input class="item-input item-input-sm" type="number" value="${item.sgstRate}" min="0" step="0.01"
+                        onchange="updateItem(${item.id}, 'sgstRate', parseFloat(this.value) || 0)"></td>
+                    <td><input class="item-input item-input-sm" type="number" value="${item.igstRate}" min="0" step="0.01"
+                        onchange="updateItem(${item.id}, 'igstRate', parseFloat(this.value) || 0)"></td>
+                    <td class="amount-col" id="amount-${item.id}">₹0.00</td>
+                    <td><button class="remove-item-btn" onclick="removeItem(${item.id})" title="Remove"><i class="fa-solid fa-trash-can"></i></button></td>
+                </tr>
+            `).join('');
+
+            recalculate();
+        }
+
+        // ======================== UPDATE ITEM FIELD ========================
+        function updateItem(itemId, field, value) {
+            const item = billItems.find(i => i.id === itemId);
+            if (item) {
+                item[field] = value;
+                recalculate();
+            }
+        }
+
+        // ======================== RECALCULATE ========================
+        function recalculate() {
+            let subtotal = 0;
+            let totalCGST = 0;
+            let totalSGST = 0;
+            let totalIGST = 0;
+
+            billItems.forEach(item => {
+                const base = item.quantity * item.unitPrice;
+                const cgst = base * (item.cgstRate / 100);
+                const sgst = base * (item.sgstRate / 100);
+                const igst = base * (item.igstRate / 100);
+                const total = base + cgst + sgst + igst;
+
+                item.cgstAmount = cgst;
+                item.sgstAmount = sgst;
+                item.igstAmount = igst;
+                item.totalItemAmount = total;
+
+                subtotal += base;
+                totalCGST += cgst;
+                totalSGST += sgst;
+                totalIGST += igst;
+
+                // Update row amount
+                const amountEl = document.getElementById(`amount-${item.id}`);
+                if (amountEl) amountEl.textContent = '₹' + total.toFixed(2);
+            });
+
+            const grandTotal = subtotal + totalCGST + totalSGST + totalIGST;
+            const advance = parseFloat(document.getElementById('advancePaid').value) || 0;
+            const balance = grandTotal - advance;
+
+            // Bill paper totals
+            document.getElementById('subtotalDisplay').textContent = '₹' + subtotal.toFixed(2);
+            document.getElementById('totalCGSTDisplay').textContent = '₹' + totalCGST.toFixed(2);
+            document.getElementById('totalSGSTDisplay').textContent = '₹' + totalSGST.toFixed(2);
+            document.getElementById('totalIGSTDisplay').textContent = '₹' + totalIGST.toFixed(2);
+            document.getElementById('grandTotalDisplay').textContent = '₹' + grandTotal.toFixed(2);
+            document.getElementById('advancePaidDisplay').textContent = '₹' + advance.toFixed(2);
+            document.getElementById('balanceDueDisplay').textContent = '₹' + balance.toFixed(2);
+            document.getElementById('amountInWordsDisplay').textContent = numberToWords(Math.round(grandTotal)) + ' Rupees Only';
+
+            // Sidebar totals
+            document.getElementById('sideSubtotal').textContent = '₹' + subtotal.toFixed(2);
+            document.getElementById('sideCGST').textContent = '₹' + totalCGST.toFixed(2);
+            document.getElementById('sideSGST').textContent = '₹' + totalSGST.toFixed(2);
+            document.getElementById('sideIGST').textContent = '₹' + totalIGST.toFixed(2);
+            document.getElementById('sideGrandTotal').textContent = '₹' + grandTotal.toFixed(2);
+            document.getElementById('sideAdvance').textContent = '₹' + advance.toFixed(2);
+            document.getElementById('sideBalance').textContent = '₹' + balance.toFixed(2);
+        }
+
+        function numberToWords(num) {
+            if (num === 0) return 'Zero';
+            const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            const g = ['', 'Thousand', 'Million', 'Billion', 'Trillion'];
+
+            const makeGroup = ([h, t, o]) => {
+                return [
+                    h === '0' ? '' : a[h] + ' Hundred ',
+                    t === '0' ? (o === '0' ? '' : a[o]) : (t === '1' ? a[t + o] : b[t] + (o === '0' ? '' : ' ' + a[o]))
+                ].join('');
+            };
+
+            const groups = [];
+            while (num > 0) {
+                groups.push(num % 1000);
+                num = Math.floor(num / 1000);
+            }
+
+            return groups.map((group, idx) => {
+                const groupStr = group.toString().padStart(3, '0');
+                const words = makeGroup(groupStr);
+                return words ? words + ' ' + g[idx] : '';
+            }).reverse().join(' ').trim();
+        }
+
+        // ======================== LIVE UPDATES TO BILL DISPLAY ========================
+        function bindLiveUpdates() {
+            function safeBind(id, evt, fn) {
+                const el = document.getElementById(id);
+                if (!el) {
+                    console.warn('bindLiveUpdates: element not found', id);
+                    return;
+                }
+                el.addEventListener(evt, fn);
+            }
+
+            // Invoice meta
+            safeBind('invoiceNumber', 'input', updateBillDisplay);
+            safeBind('invoiceDate', 'change', updateBillDisplay);
+            safeBind('dueDate', 'change', updateBillDisplay);
+            safeBind('invoiceType', 'change', updateBillDisplay);
+
+            // From fields
+            ['fromBusinessName', 'fromBusinessAddress', 'fromBusinessCity', 'fromBusinessState', 'fromBusinessCountry', 'fromBusinessPin', 'fromContactPerson', 'fromContactPersonPhone', 'fromContactPersonEmail', 'fromGSTIN', 'fromPhone', 'fromEmail', 'fromBusinessType', 'fromAdCode', 'fromIecCode', 'fromPanNumber']
+                .forEach(id => safeBind(id, 'input', updateBillDisplay));
+
+            // To fields
+            ['toRecipientName', 'toRecipientBusinessName', 'toRecipientStreet', 'toRecipientCity', 'toRecipientState', 'toRecipientCountry', 'toRecipientPin', 'toGSTIN', 'toPhone', 'toEmail', 'toADCode', 'toIECCode', 'toPANNumber']
+                .forEach(id => safeBind(id, 'input', updateBillDisplay));
+
+            // Advance & Terms & Instructions
+            safeBind('advancePaid', 'input', recalculate);
+            safeBind('billTerms', 'input', updateBillDisplay);
+            safeBind('paymentInstructions', 'input', updateBillDisplay);
+        }
+
+        function updateBillDisplay() {
+            console.log('updateBillDisplay called');
+            function flash(id) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const prev = el.style.boxShadow;
+                el.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.35)';
+                setTimeout(() => { el.style.boxShadow = prev; }, 400);
+            }
+
+            const $ = id => document.getElementById(id);
+
+            // Invoice number
+            const invNo = ($('invoiceNumber') && $('invoiceNumber').value) || 'INV-0001';
+            const invEl = $('invoiceNumberDisplay'); if (invEl) invEl.textContent = '#' + invNo;
+
+            // Dates
+            const invDate = $('invoiceDate') ? $('invoiceDate').value : '';
+            const dueD = $('dueDate') ? $('dueDate').value : '';
+            const invDateEl = $('invoiceDateDisplay'); if (invDateEl) invDateEl.textContent = invDate ? formatDate(invDate) : '--';
+            const dueDateEl = $('dueDateDisplay'); if (dueDateEl) dueDateEl.textContent = dueD ? formatDate(dueD) : '--';
+
+            // Invoice type heading (display below due date)
+            const type = $('invoiceType');
+            if (type) {
+                const typeEl = $('invoiceTypeHeading');
+                if (typeEl && type.options && type.selectedIndex >= 0) typeEl.textContent = type.options[type.selectedIndex].text.toUpperCase();
+            }
+
+            // From
+            const fromName = $('fromBusinessName') ? $('fromBusinessName').value : '';
+            const fromStreet = $('fromBusinessAddress') ? $('fromBusinessAddress').value : '';
+            const fromCity = $('fromBusinessCity') ? $('fromBusinessCity').value : '';
+            const fromState = $('fromBusinessState') ? $('fromBusinessState').value : '';
+            const fromCountry = $('fromBusinessCountry') ? $('fromBusinessCountry').value : '';
+            const fromPin = $('fromBusinessPin') ? $('fromBusinessPin').value : '';
+            const fromGST = $('fromGSTIN') ? $('fromGSTIN').value : '';
+            const fromPh = $('fromPhone') ? $('fromPhone').value : '';
+            const fromEm = $('fromEmail') ? $('fromEmail').value : '';
+            const fromType = $('fromBusinessType') ? $('fromBusinessType').value : '';
+            const fromAd = $('fromAdCode') ? $('fromAdCode').value : '';
+            const fromIec = $('fromIecCode') ? $('fromIecCode').value : '';
+            const fromPan = $('fromPanNumber') ? $('fromPanNumber').value : '';
+            const contactPerson = $('fromContactPerson') ? $('fromContactPerson').value : '';
+            const contactPhone = $('fromContactPersonPhone') ? $('fromContactPersonPhone').value : '';
+            const contactEmail = $('fromContactPersonEmail') ? $('fromContactPersonEmail').value : '';
+
+            const fromNameEl = $('fromName'); if (fromNameEl) fromNameEl.textContent = fromName || '—';
+            const businessNameDisplayEl = $('businessNameDisplay'); if (businessNameDisplayEl) businessNameDisplayEl.textContent = fromName || 'Your Business';
+            const signatureBusinessNameEl = $('signatureBusinessName'); if (signatureBusinessNameEl) signatureBusinessNameEl.textContent = 'For ' + (fromName || 'Your Business');
+
+            // Footer dynamic updates
+            const footName = $('footerBusinessName'); if (footName) footName.textContent = fromName || 'YOUR BUSINESS NAME';
+
+
+            const footPhone = $('footerBusinessPhone');
+            if (footPhone) footPhone.innerHTML = `<i class="fa-solid fa-phone" style="margin-right: 4px; color: #94a3b8;"></i> ${fromPh || '+91 0000000000'}`;
+
+            const footEmail = $('footerBusinessEmail');
+            if (footEmail) footEmail.innerHTML = `<i class="fa-solid fa-envelope" style="margin-right: 4px; color: #94a3b8;"></i> ${fromEm || 'contact@business.com'}`;
+
+            const footAddrEl = $('footerBusinessAddress');
+            if (footAddrEl) {
+                let parts = [fromStreet, fromCity, fromState, fromPin, fromCountry].filter(x => x && x.trim());
+                let addrText = parts.join(', ') || 'Business Address, City, State, Pin';
+                footAddrEl.innerHTML = `<i class="fa-solid fa-location-dot" style="margin-right: 4px; color: #94a3b8;"></i> ${addrText}`;
+            }
+
+            // visual debug flashes
+            flash('businessNameDisplay');
+            flash('fromAddress');
+
+            // Logo preview is handled elsewhere (base64), but default letter fallback
+            const invoiceLogoEl = $('invoiceLogo');
+            if (!window.__businessLogoBase64) {
+                if (invoiceLogoEl) invoiceLogoEl.textContent = fromName ? fromName.charAt(0).toUpperCase() : 'B';
+            }
+
+            // Compose business address detail from split inputs
+            let fromDetail = '';
+            if (fromStreet) fromDetail += fromStreet;
+            const fromLocalityParts = [];
+            if (fromCity) fromLocalityParts.push(fromCity);
+            if (fromState && fromPin) fromLocalityParts.push(fromState + ' - ' + fromPin);
+            else if (fromState) fromLocalityParts.push(fromState);
+            else if (fromPin) fromLocalityParts.push(fromPin);
+            const locality = fromLocalityParts.filter(x => x && x.trim()).join(', ');
+            if (locality) fromDetail += (fromDetail ? ',\n' : '') + locality;
+            if (fromCountry) fromDetail += (fromDetail ? ', ' : '') + fromCountry;
+            if (contactPerson) fromDetail += (fromDetail ? '\n' : '') + 'Contact: ' + contactPerson;
+            if (contactPhone) fromDetail += (fromDetail ? '\n' : '') + contactPhone;
+            if (contactEmail) fromDetail += (fromDetail ? '\n' : '') + contactEmail;
+            if (fromPh && !contactPhone) fromDetail += (fromDetail ? '\n' : '') + fromPh;
+            if (fromEm && !contactEmail) fromDetail += (fromDetail ? '\n' : '') + fromEm;
+
+            const fromAddressEl = $('fromAddress'); if (fromAddressEl) fromAddressEl.textContent = fromDetail || 'Add your business details →';
+            const fromGstEl = $('fromGST'); if (fromGstEl) fromGstEl.textContent = fromGST ? 'GSTIN: ' + fromGST.toUpperCase() : '';
+
+            // Header snapshot fields
+            const businessAddressDisplayEl = $('businessAddressDisplay');
+            if (businessAddressDisplayEl) {
+                let addrStr = (fromStreet || '') + (locality ? ', ' + locality : '') + (fromCountry ? (', ' + fromCountry) : '');
+                businessAddressDisplayEl.innerHTML = addrStr ? `<i class="fa-solid fa-location-dot" style="margin-right: 6px; color: #6366f1;"></i> ${addrStr}` : '';
+            }
+            const businessTypeDisplayEl = $('businessTypeDisplay'); if (businessTypeDisplayEl) businessTypeDisplayEl.textContent = fromType || '';
+            const businessGstDisplayEl = $('businessGstDisplay');
+            if (businessGstDisplayEl) {
+                businessGstDisplayEl.innerHTML = fromGST ? `<i class="fa-solid fa-id-card" style="margin-right: 6px; color: var(--primary);"></i> GSTIN: ${fromGST.toUpperCase()}` : '';
+            }
+            const businessAdCodeEl = $('businessAdCode');
+            if (businessAdCodeEl) {
+                businessAdCodeEl.innerHTML = fromAd ? `<i class="fa-solid fa-file-signature" style="margin-right: 6px; color: var(--primary);"></i> AD Code: ${fromAd}` : '';
+            }
+            const businessIecCodeEl = $('businessIecCode');
+            if (businessIecCodeEl) {
+                businessIecCodeEl.innerHTML = fromIec ? `<i class="fa-solid fa-earth-americas" style="margin-right: 6px; color: var(--primary);"></i> IEC Code: ${fromIec}` : '';
+            }
+            const businessPanEl = $('businessPan');
+            if (businessPanEl) {
+                businessPanEl.innerHTML = fromPan ? `<i class="fa-solid fa-id-card-clip" style="margin-right: 6px; color: var(--primary);"></i> PAN No.: ${fromPan.toUpperCase()}` : '';
+            }
+
+            // Contact person display (right-side box)
+            const contactNameEl = $('contactName'); if (contactNameEl) contactNameEl.textContent = contactPerson || fromName || 'N/A';
+            const contactPhoneEl = $('contactPhone'); if (contactPhoneEl) contactPhoneEl.innerHTML = contactPhone ? ('<i class="fa-solid fa-phone" style="margin-right: 6px; color: #6366f1;"></i> ' + contactPhone) : '';
+            const contactEmailEl = $('contactEmail'); if (contactEmailEl) contactEmailEl.innerHTML = (contactEmail || fromEm) ? ('<i class="fa-solid fa-envelope" style="margin-right: 6px; color: #6366f1;"></i> ' + (contactEmail || fromEm)) : '';
+
+            // Show logo image if uploaded or if businessInfo has logo (server-render not implemented here)
+            if (window.__businessLogoBase64 && invoiceLogoEl) {
+                const imgSrc = `data:image/png;base64,${window.__businessLogoBase64}`;
+                invoiceLogoEl.innerHTML = `<img src="${imgSrc}" style="width:320px;height:192px;border-radius:8px;object-fit:cover;display:block;" onerror="console.log('Logo img error', this.src)">`;
+                console.log('Set invoiceLogo src, length=', window.__businessLogoBase64.length);
+            } else if (invoiceLogoEl) {
+                invoiceLogoEl.textContent = fromName ? fromName.charAt(0).toUpperCase() : 'B';
+            }
+
+            // To
+            const toName = $('toRecipientName') ? $('toRecipientName').value : '';
+            const toBusiness = $('toRecipientBusinessName') ? $('toRecipientBusinessName').value : '';
+            const toStreet = $('toRecipientStreet') ? $('toRecipientStreet').value : '';
+            const toCity = $('toRecipientCity') ? $('toRecipientCity').value : '';
+            const toState = $('toRecipientState') ? $('toRecipientState').value : '';
+            const toCountry = $('toRecipientCountry') ? $('toRecipientCountry').value : '';
+            const toPin = $('toRecipientPin') ? $('toRecipientPin').value : '';
+            const toGST = $('toGSTIN') ? $('toGSTIN').value : '';
+            const toPh = $('toPhone') ? $('toPhone').value : '';
+            const toEm = $('toEmail') ? $('toEmail').value : '';
+            const toAD = $('toADCode') ? $('toADCode').value : '';
+            const toIEC = $('toIECCode') ? $('toIECCode').value : '';
+            const toPAN = $('toPANNumber') ? $('toPANNumber').value : '';
+
+            const toNameEl = $('toName'); if (toNameEl) toNameEl.textContent = toName || '—';
+            const toBusinessEl = $('toBusinessDisplay'); if (toBusinessEl) toBusinessEl.innerHTML = toBusiness ? (`<i class="fa-solid fa-building" style="margin-right: 6px; color: #6366f1;"></i> ` + toBusiness) : '';
+            let toDetail = '';
+            // if (toBusiness) toDetail += toBusiness + '\n'; // Removed to avoid duplication with toName
+
+            let addr = [];
+            if (toStreet) addr.push(toStreet);
+
+            const toLocalityParts = [];
+            if (toCity) toLocalityParts.push(toCity);
+            if (toState && toPin) toLocalityParts.push(toState + ' - ' + toPin);
+            else if (toState) toLocalityParts.push(toState);
+            else if (toPin) toLocalityParts.push(toPin);
+
+            const toLocality = toLocalityParts.filter(x => x && x.trim()).join(', ');
+            if (toLocality) addr.push(toLocality);
+            if (toCountry) addr.push(toCountry);
+
+            toDetail += addr.join(', ');
+
+            const toAddressEl = $('toAddress'); if (toAddressEl) toAddressEl.innerHTML = toDetail ? (`<i class="fa-solid fa-location-dot" style="margin-right: 6px; color: #6366f1;"></i> ` + toDetail) : (`<i class="fa-solid fa-location-dot" style="margin-right: 6px; color: #6366f1;"></i> Add recipient details in the sidebar →`);
+            const toPhoneDisplayEl = $('toPhoneDisplay'); if (toPhoneDisplayEl) toPhoneDisplayEl.innerHTML = toPh ? ('<i class="fa-solid fa-phone" style="margin-right: 6px; color: #6366f1;"></i> Phone: ' + toPh) : '';
+            const toEmailDisplayEl = $('toEmailDisplay'); if (toEmailDisplayEl) toEmailDisplayEl.innerHTML = toEm ? ('<i class="fa-solid fa-envelope" style="margin-right: 6px; color: #6366f1;"></i> Email: ' + toEm) : '';
+            const toGstEl = $('toGST'); if (toGstEl) toGstEl.innerHTML = toGST ? ('<i class="fa-solid fa-id-card" style="margin-right: 6px; color: #6366f1;"></i> GSTIN: ' + toGST.toUpperCase()) : '';
+
+            const toADDisplayEl = $('toADDisplay'); if (toADDisplayEl) toADDisplayEl.innerHTML = toAD ? (`<i class="fa-solid fa-file-signature" style="margin-right: 6px; color: #6366f1;"></i> AD Code: ` + toAD) : '';
+            const toIECDisplayEl = $('toIECDisplay'); if (toIECDisplayEl) toIECDisplayEl.innerHTML = toIEC ? (`<i class="fa-solid fa-earth-americas" style="margin-right: 6px; color: #6366f1;"></i> IEC Code: ` + toIEC) : '';
+            const toPANDisplayEl = $('toPANDisplay'); if (toPANDisplayEl) toPANDisplayEl.innerHTML = toPAN ? (`<i class="fa-solid fa-id-card-clip" style="margin-right: 6px; color: #6366f1;"></i> PAN No.: ` + toPAN.toUpperCase()) : '';
+
+            // Terms
+            const terms = $('billTerms') ? $('billTerms').value : '';
+            const termsEl = $('billTermsDisplay'); if (termsEl) termsEl.textContent = terms || 'Payment is due upon receipt.';
+
+            // Payment Instructions
+            const inst = $('paymentInstructions') ? $('paymentInstructions').value : '';
+            const instEl = $('paymentInstructionsDisplay'); if (instEl) instEl.textContent = inst || 'Please quote invoice number in the payment reference.';
+        }
+
+        // ======================== PAYMENT STATUS ========================
+        function selectPayment(el, value) {
+            document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
+            el.classList.add('active');
+            el.querySelector('input[type="radio"]').checked = true;
+        }
+
+        // ======================== BANK DETAILS ========================
+        function renderBankList() {
+            const container = document.getElementById('bankList');
+            const invoiceBankEl = document.getElementById('bankDetailsDisplay');
+            if (!container && !invoiceBankEl) return;
+            if (!window.__bankDetails || window.__bankDetails.length === 0) {
+                if (container) container.innerHTML = '<div style="color:#94a3b8;font-size:0.9rem;">No bank details added</div>';
+                if (invoiceBankEl) invoiceBankEl.innerHTML = '<div style="color:#94a3b8;font-size:0.9rem;">No bank details available</div>';
+                return;
+            }
+
+            const sidebarHtml = window.__bankDetails.map((b, idx) => `
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                        <div style="flex:1;font-size:0.9rem;">
+                            <div style="font-weight:700;">${escapeHtml(b.holder || '')}</div>
+                            <div style="font-size:0.85rem;color:#64748b;">${escapeHtml(b.bank || '')} · ${escapeHtml(b.account || '')} · IFSC ${escapeHtml(b.ifsc || '')}</div>
+                        </div>
+                        <button type="button" class="btn-outline" onclick="removeBank(${idx})">Remove</button>
+                    </div>
+                `).join('');
+
+            const invoiceHtml = window.__bankDetails.map((b) => `
+                    <div style="margin-bottom:4px;">
+                        <div class="party-name">${escapeHtml(b.holder || '')}</div>
+                        <div class="party-detail" style="line-height: 1.5;">
+                            <i class="fa-solid fa-university" style="margin-right: 6px; width: 14px; color: #6366f1;"></i> ${escapeHtml(b.bank || '')}<br>
+                            <i class="fa-solid fa-credit-card" style="margin-right: 6px; width: 14px; color: #6366f1;"></i> A/C: ${escapeHtml(b.account || '')}<br>
+                            <i class="fa-solid fa-fingerprint" style="margin-right: 6px; width: 14px; color: #6366f1;"></i> IFSC: ${escapeHtml(b.ifsc || '')}${b.branch ? '<br><i class="fa-solid fa-location-dot" style="margin-right: 6px; width: 14px; color: #6366f1;"></i> ' + escapeHtml(b.branch) : ''}
+                        </div>
+                    </div>
+                `).join('');
+
+            if (container) container.innerHTML = sidebarHtml;
+            if (invoiceBankEl) invoiceBankEl.innerHTML = invoiceHtml;
+        }
+
+        function addBankDetail() {
+            const holder = document.getElementById('bankHolder').value.trim();
+            const bank = document.getElementById('bankName').value.trim();
+            const account = document.getElementById('bankAccount').value.trim();
+            const ifsc = document.getElementById('bankIfsc').value.trim();
+            const branch = document.getElementById('bankBranch').value.trim();
+            if (!holder && !bank && !account && !ifsc && !branch) return;
+            window.__bankDetails = window.__bankDetails || [];
+            window.__bankDetails.push({ holder, bank, account, ifsc, branch });
+            document.getElementById('bankHolder').value = '';
+            document.getElementById('bankName').value = '';
+            document.getElementById('bankAccount').value = '';
+            document.getElementById('bankIfsc').value = '';
+            document.getElementById('bankBranch').value = '';
+            renderBankList();
+        }
+
+        function removeBank(idx) {
+            if (!window.__bankDetails) return;
+            window.__bankDetails.splice(idx, 1);
+            renderBankList();
+        }
+
+        // ======================== SAVE BILL ========================
+        async function saveBill() {
+            if (billItems.length === 0) {
+                showToast('Please add at least one item to the bill.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('saveBillBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+            const payload = {
+                invoiceNumber: document.getElementById('invoiceNumber').value,
+                businessName: document.getElementById('fromBusinessName').value,
+                businessStreetAddress: document.getElementById('fromBusinessAddress').value,
+                businessCity: document.getElementById('fromBusinessCity').value,
+                businessState: document.getElementById('fromBusinessState').value,
+                businessCountry: document.getElementById('fromBusinessCountry').value,
+                businessPinCode: document.getElementById('fromBusinessPin').value,
+                businessGstNumber: document.getElementById('fromGSTIN').value,
+                businessNumber: document.getElementById('fromPhone').value,
+                businessEmail: document.getElementById('fromEmail').value,
+                contactPersonName: document.getElementById('fromContactPerson').value,
+                contactPersonPhone: document.getElementById('fromContactPersonPhone').value,
+                contactPersonEmail: document.getElementById('fromContactPersonEmail').value,
+                businessType: document.getElementById('fromBusinessType').value,
+                adCode: document.getElementById('fromAdCode').value,
+                iecCode: document.getElementById('fromIecCode').value,
+                panNumber: document.getElementById('fromPanNumber').value,
+                businessLogoBase64: window.__businessLogoBase64 || null,
+                termsAndCondition: document.getElementById('billTerms').value,
+                notes: document.getElementById('paymentInstructions').value,
+                recipientName: document.getElementById('toRecipientName').value,
+                recipientBusinessName: document.getElementById('toRecipientBusinessName').value,
+                recipientBusinessStreetAddress: document.getElementById('toRecipientStreet').value,
+                recipientBusinessCity: document.getElementById('toRecipientCity').value,
+                recipientBusinessState: document.getElementById('toRecipientState').value,
+                recipientBusinessCountry: document.getElementById('toRecipientCountry').value,
+                recipientBusinessPinCode: document.getElementById('toRecipientPin').value,
+                recipientGstNumber: document.getElementById('toGSTIN').value,
+                recipientMobileNumber: document.getElementById('toPhone').value,
+                recipientEmail: document.getElementById('toEmail').value,
+                recipientAdCode: document.getElementById('toADCode').value,
+                recipientIecCode: document.getElementById('toIECCode').value,
+                recipientPanNumber: document.getElementById('toPANNumber').value,
+                amountInWords: document.getElementById('amountInWordsDisplay').textContent,
+                advancedPayment: document.getElementById('advancePaid').value,
+                balancePayment: (parseFloat(document.getElementById('grandTotalDisplay').textContent.replace('₹', '')) - parseFloat(document.getElementById('advancePaid').value || 0)).toFixed(2),
+                bankDetails: window.__bankDetails || [],
+                advancedPayment: document.getElementById('advancePaid').value,
+                items: billItems.map(item => ({
+                    itemName: item.itemName,
+                    itemDescription: item.itemDescription,
+                    hsnCode: item.hsnCode,
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                    cgstRate: item.cgstRate,
+                    sgstRate: item.sgstRate,
+                    igstRate: item.igstRate,
+                    cgstAmount: item.cgstAmount || 0,
+                    sgstAmount: item.sgstAmount || 0,
+                    igstAmount: item.igstAmount || 0,
+                    totalItemAmount: item.totalItemAmount || 0
+                }))
+            };
+
+            try {
+                const res = await fetch('/billing-app/api/generateBill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    showToast('Invoice generated successfully! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/billing-app/api/Reports';
+                    }, 2000);
+                } else {
+                    const err = await res.text();
+                    showToast('Failed to save: ' + err, 'error');
+                }
+            } catch (e) {
+                showToast('Could not connect to server.', 'error');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-file-invoice"></i> Save & Generate';
+        }
+
+        // ======================== CLEAR BILL ========================
+        function clearBill() {
+            if (!confirm('Are you sure you want to reset the entire bill?')) return;
+            billItems = [];
+            nextItemId = 1;
+            document.getElementById('fromBusinessName').value = '';
+            document.getElementById('fromBusinessAddress').value = '';
+            document.getElementById('fromGSTIN').value = '';
+            document.getElementById('fromPhone').value = '';
+            document.getElementById('fromEmail').value = '';
+            document.getElementById('fromBusinessType').value = '';
+            document.getElementById('fromAdCode').value = '';
+            document.getElementById('fromIecCode').value = '';
+            document.getElementById('fromPanNumber').value = '';
+            document.getElementById('toRecipientName').value = '';
+            document.getElementById('toRecipientBusinessName').value = '';
+            document.getElementById('toRecipientStreet').value = '';
+            document.getElementById('toRecipientCity').value = '';
+            document.getElementById('toRecipientState').value = '';
+            document.getElementById('toRecipientCountry').value = 'India';
+            document.getElementById('toRecipientPin').value = '';
+            document.getElementById('toGSTIN').value = '';
+            document.getElementById('toPhone').value = '';
+            document.getElementById('toEmail').value = '';
+            document.getElementById('advancePaid').value = '0';
+            document.getElementById('billTerms').value = 'Payment is due upon receipt.\nLate payments may attract interest.\nGoods once sold will not be taken back.';
+            renderItems();
+            recalculate();
+            updateBillDisplay();
+            showToast('Bill has been reset.', 'success');
+        }
+
+        // ======================== HELPERS ========================
+        function formatDate(dateStr) {
+            const d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.className = 'toast ' + type;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        // ======================== AUTO GENERATE INVOICE ========================
+        async function generateInvoiceNumber() {
+            const btn = document.querySelector('button[onclick="generateInvoiceNumber()"]');
+            const icon = btn.querySelector('i');
+            icon.classList.add('fa-spin');
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/billing-app/api/generateUniqueInvoiceNumber');
+                if (res.ok) {
+                    const num = await res.text();
+                    document.getElementById('invoiceNumber').value = num;
+                    updateBillDisplay();
+                    showToast('Unique invoice number generated!', 'success');
+                } else {
+                    const err = await res.text();
+                    showToast('Failed to generate: ' + err, 'error');
+                }
+            } catch (e) {
+                showToast('Server error while generating number.', 'error');
+            } finally {
+                icon.classList.remove('fa-spin');
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

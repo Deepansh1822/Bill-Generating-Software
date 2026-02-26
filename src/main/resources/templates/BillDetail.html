@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Detail | SFP Billing</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://kit.fontawesome.com/d5cc9e8901.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #eef2ff;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+        }
+
+        .main-content {
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .btn-back:hover {
+            color: var(--text-main);
+        }
+
+        .print-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+            transition: all 0.2s;
+        }
+
+        .print-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Invoice Paper Style */
+        .invoice-card {
+            background: white;
+            padding: 60px;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .invoice-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+            margin-bottom: 48px;
+            width: 100%;
+        }
+
+        .brand-section h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .brand-section p {
+            font-size: 14px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .invoice-meta {
+            text-align: center;
+            width: 100%;
+        }
+
+        .invoice-meta h2 {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .meta-item {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .meta-item span {
+            color: var(--text-main);
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .parties-grid {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 40px;
+            margin-bottom: 48px;
+            padding: 0;
+            /* remove background container color as requested */
+            background: transparent;
+            border-radius: 0;
+            border: none;
+        }
+
+        .party-box h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        /* Right-align contact person block when marked */
+        .party-box.contact-right {
+            text-align: right;
+        }
+
+        .party-box.contact-right h3 {
+            text-align: right;
+        }
+
+        .party-box.contact-right .party-name,
+        .party-box.contact-right .party-detail {
+            text-align: right;
+        }
+
+        .party-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .party-detail {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 32px;
+        }
+
+        .items-table th {
+            text-align: left;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-bottom: 2px solid var(--border);
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .items-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+        }
+
+        .items-table .amount-col {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .totals-box {
+            width: 300px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .total-row.grand-total {
+            border-top: 2px solid var(--text-main);
+            margin-top: 8px;
+            padding-top: 16px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .footer-info {
+            margin-top: 60px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer-block h4 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .footer-block p {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        @media print {
+            @page {
+                size: portrait;
+                margin: 10mm;
+            }
+
+            body {
+                background: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            aside,
+            .action-bar,
+            .mobile-nav {
+                display: none !important;
+            }
+
+            .main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            .invoice-card {
+                box-shadow: none !important;
+                border: 1px solid var(--border) !important;
+                padding: 15mm !important;
+                border-radius: 0 !important;
+            }
+
+            .parties-grid {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 24px !important;
+            }
+
+            .items-table th {
+                background-color: var(--bg-main) !important;
+                color: var(--text-main) !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .invoice-header,
+            .brand-section,
+            .invoice-meta {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                text-align: center !important;
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='reports')}"></div>
+
+    <div class="main-content">
+        <div class="action-bar">
+            <a href="/billing-app/api/Reports" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Back to Reports
+            </a>
+            <button class="print-btn" onclick="window.print()">
+                <i class="fa-solid fa-print"></i> Print Invoice
+            </button>
+        </div>
+
+        <div class="invoice-card" id="invoiceArea">
+            <div class="invoice-header">
+                <div class="brand-section" id="printBrand">
+                    <h1 id="brandName" style="margin-bottom: 2px;">SFP BILLING</h1>
+                    <div id="headerBusinessType" style="font-size: 0.85rem; color: #64748b; margin-bottom: 4px;">Company
+                    </div>
+                    <div id="headerBusinessAddress" style="font-size: 0.8rem; color: #334155;">Address</div>
+                    <div
+                        style="margin-top:6px;font-size:0.8rem;color:#334155;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+                        <span id="headerGst"></span>
+                        <span id="headerAd"></span>
+                    </div>
+                    <div
+                        style="margin-top:2px;font-size:0.8rem;color:#334155;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+                        <span id="headerIec"></span>
+                        <span id="headerPan"></span>
+                    </div>
+                    <p style="margin-top: 8px; font-weight: 700; letter-spacing: 0.05em; color: var(--primary);">TAX
+                        INVOICE</p>
+                </div>
+                <div class="invoice-meta">
+                    <h2 id="invoiceNumber">#INV-0000</h2>
+                    <div style="display:flex; gap:16px; justify-content:center; align-items:center; margin-top:8px;">
+                        <div class="meta-item" style="margin-bottom:0;">Date: <span id="invoiceDate">--</span></div>
+                        <span style="width: 1px; height: 12px; background: #cbd5e1; display: inline-block;"></span>
+                        <div class="meta-item" style="margin-bottom:0;">Due: <span id="invoiceDue">--</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="parties-grid">
+                <div class="party-box">
+                    <h3><i class="fa-solid fa-file-invoice" style="margin-right: 6px; color: var(--primary);"></i> Bill
+                        To</h3>
+                    <div class="party-name" id="recipientName">Recipient Name</div>
+                    <div class="party-detail" id="recipientBusinessDisplay"></div>
+                    <div class="party-detail" id="recipientAddress">Address Line</div>
+                    <div class="party-detail" id="recipientGST">GSTIN: </div>
+                    <div class="party-detail" id="recipientPhone">Phone: </div>
+                    <div class="party-detail" id="recipientEmail">Email: </div>
+                    <div class="party-detail" id="recipientAd">AD Code: </div>
+                    <div class="party-detail" id="recipientIec">IEC Code: </div>
+                    <div class="party-detail" id="recipientPan">PAN No.: </div>
+                </div>
+                <div class="party-box contact-right">
+                    <h3><i class="fa-solid fa-user-tie" style="margin-right: 6px; color: var(--primary);"></i> Contact
+                        Person</h3>
+                    <div class="party-name" id="contactName">Contact Name</div>
+                    <div class="party-detail" id="contactPhone"><i class="fa-solid fa-phone"
+                            style="margin-right: 6px; color: var(--primary);"></i> Phone</div>
+                    <div class="party-detail" id="contactEmail"><i class="fa-solid fa-envelope"
+                            style="margin-right: 6px; color: var(--primary);"></i> Email</div>
+                </div>
+            </div>
+
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Item Description</th>
+                        <th>HSN</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th class="amount-col">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="itemsBody">
+                    <!-- Items injected here -->
+                </tbody>
+            </table>
+
+            <div class="totals-section">
+                <div class="totals-box">
+                    <div class="total-row">
+                        <span>Subtotal</span>
+                        <span id="subtotal">₹0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Tax (GST)</span>
+                        <span id="taxTotal">₹0.00</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span>Grand Total</span>
+                        <span id="grandTotal">₹0.00</span>
+                    </div>
+                    <div class="total-row"
+                        style="color: #64748b; font-size: 0.85rem; border-top: 1px dashed var(--border); margin-top: 8px; padding-top: 8px;">
+                        <span>Advance Paid</span>
+                        <span id="advancePaid">₹0.00</span>
+                    </div>
+                    <div class="total-row" style="font-weight: 700; color: #ef4444;">
+                        <span>Balance Due</span>
+                        <span id="balanceDue">₹0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="margin-top: 16px; padding: 12px 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); width: 320px; margin-left: auto;">
+                <div
+                    style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; letter-spacing: 0.05em;">
+                    Amount in Words</div>
+                <div id="amountInWords"
+                    style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); font-style: italic;">Zero
+                    Rupees Only</div>
+            </div>
+            <div id="bankDetailsSection" class="parties-grid"
+                style="margin-top: 32px; border-top: 1px dashed var(--border); padding-top: 32px; display: none;">
+                <div class="party-box">
+                    <h3><i class="fa-solid fa-building-columns" style="margin-right: 6px; color: var(--primary);"></i>
+                        Bank Details</h3>
+                    <div id="bankDetailsDisplay">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div class="party-box contact-right">
+                    <h3><i class="fa-solid fa-money-check-dollar" style="margin-right: 6px; color: var(--primary);"></i>
+                        Payment Instructions</h3>
+                    <div id="paymentInstructionsDisplay" class="party-detail"
+                        style="line-height: 1.3; white-space: pre-line;">Please quote invoice number in the payment
+                        reference.
+                        For international transfers, please include all beneficiary details and use the provided
+                        IFSC/Swift code.</div>
+                </div>
+            </div>
+
+            <!-- Thank You Message -->
+            <div style="text-align: center; margin-top: 40px; padding: 24px 0; border-top: 1px solid var(--border);">
+                <div style="font-size: 1.85rem; color: var(--primary); margin-bottom: 8px;">
+                    <i class="fa-solid fa-handshake"></i>
+                </div>
+                <div style="font-weight: 700; color: var(--text-main); font-size: 1.15rem; letter-spacing: -0.01em;">
+                    Thank you for doing business with us!
+                </div>
+            </div>
+
+            <!-- Terms & Conditions -->
+            <div
+                style="margin-top: 24px; padding: 20px 24px; background: #f8fafc; border-radius: 16px; border: 1px solid var(--border);">
+                <h4
+                    style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; font-weight: 800; letter-spacing: 0.1em;">
+                    <i class="fa-solid fa-file-contract" style="margin-right: 6px;"></i> Terms & Conditions
+                </h4>
+                <div id="billTerms" style="font-size: 13px; color: #475569; line-height: 1.6; white-space: pre-line;">
+                    Payment is due
+                    upon receipt.</div>
+            </div>
+
+            <!-- Signature Block -->
+            <div style="margin-top: 48px; display: flex; flex-direction: column; align-items: flex-end;">
+                <div style="width: 200px; border-top: 1px solid var(--border); margin-bottom: 8px;"></div>
+                <div style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">
+                    <i class="fa-solid fa-signature" style="margin-right: 6px; color: var(--primary);"></i>
+                    Authorised Signature
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;" id="signatureBusinessName">
+                    For Business Name</div>
+            </div>
+
+            <!-- Professional Bill Footer -->
+            <div id="billPaperFooter"
+                style="margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); font-size: 0.75rem; line-height: 1.8;">
+                <div id="footerBusinessName"
+                    style="font-weight: 700; color: var(--text-main); text-transform: uppercase; margin-bottom: 6px; font-size: 0.85rem;">
+                    YOUR BUSINESS NAME</div>
+
+                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 4px;">
+                    <span id="footerBusinessAddress"><i class="fa-solid fa-location-dot"
+                            style="margin-right: 4px; color: var(--primary);"></i> <span id="footerAddressText">Business
+                            Address, City, State, Pin</span></span>
+                </div>
+
+                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 4px;">
+                    <span id="footerBusinessPhone"><i class="fa-solid fa-phone"
+                            style="margin-right: 4px; color: var(--primary);"></i> +91 0000000000</span>
+                    <span id="footerBusinessEmail"><i class="fa-solid fa-envelope"
+                            style="margin-right: 4px; color: var(--primary);"></i> contact@business.com</span>
+                </div>
+
+
+
+                <div
+                    style="margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border); color: var(--text-muted); font-style: italic; font-size: 0.7rem;">
+                    This is a computer generated invoice, no signature required
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const billId = /*[[${billId}]]*/ 0;
+
+        async function loadBillDetail() {
+            try {
+                const response = await fetch(`/billing-app/api/reports/bill/${billId}`);
+                if (!response.ok) throw new Error('Failed to fetch bill');
+
+                const bill = await response.json();
+
+                // Header & Meta
+                const businessName = bill.businessBillingInfo?.businessName || 'SFP BILLING';
+                document.getElementById('brandName').innerText = businessName;
+                document.getElementById('footerBusinessName').innerText = businessName;
+
+                const b = bill.businessBillingInfo;
+                if (b) {
+                    if (document.getElementById('headerBusinessType')) document.getElementById('headerBusinessType').innerText = b.businessType || '';
+                    if (document.getElementById('headerBusinessAddress')) {
+                        let addr = [b.businessStreetAddress, b.businessCity, b.businessState, b.pinCode, b.businessCountry].filter(x => x && x.trim()).join(', ');
+                        document.getElementById('headerBusinessAddress').innerHTML = addr ? `<i class="fa-solid fa-location-dot" style="margin-right: 6px; color: var(--primary);"></i> ${addr}` : '';
+                        if (document.getElementById('footerAddressText')) document.getElementById('footerAddressText').innerText = addr || 'Business Address';
+                    }
+                    if (document.getElementById('headerGst')) document.getElementById('headerGst').innerHTML = b.businessGstNumber ? `<i class="fa-solid fa-id-card" style="margin-right: 4px; color: var(--primary);"></i> GSTIN: ${b.businessGstNumber}` : '';
+                    if (document.getElementById('headerAd')) document.getElementById('headerAd').innerHTML = b.adCode ? `<i class="fa-solid fa-file-signature" style="margin-right: 4px; color: var(--primary);"></i> AD Code: ${b.adCode}` : '';
+                    if (document.getElementById('headerIec')) document.getElementById('headerIec').innerHTML = b.iecCode ? `<i class="fa-solid fa-earth-americas" style="margin-right: 4px; color: var(--primary);"></i> IEC Code: ${b.iecCode}` : '';
+                    if (document.getElementById('headerPan')) document.getElementById('headerPan').innerHTML = b.panNumber ? `<i class="fa-solid fa-id-card-clip" style="margin-right: 4px; color: var(--primary);"></i> PAN No.: ${b.panNumber}` : '';
+                }
+                document.getElementById('invoiceNumber').innerText = `#${bill.invoiceNumber}`;
+                document.title = `Invoice ${bill.invoiceNumber} | SFP Billing`;
+                const sigBusEl = document.getElementById('signatureBusinessName');
+                if (sigBusEl) sigBusEl.innerText = 'For ' + businessName;
+
+
+
+                const footPhone = document.getElementById('footerBusinessPhone');
+                if (footPhone) footPhone.innerHTML = `<i class="fa-solid fa-phone" style="margin-right: 4px; color: var(--primary);"></i> ${b?.businessNumber || '+91 0000000000'}`;
+
+                const footEmail = document.getElementById('footerBusinessEmail');
+                if (footEmail) footEmail.innerHTML = `<i class="fa-solid fa-envelope" style="margin-right: 4px; color: var(--primary);"></i> ${b?.businessEmail || 'contact@business.com'}`;
+
+                const footAddr = document.getElementById('footerBusinessAddress');
+                if (footAddr) {
+                    let parts = [b?.businessStreetAddress, b?.businessCity, b?.businessState, b?.businessPinCode, b?.businessCountry].filter(x => x && x.trim());
+                    let addrText = parts.join(', ') || 'Business Address, City, State, Pin';
+                    footAddr.innerHTML = `<i class="fa-solid fa-location-dot" style="margin-right: 4px; color: var(--primary);"></i> ${addrText}`;
+                }
+
+                // Parties
+                const recp = bill.recipientBillingInfo;
+                document.getElementById('recipientName').innerText = recp?.recipientName || 'N/A';
+                const recipientBusinessEl = document.getElementById('recipientBusinessDisplay');
+                if (recipientBusinessEl) {
+                    recipientBusinessEl.innerHTML = recp?.recipientBusinessName ? `<i class="fa-solid fa-building" style="margin-right: 6px; color: var(--primary);"></i> ${recp.recipientBusinessName}` : '';
+                }
+                const rStreet = recp?.recipientBusinessStreetAddress || '';
+                const rBusiness = recp?.recipientBusinessName || '';
+                const rLocality = [recp?.recipientBusinessCity, recp?.recipientBusinessState, recp?.recipientBusinessPinCode].filter(x => x).join(', ');
+                const rCountry = recp?.recipientBusinessCountry || '';
+                let rAddress = '';
+                // if (rBusiness) rAddress += rBusiness + '\n'; // Avoid duplication
+
+                let rAddrParts = [];
+                if (rStreet) rAddrParts.push(rStreet);
+                if (rLocality) rAddrParts.push(rLocality);
+                if (rCountry) rAddrParts.push(rCountry);
+
+                rAddress += rAddrParts.join(', ');
+                document.getElementById('recipientAddress').innerHTML = rAddress ? `<i class="fa-solid fa-location-dot" style="margin-right: 6px; color: var(--primary);"></i> ${rAddress}` : '';
+                document.getElementById('recipientGST').innerHTML = recp?.recipientGstNumber ? `<i class="fa-solid fa-id-card" style="margin-right: 6px; color: var(--primary);"></i> GSTIN: ${recp.recipientGstNumber}` : '';
+                const recipientPhoneEl = document.getElementById('recipientPhone'); if (recipientPhoneEl) recipientPhoneEl.innerHTML = recp?.recipientMobileNumber ? `<i class="fa-solid fa-phone" style="margin-right: 6px; color: var(--primary);"></i> Phone: ${recp.recipientMobileNumber}` : '';
+                const recipientEmailEl = document.getElementById('recipientEmail'); if (recipientEmailEl) recipientEmailEl.innerHTML = recp?.recipientEmail ? `<i class="fa-solid fa-envelope" style="margin-right: 6px; color: var(--primary);"></i> Email: ${recp.recipientEmail}` : '';
+
+                const recipientAdEl = document.getElementById('recipientAd'); if (recipientAdEl) recipientAdEl.innerHTML = recp?.recipientAdCode ? `<i class="fa-solid fa-file-signature" style="margin-right: 6px; color: var(--primary);"></i> AD Code: ${recp.recipientAdCode}` : '';
+                const recipientIecEl = document.getElementById('recipientIec'); if (recipientIecEl) recipientIecEl.innerHTML = recp?.recipientIecCode ? `<i class="fa-solid fa-earth-americas" style="margin-right: 6px; color: var(--primary);"></i> IEC Code: ${recp.recipientIecCode}` : '';
+                const recipientPanEl = document.getElementById('recipientPan'); if (recipientPanEl) recipientPanEl.innerHTML = recp?.recipientPanNumber ? `<i class="fa-solid fa-id-card-clip" style="margin-right: 6px; color: var(--primary);"></i> PAN No.: ${recp.recipientPanNumber.toUpperCase()}` : '';
+
+                // Contact person (show at right side)
+                const sender = bill.businessBillingInfo;
+                const contactNameEl = document.getElementById('contactName'); if (contactNameEl) contactNameEl.innerText = sender?.contactPersonName || sender?.businessName || 'N/A';
+                const contactPhoneEl = document.getElementById('contactPhone'); if (contactPhoneEl) contactPhoneEl.innerHTML = (sender?.contactPersonPhone || sender?.businessNumber) ? `<i class="fa-solid fa-phone" style="margin-right: 6px; color: var(--primary);"></i> ${sender?.contactPersonPhone || sender?.businessNumber}` : '';
+                const contactEmailEl = document.getElementById('contactEmail'); if (contactEmailEl) contactEmailEl.innerHTML = (sender?.contactPersonEmail || sender?.businessEmail) ? `<i class="fa-solid fa-envelope" style="margin-right: 6px; color: var(--primary);"></i> ${sender?.contactPersonEmail || sender?.businessEmail}` : '';
+
+                // Items
+                const tableBody = document.getElementById('itemsBody');
+                let taxSum = 0;
+                let subtotalSum = 0;
+
+                tableBody.innerHTML = bill.billItems.map((item, index) => {
+                    const lineTotal = Number(item.totalItemAmount || 0);
+                    const basePrice = Number(item.unitPrice || 0) * Number(item.quantity || 0);
+                    subtotalSum += basePrice;
+                    taxSum += (lineTotal - basePrice);
+
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>
+                                <div style="font-weight: 600;">${item.itemName}</div>
+                                <div style="font-size: 12px; color: #64748b;">${item.itemDescription || ''}</div>
+                            </td>
+                            <td>${item.hsnCode || '-'}</td>
+                            <td>${item.quantity}</td>
+                            <td>₹${Number(item.unitPrice).toLocaleString('en-IN')}</td>
+                            <td class="amount-col">₹${lineTotal.toLocaleString('en-IN')}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                // Totals
+                document.getElementById('subtotal').innerText = `₹${subtotalSum.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+                document.getElementById('taxTotal').innerText = `₹${taxSum.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+                document.getElementById('grandTotal').innerText = `₹${Number(bill.stockTotalAmount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+                document.getElementById('advancePaid').innerText = `₹${Number(bill.advancedPayment || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+                document.getElementById('balanceDue').innerText = `₹${Number(bill.balancePayment || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+                document.getElementById('amountInWords').innerText = bill.amountInWords || 'N/A';
+
+                // Footer
+                // Footer & Instructions
+                if (bill.notes) {
+                    const pinEl = document.getElementById('paymentInstructionsDisplay');
+                    if (pinEl) pinEl.innerText = bill.notes;
+                }
+                if (sender?.termsAndCondition) document.getElementById('billTerms').innerText = sender.termsAndCondition;
+
+                // Bank Details
+                if (bill.bankDetails && bill.bankDetails.length > 0) {
+                    const bankSec = document.getElementById('bankDetailsSection');
+                    const bankDisp = document.getElementById('bankDetailsDisplay');
+                    if (bankSec && bankDisp) {
+                        bankSec.style.display = 'grid';
+                        bankDisp.innerHTML = bill.bankDetails.map(b => `
+                            <div style="margin-bottom:4px;">
+                                <div class="party-name">${b.holder || ''}</div>
+                                <div class="party-detail" style="line-height: 1.5;">
+                                    <i class="fa-solid fa-university" style="margin-right: 6px; width: 14px; color: var(--primary);"></i> ${b.bank || ''}<br>
+                                    <i class="fa-solid fa-credit-card" style="margin-right: 6px; width: 14px; color: var(--primary);"></i> A/C: ${b.account || ''}<br>
+                                    <i class="fa-solid fa-fingerprint" style="margin-right: 6px; width: 14px; color: var(--primary);"></i> IFSC: ${b.ifsc || ''}${b.branch ? '<br><i class="fa-solid fa-location-dot" style="margin-right: 6px; width: 14px; color: var(--primary);"></i> ' + b.branch : ''}
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('Error loading invoice details');
+            }
+        }
+
+        window.onload = loadBillDetail;
+    </script>
+</body>
+
+</html>

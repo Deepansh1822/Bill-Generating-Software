@@ -25,7 +25,17 @@ public class CategInfoController {
 
     @GetMapping("/getAllCategories")
     public ResponseEntity<List<CategInfo>> getAllCategories() {
-        List<CategInfo> categories = categInfoService.getAllCategories();
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        String email = auth.getName();
+        String role = auth.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .filter(a -> a.startsWith("ROLE_"))
+                .map(a -> a.substring(5))
+                .findFirst()
+                .orElse("CLIENT");
+
+        List<CategInfo> categories = categInfoService.getAllCategoriesByUser(email, role);
         return ResponseEntity.ok(categories);
     }
 

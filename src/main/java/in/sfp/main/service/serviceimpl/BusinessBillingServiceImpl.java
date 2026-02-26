@@ -1,11 +1,13 @@
 package in.sfp.main.service.serviceimpl;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import in.sfp.main.models.BusinessBillingInfo;
 import in.sfp.main.repository.BusinessBillingInfoRepository;
 import in.sfp.main.service.BusinessBillingService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class BusinessBillingServiceImpl implements BusinessBillingService {
@@ -34,7 +36,7 @@ public class BusinessBillingServiceImpl implements BusinessBillingService {
                 .orElseThrow(() -> new RuntimeException("Business profile not found"));
 
         existing.setBusinessLogo(businessBillingInfo.getBusinessLogo());
-        existing.setBusinessOwnerName(businessBillingInfo.getBusinessOwnerName());
+        existing.setBusinessName(businessBillingInfo.getBusinessName());
         existing.setContactPerson(businessBillingInfo.getContactPerson());
         existing.setBusinessStreetAddress(businessBillingInfo.getBusinessStreetAddress());
         existing.setBusinessNumber(businessBillingInfo.getBusinessNumber());

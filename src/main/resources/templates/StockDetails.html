@@ -30,10 +30,10 @@
 
         .detail-card {
             background: var(--white);
-            border-radius: 24px;
+            border-radius: 28px;
             border: 1px solid var(--border);
             padding: 40px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
         }
 
         .detail-header {
@@ -41,46 +41,58 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 40px;
-            padding-bottom: 24px;
+            padding-bottom: 30px;
             border-bottom: 1px solid var(--border);
         }
 
         .item-identity {
             display: flex;
             align-items: center;
-            gap: 24px;
+            gap: 28px;
+        }
+
+        .item-hero-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 24px;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
 
         .item-icon {
             width: 80px;
             height: 80px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 22px;
+            background: linear-gradient(135deg, var(--primary), #a78bfa);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+            font-size: 2.2rem;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
         }
 
         .item-titles h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 800;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            color: var(--text-main);
         }
 
         .badge-row {
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            align-items: center;
         }
 
         .type-badge {
-            padding: 4px 12px;
-            border-radius: 8px;
+            padding: 5px 14px;
+            border-radius: 10px;
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .type-product {
@@ -93,6 +105,20 @@
             color: #7c3aed;
         }
 
+        .cat-badge {
+            background: #f1f5f9;
+            color: #475569;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .cat-badge:hover {
+            background: #e2e8f0;
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
         .detail-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -100,18 +126,20 @@
         }
 
         .detail-section h3 {
-            font-size: 14px;
+            font-size: 15px;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-            font-weight: 700;
+            letter-spacing: 1.2px;
+            margin-bottom: 24px;
+            font-weight: 800;
+            border-left: 4px solid var(--primary);
+            padding-left: 12px;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
+            padding: 14px 0;
             border-bottom: 1px dashed var(--border);
         }
 
@@ -121,27 +149,31 @@
 
         .info-label {
             color: var(--text-muted);
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 14px;
         }
 
         .info-value {
             font-weight: 700;
             color: var(--text-main);
+            font-size: 15px;
         }
 
         .price-tag {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: var(--primary);
             font-weight: 800;
+            letter-spacing: -1px;
         }
 
         .stock-status {
-            padding: 20px;
-            border-radius: 16px;
-            margin-top: 24px;
+            padding: 24px;
+            border-radius: 20px;
+            margin-top: 32px;
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 18px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .status-ok {
@@ -157,7 +189,171 @@
         }
 
         .status-icon {
-            font-size: 24px;
+            font-size: 32px;
+        }
+
+        .description-box {
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .description-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-muted);
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .audit-info {
+            margin-top: 40px;
+            display: flex;
+            gap: 32px;
+            font-size: 13px;
+            color: var(--text-muted);
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .audit-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .audit-item i {
+            color: var(--primary);
+            opacity: 0.7;
+        }
+
+        .audit-item b {
+            color: var(--text-main);
+        }
+
+        /* Edit Modal */
+        .sfp-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+        }
+
+        .sfp-modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 36px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 720px;
+            box-shadow: 0 24px 40px rgba(0, 0, 0, 0.15);
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+
+        .modal-card h2 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .type-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 8px;
+            background: #f1f5f9;
+            border-radius: 14px;
+        }
+
+        .type-opt {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .type-opt.active {
+            background: white;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 4px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            outline: none;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .conditional-field {
+            display: none;
+        }
+
+        .conditional-field.show {
+            display: block;
+        }
+
+        .secondary-btn {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .secondary-btn:hover {
+            background: #e2e8f0;
+            color: var(--text-main);
         }
     </style>
 </head>
@@ -167,27 +363,31 @@
 
     <div class="main-content">
         <div class="details-container">
-            <a href="/billing-app/api/ManageStocks" class="back-link">
+            <a href="/billing-app/api/ManageStocks" class="back-link" id="backBtn">
                 <i class="fa-solid fa-arrow-left"></i> Back to Products & Services
             </a>
 
             <div class="detail-card">
                 <div class="detail-header">
                     <div class="item-identity">
+                        <img id="itemHeroImg" src="" class="item-hero-img" style="display: none;">
                         <div class="item-icon" id="itemIcon">
                             <i class="fa-solid fa-box"></i>
                         </div>
                         <div class="item-titles">
-                            <h1 id="itemName">-</h1>
+                            <h1 id="itemName">Loading...</h1>
                             <div class="badge-row">
                                 <span class="type-badge" id="itemTypeBadge">-</span>
-                                <span class="type-badge" style="background:#f1f5f9; color:#475569;"
-                                    id="itemCategory">-</span>
+                                <a href="#" class="type-badge cat-badge" id="itemCategoryLink">
+                                    <i class="fa-solid fa-folder-open" style="margin-right: 4px;"></i>
+                                    <span id="itemCategoryName">Uncategorized</span>
+                                </a>
                             </div>
                         </div>
                     </div>
-                    <div class="actions">
-                        <button class="add-btn" id="editBtn" style="padding: 10px 20px;">
+                    <div class="actions" th:if="${userRole != 'ADMIN'}">
+                        <button class="add-btn" id="editBtn"
+                            style="padding: 10px 24px; border-radius: 12px; font-weight: 700; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                             <i class="fa-solid fa-pen"></i> Edit Details
                         </button>
                     </div>
@@ -197,9 +397,13 @@
                     <!-- General Details -->
                     <div class="detail-section">
                         <h3>General Information</h3>
-                        <div class="info-row">
-                            <span class="info-label">HSN/SAC Code</span>
-                            <span class="info-value" id="itemCode">-</span>
+                        <div class="info-row" id="hsnRow">
+                            <span class="info-label">HSN Code</span>
+                            <span class="info-value" id="hsnCode">-</span>
+                        </div>
+                        <div class="info-row" id="sacRow">
+                            <span class="info-label">SAC Code</span>
+                            <span class="info-value" id="sacCode">-</span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">Unit of Measure</span>
@@ -230,10 +434,6 @@
                             <span class="price-tag" id="salePrice">₹ 0.00</span>
                         </div>
                         <div class="info-row">
-                            <span class="info-label">Purchase Price</span>
-                            <span class="info-value" id="purchasePrice">₹ 0.00</span>
-                        </div>
-                        <div class="info-row">
                             <span class="info-label">CGST Rate</span>
                             <span class="info-value" id="cgstRate">0%</span>
                         </div>
@@ -245,46 +445,335 @@
                             <span class="info-label">IGST Rate</span>
                             <span class="info-value" id="igstRate">0%</span>
                         </div>
+                        <div class="info-row" style="border-top: 2px solid var(--border); margin-top: 8px;">
+                            <span class="info-label" style="color: var(--primary); font-weight: 800;">Total GST</span>
+                            <span class="info-value" id="totalGst"
+                                style="color: var(--primary); font-weight: 800;">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="description-box" id="itemDescriptionBox" style="display: none;">
+                    <h3>Description</h3>
+                    <div class="description-content" id="itemDescription">-</div>
+                </div>
+
+                <!-- Audit Info -->
+                <div class="audit-info">
+                    <div class="audit-item">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Created by <b><span id="createdBy">-</span></b> on <b id="createdAt">-</b></span>
+                    </div>
+                    <div class="audit-item" id="updatedRow" style="display: none;">
+                        <i class="fa-solid fa-user-pen"></i>
+                        <span>Updated by <b><span id="updatedBy">-</span></b> on <b id="updatedAt">-</b></span>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Edit Stock Modal -->
+    <div class="sfp-modal-overlay" id="editModal">
+        <div class="modal-card">
+            <h2><i class="fa-solid fa-pen" style="color: var(--primary); margin-right: 10px;"></i>Edit Item Details</h2>
+
+            <div class="type-selector">
+                <div class="type-opt active" id="opt-product" onclick="setEditType('PRODUCT')">
+                    <i class="fa-solid fa-box"></i> Product
+                </div>
+                <div class="type-opt" id="opt-service" onclick="setEditType('SERVICE')">
+                    <i class="fa-solid fa-handshake"></i> Service
+                </div>
+            </div>
+
+            <form id="editStockForm">
+                <input type="hidden" id="e_stockId">
+                <input type="hidden" id="e_stockType" value="PRODUCT">
+                <input type="hidden" id="e_createdBy">
+                <input type="hidden" id="e_createdAt">
+
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Item Name</label>
+                        <input type="text" id="e_itemName" required placeholder="e.g. Dell Monitor">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Item Group / Category</label>
+                        <select id="e_categoryId" required></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sale Price (₹)</label>
+                        <input type="number" step="0.01" id="e_unitPrice" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Unit of Measure</label>
+                        <select id="e_itemUnit">
+                            <option value="Pcs">Pcs (Pieces)</option>
+                            <option value="Box">Box</option>
+                            <option value="Kg">Kg (Kilogram)</option>
+                            <option value="Ltr">Ltr (Liter)</option>
+                            <option value="Mtr">Mtr (Meter)</option>
+                            <option value="Nos">Nos (Numbers)</option>
+                            <option value="Hr">Hr (Hour)</option>
+                            <option value="Service">Service</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tax Preference</label>
+                        <select id="e_taxPreference">
+                            <option value="true">Taxable</option>
+                            <option value="false">Tax Exempt</option>
+                        </select>
+                    </div>
+
+                    <!-- Quantity & Code Fields -->
+                    <div class="form-group conditional-field field-product show">
+                        <label>HSN Code</label>
+                        <input type="text" id="e_hsnCode" placeholder="Enter HSN Code">
+                    </div>
+                    <div class="form-group conditional-field field-service" style="grid-column: span 2;">
+                        <label>SAC Code</label>
+                        <input type="text" id="e_sacCode" placeholder="Enter SAC Code">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label id="e_qtyLabel">Current Stock / Base Quantity</label>
+                        <input type="number" id="e_availableQuantity" value="1">
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Description</label>
+                        <textarea id="e_itemDescription" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>CGST (%)</label>
+                        <input type="number" step="0.01" id="e_cgstRate" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>SGST (%)</label>
+                        <input type="number" step="0.01" id="e_sgstRate" value="0">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>IGST (%)</label>
+                        <input type="number" step="0.01" id="e_igstRate" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 8px;">
+                    <label>Image (Optional — leave blank to keep existing)</label>
+                    <input type="file" id="e_stockImage" accept="image/*">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px;">
+                    <button type="button" class="secondary-btn" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="add-btn" style="padding: 12px 28px;">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script th:inline="javascript">
         const urlParams = new URLSearchParams(window.location.search);
         const stockId = urlParams.get('id');
+        const apiBase = '/billing-app/api';
 
         if (!stockId) {
             window.location.href = '/billing-app/api/ManageStocks';
         }
 
+        const formatDate = (dateArr) => {
+            if (!dateArr) return '-';
+            if (typeof dateArr === 'string') {
+                const d = new Date(dateArr);
+                if (isNaN(d.getTime())) return dateArr;
+                return d.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+            }
+            if (Array.isArray(dateArr)) {
+                const [year, month, day, hour = 0, minute = 0] = dateArr;
+                const d = new Date(year, month - 1, day, hour, minute);
+                return d.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+            }
+            return '-';
+        };
+
+        /* ===== Edit Modal Logic ===== */
+        const setEditType = (type) => {
+            document.getElementById('e_stockType').value = type;
+            document.querySelectorAll('.type-opt').forEach(el => el.classList.remove('active'));
+            const opt = document.getElementById(`opt-${type.toLowerCase()}`);
+            if (opt) opt.classList.add('active');
+
+            document.querySelectorAll('.conditional-field').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll(`.field-${type.toLowerCase()}`).forEach(el => el.classList.add('show'));
+
+            // Dynamic Label
+            const label = document.getElementById('e_qtyLabel');
+            if (label) {
+                label.innerText = type === 'PRODUCT' ? 'Current Stock Level' : 'Base Billing Unit (Qty)';
+            }
+        };
+
+        const openEditModal = (stock) => {
+            // Load categories into dropdown
+            fetch(`${apiBase}/getAllCategories`).then(r => r.json()).then(cats => {
+                const sel = document.getElementById('e_categoryId');
+                sel.innerHTML = cats.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
+                if (stock.stockCategories) sel.value = stock.stockCategories.id;
+            });
+
+            document.getElementById('e_stockId').value = stock.id;
+            document.getElementById('e_createdBy').value = stock.createdBy || '';
+            document.getElementById('e_createdAt').value = stock.createdAt || '';
+            document.getElementById('e_itemName').value = stock.itemName || '';
+            document.getElementById('e_unitPrice').value = stock.unitPrice || 0;
+            document.getElementById('e_itemDescription').value = stock.itemDescription || '';
+            document.getElementById('e_cgstRate').value = stock.cgstRate || 0;
+            document.getElementById('e_sgstRate').value = stock.sgstRate || 0;
+            document.getElementById('e_igstRate').value = stock.igstRate || 0;
+            document.getElementById('e_itemUnit').value = stock.unit || 'Pcs';
+            document.getElementById('e_taxPreference').value = stock.taxable !== undefined ? stock.taxable.toString() : 'true';
+
+            if (stock.stockType === 'SERVICE') {
+                setEditType('SERVICE');
+                document.getElementById('e_sacCode').value = stock.sacCode || '';
+            } else {
+                setEditType('PRODUCT');
+                document.getElementById('e_hsnCode').value = stock.hsnCode || '';
+                document.getElementById('e_availableQuantity').value = stock.availableQuantity || 0;
+            }
+
+            document.getElementById('editModal').classList.add('active');
+        };
+
+        const closeEditModal = () => document.getElementById('editModal').classList.remove('active');
+
+        document.getElementById('editStockForm').onsubmit = (e) => {
+            e.preventDefault();
+            const id = document.getElementById('e_stockId').value;
+            const type = document.getElementById('e_stockType').value;
+
+            const data = {
+                itemName: document.getElementById('e_itemName').value,
+                stockType: type,
+                unitPrice: parseFloat(document.getElementById('e_unitPrice').value),
+                itemDescription: document.getElementById('e_itemDescription').value,
+                cgstRate: parseFloat(document.getElementById('e_cgstRate').value || 0),
+                sgstRate: parseFloat(document.getElementById('e_sgstRate').value || 0),
+                igstRate: parseFloat(document.getElementById('e_igstRate').value || 0),
+                unit: document.getElementById('e_itemUnit').value,
+                taxable: document.getElementById('e_taxPreference').value === 'true',
+                stockCategories: { id: parseInt(document.getElementById('e_categoryId').value) },
+                createdBy: document.getElementById('e_createdBy').value || null,
+                createdAt: document.getElementById('e_createdAt').value || null
+            };
+
+            if (type === 'PRODUCT') {
+                data.hsnCode = document.getElementById('e_hsnCode').value;
+                data.availableQuantity = parseInt(document.getElementById('e_availableQuantity').value) || 0;
+                data.sacCode = null;
+            } else {
+                data.sacCode = document.getElementById('e_sacCode').value;
+                data.hsnCode = null;
+                data.availableQuantity = parseInt(document.getElementById('e_availableQuantity').value) || 1;
+            }
+
+            const doSave = (payload) => {
+                fetch(`${apiBase}/updateStock/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).then(res => {
+                    if (res.ok) {
+                        closeEditModal();
+                        fetchStockDetails(); // Refresh page data
+                    } else {
+                        alert('Error saving changes. Please try again.');
+                    }
+                });
+            };
+
+            const imageFile = document.getElementById('e_stockImage').files[0];
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = () => { data.stockImage = reader.result.split(',')[1]; doSave(data); };
+                reader.readAsDataURL(imageFile);
+            } else {
+                doSave(data);
+            }
+        };
+
+        window.onclick = (ev) => { if (ev.target === document.getElementById('editModal')) closeEditModal(); };
+
+        /* ===== Stock Details Logic ===== */
         const fetchStockDetails = () => {
-            fetch(`/billing-app/api/getStockById/${stockId}`)
+            fetch(`${apiBase}/getStockById/${stockId}`)
                 .then(res => res.json())
                 .then(stock => {
                     document.title = `${stock.itemName} | SFP Billing`;
                     document.getElementById('itemName').innerText = stock.itemName;
-                    document.getElementById('itemCode').innerText = stock.hsnCode || stock.sacCode || 'N/A';
-                    document.getElementById('itemUnit').innerText = 'Units'; // Default as model doesn't have it
-                    document.getElementById('taxPreference').innerText = 'Taxable';
+
+                    // HSN/SAC logic
+                    if (stock.stockType === 'SERVICE') {
+                        document.getElementById('hsnRow').style.display = 'none';
+                        document.getElementById('sacRow').style.display = 'flex';
+                        document.getElementById('sacCode').innerText = stock.sacCode || 'N/A';
+                    } else {
+                        document.getElementById('hsnRow').style.display = 'flex';
+                        document.getElementById('sacRow').style.display = 'none';
+                        document.getElementById('hsnCode').innerText = stock.hsnCode || 'N/A';
+                    }
+
+                    document.getElementById('itemUnit').innerText = stock.unit || (stock.stockType === 'SERVICE' ? 'Service' : 'Pcs');
+                    document.getElementById('taxPreference').innerText = stock.taxable ? 'Taxable' : 'Tax Exempt';
 
                     document.getElementById('salePrice').innerText = `₹ ${parseFloat(stock.unitPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-                    document.getElementById('purchasePrice').parentElement.style.display = 'none'; // Only one price in model
+                    document.getElementById('cgstRate').innerText = `${stock.cgstRate || 0}%`;
+                    document.getElementById('sgstRate').innerText = `${stock.sgstRate || 0}%`;
+                    document.getElementById('igstRate').innerText = `${stock.igstRate || 0}%`;
 
-                    document.getElementById('cgstRate').innerText = `${stock.cgstRate}%`;
-                    document.getElementById('sgstRate').innerText = `${stock.sgstRate}%`;
-                    document.getElementById('igstRate').innerText = `${stock.igstRate}%`;
+                    const totalTax = (stock.cgstRate || 0) + (stock.sgstRate || 0) + (stock.igstRate || 0);
+                    document.getElementById('totalGst').innerText = `${totalTax}%`;
 
+                    // Handle Item Image
+                    const heroImg = document.getElementById('itemHeroImg');
+                    const iconBox = document.getElementById('itemIcon');
+                    if (stock.stockImage) {
+                        heroImg.src = `data:image/png;base64,${stock.stockImage}`;
+                        heroImg.style.display = 'block';
+                        iconBox.style.display = 'none';
+                    } else {
+                        heroImg.style.display = 'none';
+                        iconBox.style.display = 'flex';
+                        iconBox.innerHTML = stock.stockType === 'PRODUCT' ? '<i class="fa-solid fa-box"></i>' : '<i class="fa-solid fa-handshake"></i>';
+                    }
+
+                    // Handle Description
+                    if (stock.itemDescription) {
+                        document.getElementById('itemDescriptionBox').style.display = 'block';
+                        document.getElementById('itemDescription').innerText = stock.itemDescription;
+                    }
+
+                    // Handle Category Link
+                    if (stock.stockCategories) {
+                        document.getElementById('itemCategoryName').innerText = stock.stockCategories.categoryName;
+                        document.getElementById('itemCategoryLink').href = `/billing-app/api/CategoryDetails?id=${stock.stockCategories.id}`;
+                    }
+
+                    // Badges
                     const type = stock.stockType || 'PRODUCT';
                     const typeBadge = document.getElementById('itemTypeBadge');
                     typeBadge.innerText = type;
                     typeBadge.className = `type-badge type-${type.toLowerCase()}`;
-
-                    const iconBox = document.getElementById('itemIcon');
-                    iconBox.innerHTML = type === 'PRODUCT' ? '<i class="fa-solid fa-box"></i>' : '<i class="fa-solid fa-hand-holding-hand"></i>';
-
-                    document.getElementById('itemCategory').innerText = stock.stockCategories ? stock.stockCategories.categoryName : 'Uncategorized';
 
                     // Stock Level Status
                     const statusBox = document.getElementById('stockStatusBox');
@@ -293,31 +782,49 @@
                     const statusSubtext = document.getElementById('statusSubtext');
 
                     if (type === 'SERVICE') {
-                        statusBox.style.display = 'none';
+                        statusBox.className = 'stock-status';
+                        statusBox.style.background = '#f5f3ff';
+                        statusBox.style.border = '1.5px solid #ddd6fe';
+                        statusIcon.innerHTML = '<i class="fa-solid fa-file-invoice-dollar" style="color: #7c3aed;"></i>';
+                        statusText.innerText = 'Service Basis';
+                        statusText.style.color = '#7c3aed';
+                        statusSubtext.innerText = `Billed per ${stock.availableQuantity || 1} ${stock.unit || 'Service'}`;
                     } else {
                         const current = stock.availableQuantity || 0;
-                        const low = 5; // Default threshold
-                        statusSubtext.innerText = `Current Level: ${current} Units`;
+                        const low = 10;
+                        statusSubtext.innerText = `Current Inventory: ${current} ${stock.unit || 'Pcs'}`;
 
                         if (current <= low) {
                             statusBox.className = 'stock-status status-low';
                             statusIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
-                            statusText.innerText = 'Low Stock';
+                            statusText.innerText = 'Low Stock Alert';
                         } else {
                             statusBox.className = 'stock-status status-ok';
                             statusIcon.innerHTML = '<i class="fa-solid fa-check-circle"></i>';
-                            statusText.innerText = 'Stock Level Healthy';
+                            statusText.innerText = 'Stock Available';
                         }
                     }
 
-                    document.getElementById('editBtn').onclick = () => {
-                        window.location.href = `/billing-app/api/ManageStocks?edit=${stockId}`;
-                    };
+                    // Audit info
+                    document.getElementById('createdBy').innerText = stock.createdBy || 'System';
+                    document.getElementById('createdAt').innerText = formatDate(stock.createdAt);
+
+                    if (stock.updatedAt) {
+                        document.getElementById('updatedRow').style.display = 'flex';
+                        document.getElementById('updatedBy').innerText = stock.updatedBy || 'System';
+                        document.getElementById('updatedAt').innerText = formatDate(stock.updatedAt);
+                    }
+
+                    document.getElementById('editBtn').onclick = () => openEditModal(stock);
                 })
                 .catch(err => {
                     console.error('Error fetching stock:', err);
-                    alert('Error loading stock details.');
                 });
+        };
+
+        document.getElementById('backBtn').onclick = function (e) {
+            e.preventDefault();
+            window.location.href = this.href;
         };
 
         fetchStockDetails();

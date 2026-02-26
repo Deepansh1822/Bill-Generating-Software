@@ -26,4 +26,6 @@ public interface UserAccessService {
     public void resetPassword(String email, String secretKey, String newPassword);
 
     public UserAccessInfo createAdminAccount(UserAccessInfo adminInfo);
+
+    public List<UserAccessInfo> getAllClients();
 }

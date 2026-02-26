@@ -10,6 +10,8 @@ public interface StockInfoService {
 
     List<StockInfo> getAllStocks();
 
+    List<StockInfo> getAllStocksByUser(String email, String role);
+
     StockInfo getStockById(Long id);
 
     StockInfo getStockByName(String itemName);

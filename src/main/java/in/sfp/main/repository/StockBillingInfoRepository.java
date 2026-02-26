@@ -15,4 +15,9 @@ public interface StockBillingInfoRepository extends JpaRepository<TotalStockBill
 
     @EntityGraph(attributePaths = { "businessBillingInfo", "recipientBillingInfo" })
     Optional<TotalStockBillingInfo> findByInvoiceNumber(String invoiceNumber);
+
+    @EntityGraph(attributePaths = { "businessBillingInfo", "recipientBillingInfo" })
+    java.util.List<TotalStockBillingInfo> findByStockCreatedBy(String email);
+
+    boolean existsByInvoiceNumber(String invoiceNumber);
 }

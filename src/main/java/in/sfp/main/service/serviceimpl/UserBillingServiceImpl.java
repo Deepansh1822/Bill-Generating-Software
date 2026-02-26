@@ -33,7 +33,7 @@ public class UserBillingServiceImpl implements UserBillingService {
                 .orElseThrow(() -> new RuntimeException("Billing profile not found"));
 
         existing.setBusinessLogo(usersBilling.getBusinessLogo());
-        existing.setBusinessOwnerName(usersBilling.getBusinessOwnerName());
+        existing.setBusinessName(usersBilling.getBusinessName());
         existing.setContactPerson(usersBilling.getContactPerson());
         existing.setBusinessStreetAddress(usersBilling.getBusinessStreetAddress());
         existing.setBusinessNumber(usersBilling.getBusinessNumber());

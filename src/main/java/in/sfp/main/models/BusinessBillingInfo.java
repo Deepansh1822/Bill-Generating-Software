@@ -1,10 +1,29 @@
 package in.sfp.main.models;
 
-import jakarta.persistence.*;
-import lombok.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "business_billing_info")
@@ -23,7 +42,7 @@ public class BusinessBillingInfo {
     // business details
     @Lob
     private byte[] businessLogo;
-    private String businessOwnerName;
+    private String businessName;
     private String contactPerson;
     private String businessStreetAddress;
     private String businessNumber;
@@ -36,6 +55,7 @@ public class BusinessBillingInfo {
     private String pinCode;
     private String termsAndCondition; // policy and conditions of company
     private String businessGstNumber;
+    private String businessType;
     private String panNumber;
     private String adCode;
     private String iecCode;

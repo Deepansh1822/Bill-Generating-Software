@@ -188,151 +188,179 @@
             cursor: pointer;
             color: var(--text-light);
         }
+
+        .back-link {
+            display: inline-block;
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            text-align: left;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 480px) {
+            .back-link {
+                max-width: 100%;
+                padding-left: 10px;
+            }
+        }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
+    <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+        <a href="/billing-app/api/MainDashboard" class="back-link">← Back to Dashboard</a>
 
-    <div class="login-card">
-        <div class="logo">B</div>
-        <div class="header">
-            <h1>Welcome Back</h1>
-            <p>Please enter your details to sign in</p>
-        </div>
-
-        <form action="/login" method="POST">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required
-                    title="Please enter a valid email">
+        <div class="login-card">
+            <div class="logo">B</div>
+            <div class="header">
+                <h1>Welcome Back</h1>
+                <p>Please enter your details to sign in</p>
             </div>
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
-            </div>
-
-            <button type="submit" class="login-btn">Sign In</button>
-            <a href="#" class="forgot-pass" id="forgotPassLink">Forgot Password?</a>
-        </form>
-
-        <div class="signup-link">
-            Don't have access? <a href="/billing-app/api/RequestAccess">Request Access</a>
-        </div>
-    </div>
-
-    <!-- Forgot Password Modal -->
-    <div id="forgotModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeModal">&times;</span>
-            <div class="modal-header">
-                <h2>Reset Password</h2>
-                <p>Enter your secret key to reset password</p>
-            </div>
-            <form id="forgotForm">
+            <form action="/login" method="POST">
                 <div class="form-group">
-                    <label for="resetEmail">Email Address</label>
-                    <input type="email" id="resetEmail" placeholder="Enter registered email" required>
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required
+                        title="Please enter a valid email">
                 </div>
+
                 <div class="form-group">
-                    <label for="resetSecretKey">Secret Key</label>
-                    <input type="password" id="resetSecretKey" placeholder="Enter your secret key" required>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
                 </div>
-                <div class="form-group">
-                    <label for="newPassword">New Password</label>
-                    <input type="password" id="newPassword" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="login-btn">Reset Password</button>
+
+                <button type="submit" class="login-btn">Sign In</button>
+                <a href="#" class="forgot-pass" id="forgotPassLink">Forgot Password?</a>
             </form>
+
+            <div class="signup-link">
+                Don't have access? <a href="/billing-app/api/RequestAccess">Request Access</a>
+            </div>
         </div>
-    </div>
 
-    <script>
-        const form = document.querySelector('form');
+        <!-- Forgot Password Modal -->
+        <div id="forgotModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" id="closeModal">&times;</span>
+                <div class="modal-header">
+                    <h2>Reset Password</h2>
+                    <p>Enter your secret key to reset password</p>
+                </div>
+                <form id="forgotForm">
+                    <div class="form-group">
+                        <label for="resetEmail">Email Address</label>
+                        <input type="email" id="resetEmail" placeholder="Enter registered email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="resetSecretKey">Secret Key</label>
+                        <input type="password" id="resetSecretKey" placeholder="Enter your secret key" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="login-btn">Reset Password</button>
+                </form>
+            </div>
+        </div>
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault(); // Stop normal form submission
+        <script>
+            const form = document.querySelector('form');
 
-            const formData = {
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value
-            };
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Stop normal form submission
 
-            fetch('/billing-app/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.token) {
-                        localStorage.setItem('jwtToken', data.token);
-                        alert('Login successful!');
-                        window.location.href = '/billing-app/api/MainDashboard';
-                    } else {
-                        alert(data.message || 'Login failed');
-                    }
+                const formData = {
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                };
+
+                fetch('/billing-app/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
                 })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    alert('An error occurred. Please try again.');
-                });
-        });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.token) {
+                            localStorage.setItem('jwtToken', data.token);
+                            alert('Login successful!');
+                            window.location.href = '/billing-app/api/Dashboard';
+                        } else {
+                            alert(data.message || 'Login failed');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    });
+            });
 
-        // Modal Logic
-        const resetModal = document.getElementById('forgotModal');
-        const forgotLink = document.getElementById('forgotPassLink');
-        const closeModal = document.getElementById('closeModal');
-        const forgotForm = document.getElementById('forgotForm');
+            // Modal Logic
+            const resetModal = document.getElementById('forgotModal');
+            const forgotLink = document.getElementById('forgotPassLink');
+            const closeModal = document.getElementById('closeModal');
+            const forgotForm = document.getElementById('forgotForm');
 
-        forgotLink.onclick = function (e) {
-            e.preventDefault();
-            resetModal.style.display = 'flex';
-        }
+            forgotLink.onclick = function (e) {
+                e.preventDefault();
+                resetModal.style.display = 'flex';
+            }
 
-        closeModal.onclick = function () {
-            resetModal.style.display = 'none';
-        }
-
-        window.onclick = function (event) {
-            if (event.target == resetModal) {
+            closeModal.onclick = function () {
                 resetModal.style.display = 'none';
             }
-        }
 
-        forgotForm.addEventListener('submit', function (e) {
-            e.preventDefault();
+            window.onclick = function (event) {
+                if (event.target == resetModal) {
+                    resetModal.style.display = 'none';
+                }
+            }
 
-            const resetData = {
-                email: document.getElementById('resetEmail').value,
-                secretKey: document.getElementById('resetSecretKey').value,
-                newPassword: document.getElementById('newPassword').value
-            };
+            forgotForm.addEventListener('submit', function (e) {
+                e.preventDefault();
 
-            fetch('/billing-app/api/forgot-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(resetData),
-            })
-                .then(response => response.text())
-                .then(data => {
-                    alert(data);
-                    if (data.includes("successfully")) {
-                        resetModal.style.display = 'none';
-                        forgotForm.reset();
-                    }
+                const resetData = {
+                    email: document.getElementById('resetEmail').value,
+                    secretKey: document.getElementById('resetSecretKey').value,
+                    newPassword: document.getElementById('newPassword').value
+                };
+
+                fetch('/billing-app/api/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(resetData),
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error resetting password');
-                });
-        });
-    </script>
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        if (data.includes("successfully")) {
+                            resetModal.style.display = 'none';
+                            forgotForm.reset();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error resetting password');
+                    });
+            });
+        </script>
 
+    </div>
 </body>
 
 </html>

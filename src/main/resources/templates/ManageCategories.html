@@ -326,7 +326,7 @@
             <div>
                 <h1>Item Groups</h1>
             </div>
-            <button class="add-btn" onclick="openModal()">
+            <button th:if="${userRole != 'ADMIN'}" class="add-btn" onclick="openModal()">
                 <i class="fa-solid fa-plus"></i>
                 Add Item Group
             </button>
@@ -418,6 +418,8 @@
             image: document.getElementById('categoryImage')
         };
 
+        const userRole = /*[[${userRole}]]*/ 'CLIENT';
+
         const loadData = () => {
             Promise.all([
                 fetch(`${apiBase}/getAllCategories`).then(r => r.json()),
@@ -439,19 +441,26 @@
                 els.tbody.innerHTML = categories.map(cat => {
                     const count = countMap[cat.id] || 0;
                     const pillClass = count > 0 ? 'count-pill' : 'count-pill empty';
+
+                    let actionsHtml = `
+                        <td>
+                            <div class="actions">
+                                <button class="action-btn view-btn" title="View" onclick="viewCategory(${cat.id})"><i class="fa-solid fa-eye"></i></button>
+                                ${userRole !== 'ADMIN' ? `
+                                    <button class="action-btn edit-btn" title="Edit" onclick="editCategory(${cat.id})"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn delete-btn" title="Delete" onclick="deleteCategory(${cat.id})"><i class="fa-solid fa-trash"></i></button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    `;
+
                     return `
                         <tr>
                             <td><img src="${cat.categoryImage ? 'data:image/png;base64,' + cat.categoryImage : 'https://via.placeholder.com/64'}" class="category-img"></td>
                             <td style="font-weight: 600;">${cat.categoryName}</td>
                             <td style="color: var(--text-muted); max-width: 300px;">${cat.categoryDescription}</td>
                             <td><span class="${pillClass}"><i class="fa-solid fa-box" style="font-size:10px;"></i> ${count}</span></td>
-                            <td>
-                                <div class="actions">
-                                    <button class="action-btn view-btn" title="View" onclick="viewCategory(${cat.id})"><i class="fa-solid fa-eye"></i></button>
-                                    <button class="action-btn edit-btn" title="Edit" onclick="editCategory(${cat.id})"><i class="fa-solid fa-pen"></i></button>
-                                    <button class="action-btn delete-btn" title="Delete" onclick="deleteCategory(${cat.id})"><i class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </td>
+                            ${actionsHtml}
                         </tr>
                     `;
                 }).join('');

@@ -32,7 +32,12 @@
             background: white;
             padding: 8px 16px;
             border-radius: 50px;
-            border: 1px solid var(--border);
+        }
+
+        .user-profile:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+            border-color: var(--primary-light);
         }
 
         .avatar {
@@ -44,6 +49,29 @@
             align-items: center;
             justify-content: center;
             font-weight: 600;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .role-badge {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 50px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .role-admin {
+            background: #fff1f2;
+            color: #e11d48;
+            border: 1px solid #ffe4e6;
+        }
+
+        .role-client {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #dcfce7;
         }
 
         /* --- Stats Grid --- */
@@ -267,14 +295,24 @@
         <!-- Header -->
         <div class="header">
             <div class="welcome-text">
-                <h1>Welcome back, Admin!</h1>
-                <p>Here's what's happening with your business today.</p>
+                <h1
+                    th:text="${userRole == 'ADMIN' ? 'Admin Dashboard' : 'Welcome back, ' + (userFullName != null and userFullName != '' ? userFullName : displayUsername) + '!'}">
+                    Welcome
+                </h1>
+                <p
+                    th:text="${userRole == 'ADMIN' ? 'Overview of all client activities and requests.' : 'Here is what is happening with your business today.'}">
+                    Subtitle</p>
             </div>
-            <div class="user-profile">
-                <div class="avatar" style="background: #eef2ff; color: var(--primary);">AD</div>
-                <div style="font-size: 0.9rem; font-weight: 700;">Admin User</div>
-                <span style="font-size: 0.8rem; color: #94a3b8;">▼</span>
-            </div>
+            <a href="/billing-app/api/Profile" class="user-profile"
+                style="text-decoration: none; color: inherit; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border);">
+                <div class="avatar"
+                    th:style="${userProfileImage != null and userProfileImage != '' ? 'background-image: url(' + userProfileImage + '); background-size: cover; background-position: center;' : 'background: #eef2ff;'}"
+                    th:text="${(userProfileImage == null or userProfileImage == '') ? (displayUsername != null and displayUsername.length() > 0 ? #strings.substring(displayUsername,0,1).toUpperCase() : 'U') : ''}">
+                    U</div>
+                <div style="font-size: 0.9rem; font-weight: 700;" th:text="${displayUsername}">Username</div>
+                <span class="role-badge" th:classappend="${userRole == 'ADMIN' ? 'role-admin' : 'role-client'}"
+                    th:text="${userRole}">Role</span>
+            </a>
         </div>
 
         <!-- Stats Grid -->
@@ -324,34 +362,38 @@
         </div>
 
         <!-- Billing Types -->
-        <h2 class="section-title">🚀 Create New Bill</h2>
-        <div class="billing-types">
-            <!-- Product Bill -->
-            <a href="/billing-app/api/ManageStocks" class="bill-type-card">
-                <div class="bill-type-info">
-                    <div style="font-size: 2rem; margin-bottom: 12px;">📦</div>
-                    <h3>Product Bill</h3>
-                    <p>Dynamic billing for Pharma, Electronics & General products with inventory tracking.</p>
-                </div>
-                <div class="bill-type-btn" style="background: #0ea5e9;">Create Product Bill</div>
-            </a>
-            <!-- Service Bill -->
-            <a href="#" class="bill-type-card">
-                <div class="bill-type-info">
-                    <div style="font-size: 2rem; margin-bottom: 12px;">💼</div>
-                    <h3>Service Bill</h3>
-                    <p>Milestone, Hourly, and Unit-based service billing for agencies and freelancers.</p>
-                </div>
-                <div class="bill-type-btn" style="background: #0ea5e9;">Create Service Bill</div>
-            </a>
+        <div th:if="${userRole == 'CLIENT'}">
+            <h2 class="section-title">🚀 Create New Bill</h2>
+            <div class="billing-types">
+                <!-- Product Bill -->
+                <a href="/billing-app/api/GenerateBill" class="bill-type-card">
+                    <div class="bill-type-info">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">📦</div>
+                        <h3>Product Bill</h3>
+                        <p>Dynamic billing for Pharma, Electronics & General products with inventory tracking.</p>
+                    </div>
+                    <div class="bill-type-btn" style="background: #0ea5e9;">Create Product Bill</div>
+                </a>
+                <!-- Service Bill -->
+                <a href="/billing-app/api/GenerateBill" class="bill-type-card">
+                    <div class="bill-type-info">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">💼</div>
+                        <h3>Service Bill</h3>
+                        <p>Milestone, Hourly, and Unit-based service billing for agencies and freelancers.</p>
+                    </div>
+                    <div class="bill-type-btn" style="background: #0ea5e9;">Create Service Bill</div>
+                </a>
+            </div>
         </div>
 
         <!-- Bottom Sections -->
         <div class="bottom-sections">
-            <div class="card" style="background: linear-gradient(to right, #ffffff, #f0f9ff);">
+            <!-- Elite Clients Section (Admin Only) -->
+            <div class="card" th:if="${userRole == 'ADMIN'}"
+                style="background: linear-gradient(to right, #ffffff, #f0f9ff);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 style="font-weight: 800;">🏆 Elite Clients</h3>
-                    <a href="#"
+                    <a href="/billing-app/api/ManageClients"
                         style="font-size: 0.8rem; color: var(--primary); font-weight: 700; text-decoration: none;">View
                         All Clients →</a>
                 </div>
