@@ -46,6 +46,9 @@ public class BillRequestDTO {
     private String iecCode;
     private String businessType;
     private String businessLogoBase64;
+    private String invoiceDate;
+    private String dueDate;
+    private String status;
     private List<BillItemDTO> items;
 
     @Data

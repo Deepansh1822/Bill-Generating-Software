@@ -1,5 +1,6 @@
 package in.sfp.main.controllers;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,8 @@ import in.sfp.main.models.TotalStockBillingInfo;
 import in.sfp.main.repository.BusinessBillingInfoRepository;
 import in.sfp.main.repository.RecipientBillingInfoRepository;
 import in.sfp.main.repository.StockBillingInfoRepository;
+import in.sfp.main.repository.StockInfoRepository;
+import in.sfp.main.models.StockInfo;
 
 @RestController
 @RequestMapping("/billing-app/api")
@@ -37,6 +41,9 @@ public class BillGenerationController {
     private StockBillingInfoRepository stockBillingRepo;
 
     @Autowired
+    private StockInfoRepository stockRepo;
+
+    @Autowired
     private in.sfp.main.service.UserAccessService userAccessService;
 
     @PostMapping("/generateBill")
@@ -46,14 +53,24 @@ public class BillGenerationController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String currentUser = auth.getName();
 
-            // 0. Check for Invoice Number Uniqueness
-            if (stockBillingRepo.existsByInvoiceNumber(request.getInvoiceNumber())) {
-                return ResponseEntity.badRequest().body("Invoice number " + request.getInvoiceNumber()
-                        + " already exists. Please use a unique number.");
+            // 0. Check for Existing Bill for Update logic
+            TotalStockBillingInfo totalBilling = stockBillingRepo.findByInvoiceNumber(request.getInvoiceNumber())
+                    .orElse(null);
+
+            if (totalBilling != null) {
+                // If it exists, check status
+                if ("FINAL".equalsIgnoreCase(totalBilling.getStatus())) {
+                    return ResponseEntity.badRequest().body("Invoice " + request.getInvoiceNumber()
+                            + " is already FINAL and cannot be modified.");
+                }
+                // If it's DRAFT, we will clear existing items and recipient for fresh update
+                // Or just update them. For simplicity in this logic, we'll reuse objects.
+            } else {
+                totalBilling = new TotalStockBillingInfo();
+                totalBilling.setInvoiceNumber(request.getInvoiceNumber());
             }
 
             // 1. Handle Business Info (From)
-            // For now, we search by email or create new if not exists
             BusinessBillingInfo business = businessRepo.findByBusinessEmail(request.getBusinessEmail());
             if (business == null) {
                 business = new BusinessBillingInfo();
@@ -63,7 +80,6 @@ public class BillGenerationController {
                 business.setBusinessState(request.getBusinessState());
                 business.setBusinessCountry(request.getBusinessCountry());
                 business.setPinCode(request.getBusinessPinCode());
-                // contact person details
                 business.setContactPerson(request.getContactPerson());
                 business.setContactPersonNumber(request.getContactPersonNumber());
                 business.setContactPersonEmail(request.getContactPersonEmail());
@@ -71,7 +87,6 @@ public class BillGenerationController {
                 business.setBusinessNumber(request.getBusinessNumber());
                 business.setBusinessEmail(request.getBusinessEmail());
                 business.setTermsAndCondition(request.getTermsAndCondition());
-                // Persist optional business identifiers when provided
                 if (request.getPanNumber() != null)
                     business.setPanNumber(request.getPanNumber());
                 if (request.getAdCode() != null)
@@ -81,22 +96,19 @@ public class BillGenerationController {
                 if (request.getBusinessType() != null)
                     business.setBusinessType(request.getBusinessType());
 
-                // If frontend sent a logo (base64) decode and persist
                 if (request.getBusinessLogoBase64() != null && !request.getBusinessLogoBase64().isBlank()) {
                     try {
                         byte[] img = java.util.Base64.getDecoder().decode(request.getBusinessLogoBase64());
                         business.setBusinessLogo(img);
                     } catch (IllegalArgumentException ex) {
-                        // ignore invalid base64
                     }
                 }
                 business.setCreatedBy(currentUser);
                 business = businessRepo.save(business);
-                // persist bank details if provided
+
                 if (request.getBankDetails() != null && !request.getBankDetails().isEmpty()) {
                     List<String> banks = new java.util.ArrayList<>();
                     for (in.sfp.main.dto.BillRequestDTO.BankDetailDTO b : request.getBankDetails()) {
-                        // store as simple pipe-separated string: holder|bank|account|ifsc|branch
                         String entry = String.join("|",
                                 b.getAccountHolderName() == null ? "" : b.getAccountHolderName(),
                                 b.getBankName() == null ? "" : b.getBankName(),
@@ -111,7 +123,10 @@ public class BillGenerationController {
             }
 
             // 2. Handle Recipient Info (To)
-            RecipientBillingInfo recipient = new RecipientBillingInfo();
+            RecipientBillingInfo recipient = totalBilling.getRecipientBillingInfo();
+            if (recipient == null) {
+                recipient = new RecipientBillingInfo();
+            }
             recipient.setRecipientName(request.getRecipientName());
             recipient.setRecipientBusinessName(request.getRecipientBusinessName());
             recipient.setRecipientBusinessStreetAddress(request.getRecipientBusinessStreetAddress());
@@ -129,24 +144,20 @@ public class BillGenerationController {
             recipient.setBusinessBillingInfo(business);
             recipient = recipientRepo.save(recipient);
 
-            // 3. Create Stock Billing Info (Invoice)
-            TotalStockBillingInfo totalBilling = new TotalStockBillingInfo();
-            totalBilling.setInvoiceNumber(request.getInvoiceNumber());
+            // 3. Update/Create Stock Billing Info (Invoice)
             totalBilling.setAdvancedPayment(request.getAdvancedPayment());
             totalBilling.setAmountInWords(request.getAmountInWords());
             totalBilling.setBusinessBillingInfo(business);
             totalBilling.setRecipientBillingInfo(recipient);
             totalBilling.setStockCreatedBy(currentUser);
+            totalBilling.setStatus(request.getStatus() != null ? request.getStatus().toUpperCase() : "DRAFT");
 
-            // Snapshot company name/type from the saved business; do not store per-user
-            // "bill by" details
-            totalBilling.setBillByFullName(null);
-            totalBilling.setBillByDesignation(null);
-            totalBilling.setBillByMobileNumber(null);
-            totalBilling.setBillByEmail(null);
+            if (request.getInvoiceDate() != null)
+                totalBilling.setInvoiceDate(LocalDate.parse(request.getInvoiceDate()));
+            if (request.getDueDate() != null)
+                totalBilling.setDueDate(LocalDate.parse(request.getDueDate()));
 
-            // Prefer the business record's name/type; if missing, fall back to
-            // authenticated user's company fields
+            // Handle Business logic update
             String invoiceCompanyName = business.getBusinessName();
             String invoiceCompanyType = business.getBusinessType();
             try {
@@ -157,11 +168,9 @@ public class BillGenerationController {
                 if ((invoiceCompanyName == null || invoiceCompanyName.isBlank()) && current != null
                         && current.getCompanyName() != null && !current.getCompanyName().isBlank()) {
                     invoiceCompanyName = current.getCompanyName();
-                    // persist to business record for future invoices
                     business.setBusinessName(invoiceCompanyName);
                     business = businessRepo.save(business);
                 }
-
                 if ((invoiceCompanyType == null || invoiceCompanyType.isBlank()) && current != null
                         && current.getCompanyType() != null && !current.getCompanyType().isBlank()) {
                     invoiceCompanyType = current.getCompanyType();
@@ -169,7 +178,6 @@ public class BillGenerationController {
                     business = businessRepo.save(business);
                 }
             } catch (Exception e) {
-                // ignore user lookup failures; invoice will use business values (may be null)
             }
 
             totalBilling.setCompanyName(invoiceCompanyName);
@@ -180,8 +188,41 @@ public class BillGenerationController {
             double totalIGST = 0;
             double grandTotal = 0;
 
-            List<SingleStockBillingInfo> items = new ArrayList<>();
+            // 3.5 Stock Sync Logic (Smart Inventory Management)
+            // A. Restore Stock: If we are updating an existing draft, "return" its items to
+            // inventory first
+            for (SingleStockBillingInfo oldItem : totalBilling.getBillItems()) {
+                StockInfo stock = stockRepo.findByItemNameAndCreatedBy(oldItem.getItemName(), currentUser);
+                if (stock != null && "PRODUCT".equalsIgnoreCase(stock.getStockType())) {
+                    stock.setAvailableQuantity(stock.getAvailableQuantity() + oldItem.getQuantity());
+                    stockRepo.save(stock);
+                }
+            }
+
+            // B. Strict Mode Check: If finalizing, ensure we have enough physical stock
+            if ("FINAL".equalsIgnoreCase(request.getStatus())) {
+                for (BillRequestDTO.BillItemDTO newItem : request.getItems()) {
+                    StockInfo stock = stockRepo.findByItemNameAndCreatedBy(newItem.getItemName(), currentUser);
+                    if (stock != null && "PRODUCT".equalsIgnoreCase(stock.getStockType())) {
+                        if (stock.getAvailableQuantity() < newItem.getQuantity()) {
+                            return ResponseEntity.badRequest().body("Insufficient stock for: " + newItem.getItemName()
+                                    + " (Available: " + stock.getAvailableQuantity() + ")");
+                        }
+                    }
+                }
+            }
+
+            // Clear old items for update
+            totalBilling.getBillItems().clear();
+
             for (BillRequestDTO.BillItemDTO itemDto : request.getItems()) {
+                // C. Deduct Stock: Apply the new quantities to inventory
+                StockInfo stock = stockRepo.findByItemNameAndCreatedBy(itemDto.getItemName(), currentUser);
+                if (stock != null && "PRODUCT".equalsIgnoreCase(stock.getStockType())) {
+                    stock.setAvailableQuantity(stock.getAvailableQuantity() - itemDto.getQuantity());
+                    stockRepo.save(stock);
+                }
+
                 SingleStockBillingInfo item = new SingleStockBillingInfo();
                 item.setItemName(itemDto.getItemName());
                 item.setItemDescription(itemDto.getItemDescription());
@@ -197,7 +238,7 @@ public class BillGenerationController {
                 item.setTotalItemAmount(itemDto.getTotalItemAmount());
                 item.setStockBillingInfo(totalBilling);
 
-                items.add(item);
+                totalBilling.getBillItems().add(item);
 
                 totalCGST += itemDto.getCgstAmount();
                 totalSGST += itemDto.getSgstAmount();
@@ -205,7 +246,6 @@ public class BillGenerationController {
                 grandTotal += itemDto.getTotalItemAmount();
             }
 
-            totalBilling.setBillItems(items);
             totalBilling.setTotalCGSTAmount(String.valueOf(totalCGST));
             totalBilling.setTotalSGSTAmount(String.valueOf(totalSGST));
             totalBilling.setTotalIGSTAmount(String.valueOf(totalIGST));
@@ -214,12 +254,26 @@ public class BillGenerationController {
             double balance = grandTotal - Double.parseDouble(request.getAdvancedPayment());
             totalBilling.setBalancePayment(String.valueOf(balance));
 
-            stockBillingRepo.save(totalBilling);
+            totalBilling = stockBillingRepo.save(totalBilling);
 
-            return ResponseEntity.ok("Bill generated successfully with Invoice: " + request.getInvoiceNumber());
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("id", totalBilling.getId());
+            response.put("invoiceNumber", totalBilling.getInvoiceNumber());
+            response.put("status", totalBilling.getStatus());
+            response.put("message", ("FINAL".equalsIgnoreCase(totalBilling.getStatus()) ? "Invoice finalized"
+                    : "Quotation saved as Draft") + " successfully!");
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error generating bill: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/getBill/{invoiceNumber}")
+    public ResponseEntity<?> getBillByInvoiceNumber(@PathVariable String invoiceNumber) {
+        return stockBillingRepo.findByInvoiceNumber(invoiceNumber)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/generateUniqueInvoiceNumber")

@@ -164,7 +164,8 @@
         .logout-btn:hover {
             background: #fef2f2;
             border-color: #f87171;
-            transform: scale(1.05);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px -3px rgba(239, 68, 68, 0.1);
         }
 
         .edit-profile-btn {
@@ -443,6 +444,14 @@
                                 onclick="openVerifyModal()">View</button>
                         </div>
                     </div>
+                    <div class="detail-card" th:if="${user?.role == 'CLIENT'}">
+                        <label>Monthly Revenue Target</label>
+                        <div class="value">
+                            <i class="fa-solid fa-bullseye"></i>
+                            <span
+                                th:text="${'₹' + #numbers.formatDecimal(user?.monthlyTarget ?: 100000, 1, 'COMMA', 2, 'POINT')}">₹1,00,000.00</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="actions-section">
@@ -519,6 +528,10 @@
             <div class="form-group">
                 <label>Mobile Number</label>
                 <input type="text" id="editMobile" th:value="${user?.mobileNumber}">
+            </div>
+            <div class="form-group" th:if="${user?.role == 'CLIENT'}">
+                <label>Monthly Sales Target (₹)</label>
+                <input type="number" id="editMonthlyTarget" th:value="${user?.monthlyTarget ?: 100000}">
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeModals()">Cancel</button>
@@ -669,6 +682,7 @@
                 companyName: document.getElementById('editCompanyName').value,
                 companyType: document.getElementById('editCompanyType').value,
                 mobileNumber: document.getElementById('editMobile').value,
+                monthlyTarget: document.getElementById('editMonthlyTarget').value,
                 clientImage: base64Image
             };
 

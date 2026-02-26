@@ -382,6 +382,45 @@
             color: var(--text-muted);
         }
 
+        .premium-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            width: 100%;
+        }
+
+        .premium-empty-state i {
+            font-size: 2.5rem;
+            color: #f1f5f9;
+            margin-bottom: 24px;
+            background: #f8fafc;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .premium-empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .premium-empty-state p {
+            font-size: 0.95rem;
+            max-width: 360px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
         .edit-btn {
             background: #eff6ff;
             color: #2563eb;
@@ -703,54 +742,67 @@
         };
 
         const renderTable = (items) => {
-            els.tbody.innerHTML = items.length === 0
-                ? '<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 40px;">No matching items found.</td></tr>'
-                : items.map(s => {
-                    const isProduct = s.stockType === 'PRODUCT' || !s.stockType;
-                    const code = isProduct ? (s.hsnCode || '-') : (s.sacCode || '-');
-                    const img = s.stockImage ? `data:image/png;base64,${s.stockImage}` : 'https://via.placeholder.com/48';
-                    const taxType = s.taxable ? 'Taxable' : 'Exempt';
-                    const taxColor = s.taxable ? '#059669' : '#64748b';
+            if (items.length === 0) {
+                els.tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9">
+                            <div class="premium-empty-state">
+                                <i class="fa-solid fa-layer-group"></i>
+                                <h3>No items in this group</h3>
+                                <p>This item group is currently empty. Add products or services to this category to see them listed here.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
 
-                    return `
-                        <tr>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <img src="${img}" class="category-img">
-                                    <span style="font-weight: 600;">${s.itemName}</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="type-badge ${isProduct ? 'type-product' : 'type-service'}">${s.stockType || 'PRODUCT'}</span>
-                            </td>
-                            <td>${s.stockCategories?.categoryName || 'N/A'}</td>
-                            <td><code style="font-weight: 700; color: var(--text-main);">${code}</code></td>
-                            <td><span style="color: #6366f1; font-weight: 600;">${s.unit || (isProduct ? 'Pcs' : 'Service')}</span></td>
-                            <td><span style="color: ${taxColor}; font-weight: 700; font-size: 11px; text-transform: uppercase;">${taxType}</span></td>
-                            <td style="font-weight: 700;">₹ ${parseFloat(s.unitPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td>
-                                ${isProduct
-                            ? `<span class="stock-qty ${s.availableQuantity < 10 ? 'qty-low' : 'qty-ok'}">${s.availableQuantity} ${s.unit || 'Pcs'}</span>`
-                            : `<span class="stock-qty" style="background: #f5f3ff; color: #7c3aed;">${s.availableQuantity || 1} ${s.unit || 'Service'}</span>`}
-                            </td>
-                            <td>
-                                <div class="actions" style="justify-content: flex-end;">
-                                    <button onclick="viewStock(${s.id})" class="action-btn view-btn" title="View Details">
-                                        <i class="fa-solid fa-eye"></i>
+            els.tbody.innerHTML = items.map(s => {
+                const isProduct = s.stockType === 'PRODUCT' || !s.stockType;
+                const code = isProduct ? (s.hsnCode || '-') : (s.sacCode || '-');
+                const img = s.stockImage ? `data:image/png;base64,${s.stockImage}` : 'https://via.placeholder.com/48';
+                const taxType = s.taxable ? 'Taxable' : 'Exempt';
+                const taxColor = s.taxable ? '#059669' : '#64748b';
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <img src="${img}" class="category-img">
+                                <span style="font-weight: 600;">${s.itemName}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="type-badge ${isProduct ? 'type-product' : 'type-service'}">${s.stockType || 'PRODUCT'}</span>
+                        </td>
+                        <td>${s.stockCategories?.categoryName || 'N/A'}</td>
+                        <td><code style="font-weight: 700; color: var(--text-main);">${code}</code></td>
+                        <td><span style="color: #6366f1; font-weight: 600;">${s.unit || (isProduct ? 'Pcs' : 'Service')}</span></td>
+                        <td><span style="color: ${taxColor}; font-weight: 700; font-size: 11px; text-transform: uppercase;">${taxType}</span></td>
+                        <td style="font-weight: 700;">₹ ${parseFloat(s.unitPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                        <td>
+                            ${isProduct
+                        ? `<span class="stock-qty ${s.availableQuantity < 10 ? 'qty-low' : 'qty-ok'}">${s.availableQuantity} ${s.unit || 'Pcs'}</span>`
+                        : `<span class="stock-qty" style="background: #f5f3ff; color: #7c3aed;">${s.availableQuantity || 1} ${s.unit || 'Service'}</span>`}
+                        </td>
+                        <td>
+                            <div class="actions" style="justify-content: flex-end;">
+                                <button onclick="viewStock(${s.id})" class="action-btn view-btn" title="View Details">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                                ${userRole !== 'ADMIN' ? `
+                                    <button onclick="editStock(${s.id})" class="action-btn edit-btn" title="Edit Item">
+                                        <i class="fa-solid fa-pen"></i>
                                     </button>
-                                    ${userRole !== 'ADMIN' ? `
-                                        <button onclick="editStock(${s.id})" class="action-btn edit-btn" title="Edit Item">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </button>
-                                        <button onclick="deleteStock(${s.id})" class="action-btn delete-btn" title="Delete Item">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    ` : ''}
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
+                                    <button onclick="deleteStock(${s.id})" class="action-btn delete-btn" title="Delete Item">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         };
 
         const viewStock = (id) => {

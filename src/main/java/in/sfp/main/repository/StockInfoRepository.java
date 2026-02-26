@@ -8,9 +8,11 @@ import in.sfp.main.models.StockInfo;
 @Repository
 public interface StockInfoRepository extends JpaRepository<StockInfo, Long> {
 
-    StockInfo findByItemName(String itemName);
+    StockInfo findByItemNameAndCreatedBy(String itemName, String createdBy);
 
     java.util.List<StockInfo> findByCreatedBy(String createdBy);
 
     java.util.List<StockInfo> findByStockCategoriesIdAndCreatedBy(Long categoryId, String createdBy);
+
+    StockInfo findByItemName(String itemName);
 }

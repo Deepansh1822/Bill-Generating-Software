@@ -85,52 +85,157 @@
         .stat-card {
             background: white;
             padding: 24px;
-            border-radius: 20px;
+            border-radius: 24px;
             border: 1px solid var(--border);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #e2e8f0;
         }
 
         .stat-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .reports-stat-info .value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-top: 4px;
+        }
+
+        /* Premium Custom Popover */
+        .custom-popover-wrapper {
+            position: relative;
+        }
+
+        .custom-popover {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            z-index: 1000;
+            animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .custom-popover.active {
+            display: block;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .custom-popover h4 {
+            color: #92400e;
+            font-size: 0.9rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-popover p {
+            font-size: 0.8rem;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .popover-btn {
+            width: 100%;
+            padding: 8px;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .popover-btn:hover {
+            background: #d97706;
+        }
+
+        .popover-arrow {
+            position: absolute;
+            top: -6px;
+            right: 12px;
+            width: 12px;
+            height: 12px;
+            background: white;
+            transform: rotate(45deg);
+            border-left: 1px solid rgba(245, 158, 11, 0.2);
+            border-top: 1px solid rgba(245, 158, 11, 0.2);
         }
 
         .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 4px;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.025em;
+            margin-bottom: 6px;
         }
 
         .stat-label {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            font-weight: 500;
+            color: #64748b;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .trend {
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 4px;
-            margin-top: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f8fafc;
         }
 
         .trend.up {
@@ -196,6 +301,7 @@
             font-weight: 600;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
         }
 
@@ -283,6 +389,240 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* --- Shared Modal Styling (Matching Requests Page) --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: white;
+            width: 90%;
+            max-width: 650px;
+            border-radius: 32px;
+            padding: 40px;
+            position: relative;
+            animation: modalSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+            text-align: center;
+        }
+
+        .modal-header .modal-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        .info-block label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .info-block p {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: none;
+            background: #f1f5f9;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 640px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .modal-card {
+                padding: 30px 20px;
+            }
+        }
+
+        /* --- Floating Broadcast Button --- */
+        .broadcast-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 1.5rem;
+        }
+
+        .broadcast-fab:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.5);
+        }
+
+        .broadcast-popup {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            padding: 24px;
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 1001;
+            transform-origin: bottom right;
+            animation: popupAppear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #e2e8f0;
+        }
+
+        .broadcast-popup.active {
+            display: flex;
+        }
+
+        .chart-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        @keyframes popupAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.5) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .broadcast-popup h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .premium-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            width: 100%;
+        }
+
+        .premium-empty-state i {
+            font-size: 2.5rem;
+            color: #f1f5f9;
+            margin-bottom: 16px;
+            background: #f8fafc;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .premium-empty-state h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .premium-empty-state p {
+            font-size: 0.85rem;
+            max-width: 320px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
     </style>
 </head>
 
@@ -296,7 +636,7 @@
         <div class="header">
             <div class="welcome-text">
                 <h1
-                    th:text="${userRole == 'ADMIN' ? 'Admin Dashboard' : 'Welcome back, ' + (userFullName != null and userFullName != '' ? userFullName : displayUsername) + '!'}">
+                    th:text="${userRole == 'ADMIN' ? 'Admin Overview' : 'Welcome back, ' + (userFullName != null and userFullName != '' ? userFullName : displayUsername) + '!'}">
                     Welcome
                 </h1>
                 <p
@@ -315,53 +655,263 @@
             </a>
         </div>
 
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon" style="background: #eef2ff; color: var(--primary);">💰</div>
-                </div>
-                <div class="stat-label">Total Revenue</div>
-                <div class="stat-value">₹12,45,000</div>
-                <div class="trend up">▲ 12.5% vs last month</div>
+        <!-- Broadcast Banner (Dynamic) -->
+        <div id="broadcastBanner"
+            style="display: none; margin-bottom: 24px; background: linear-gradient(135.44deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 16px 24px; border-radius: 16px; align-items: center; justify-content: space-between; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 1.2rem;">📢</span>
+                <span id="broadcastText" style="font-weight: 600;">System Message: ...</span>
             </div>
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon" style="background: #ecfdf5; color: var(--success);">📄</div>
-                </div>
-                <div class="stat-label">Requests Sent</div>
-                <div class="stat-value">1,280</div>
-                <div class="trend up">▲ 8.2% vs last month</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon" style="background: #fffbeb; color: var(--warning);">⏳</div>
-                </div>
-                <div class="stat-label">Pending Payments</div>
-                <div class="stat-value">₹84,200</div>
-                <div class="trend" style="color: var(--danger);">▼ 3.1% high risk</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon"
-                        style="background: white; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.05); color: #6366f1;">
-                        🧾</div>
-                </div>
-                <div class="stat-label">Billing Breakdown</div>
-                <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 5px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
-                        <span>📦 Product:</span>
-                        <span style="font-weight: 700;">₹8.2L</span>
+            <button onclick="dismissBroadcast()"
+                style="background: rgba(255,255,255,0.2); border: none; color: white; cursor: pointer; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem;">Dismiss</button>
+        </div>
+
+        <!-- Stats Grid (Populated via JS) -->
+        <div class="stats-grid" id="statsGrid">
+            <!-- Loading state or generic cards -->
+        </div>
+
+        <!-- Admin Only: Speed & Broadcast Floating Control -->
+        <div th:if="${userRole == 'ADMIN'}" class="stats-grid" style="margin-bottom: 40px;">
+            <!-- Fast-Track Approvals -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="font-weight: 800; display: flex; align-items: center; gap: 8px;">🚀 Fast-Track
+                            Approvals
+                        </h3>
+                        <p style="font-size: 0.8rem; color: #64748b;">Latest registration requests waiting for access.
+                        </p>
                     </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
-                        <span>💼 Service:</span>
-                        <span style="font-weight: 700;">₹4.2L</span>
+                    <a href="/billing-app/api/ManageAccessRequests"
+                        style="font-size: 0.8rem; color: var(--primary); font-weight: 700; text-decoration: none;">View
+                        All</a>
+                </div>
+                <div id="latestPendingList" style="display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-container"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 40px;">
+            <!-- Revenue Growth Analysis (Always shown) -->
+            <div class="card" style="padding: 24px;">
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div class="chart-icon-box" style="background: #eef2ff; color: #6366f1;">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-weight: 800; font-size: 1.1rem; color: #1e293b;">Revenue Growth Analysis
+                            </h3>
+                            <p style="font-size: 0.8rem; color: #64748b;"
+                                th:text="${userRole == 'ADMIN' ? 'Total system-wide revenue growth over the last 6 months.' : 'Your business revenue growth over the last 6 months.'}">
+                                Revenue growth over time.</p>
+                        </div>
                     </div>
+                </div>
+                <div style="height: 250px; position: relative;">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Revenue Distribution (Admin Only) or Product/Service Distribution (Client) -->
+            <div class="card" style="padding: 24px;">
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div class="chart-icon-box" style="background: #f5f3ff; color: #8b5cf6;">
+                            <i class="fa-solid fa-chart-pie"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-weight: 800; font-size: 1.1rem; color: #1e293b;"
+                                th:text="${userRole == 'ADMIN' ? 'Revenue Distribution' : 'Service vs Product'}">
+                                Distribution</h3>
+                            <p style="font-size: 0.8rem; color: #64748b;"
+                                th:text="${userRole == 'ADMIN' ? 'Top 10 high-performing categories across the platform.' : 'Breakdown of your billing across Products and Services.'}">
+                                Revenue distribution.</p>
+                        </div>
+                    </div>
+                </div>
+                <div style="height: 250px; position: relative;">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Business Health / Bill Stats (Admin Only: Final vs Quotation) -->
+            <div class="card" th:if="${userRole == 'ADMIN'}" style="padding: 24px;">
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div class="chart-icon-box" style="background: #ecfdf5; color: #10b981;">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-weight: 800; font-size: 1.1rem; color: #1e293b;">Invoice Finalization
+                                Efficiency</h3>
+                            <p style="font-size: 0.8rem; color: #64748b;">Comparison of Finalized Invoices vs Draft
+                                Quotations.</p>
+                        </div>
+                    </div>
+                </div>
+                <div style="height: 250px; position: relative;">
+                    <canvas id="billStatsChart"></canvas>
                 </div>
             </div>
         </div>
 
         <!-- Billing Types -->
+        <!-- Business Insights (Client Only) -->
+        <div th:if="${userRole == 'CLIENT'}" id="clientInsightsSection" style="margin-bottom: 40px;">
+            <h3 class="section-title" style="margin-bottom: 24px;">📊 Business Intelligence</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+
+                <!-- Point 3: Sales Goal Tracker -->
+                <div class="card"
+                    style="padding: 24px; min-height: 280px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <h4
+                        style="font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+                        <span style="display: flex; align-items: center; gap: 8px;">🎯 Monthly Sales Goal</span>
+                        <i class="fa-solid fa-pen"
+                            style="font-size: 0.8rem; color: #94a3b8; cursor: pointer; padding: 4px;"
+                            onclick="updateMonthlyTarget()" title="Edit Target"></i>
+                    </h4>
+                    <div id="goalTrackerContent"
+                        style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem;">
+                            <span id="goalCurrentText" style="font-weight: 600;">₹0</span>
+                            <span id="goalTargetText" style="font-weight: 700; color: #6366f1;">Target: ₹1,00,000</span>
+                        </div>
+                        <div
+                            style="width: 100%; height: 14px; background: #f1f5f9; border-radius: 50px; overflow: hidden; margin-bottom: 16px;">
+                            <div id="goalProgressBar"
+                                style="width: 0%; height: 100%; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); transition: width 1s ease-out;">
+                            </div>
+                        </div>
+                        <p id="goalInsight" style="font-size: 0.85rem; color: #64748b; line-height: 1.5;"></p>
+                    </div>
+                </div>
+
+                <!-- Point 2: Top Products -->
+                <div class="card" style="padding: 24px; min-height: 280px; display: flex; flex-direction: column;">
+                    <h4
+                        style="font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
+                        <span style="display: flex; align-items: center; gap: 8px;">🏆 Top Performing Items</span>
+                        <div class="custom-popover-wrapper">
+                            <i class="fa-solid fa-circle-info"
+                                style="font-size: 0.85rem; color: #6366f1; cursor: pointer; padding: 4px;"
+                                onclick="toggleTopProductsPopover(event)" title="About Rankings"></i>
+
+                            <div id="topProductsPopover" class="custom-popover"
+                                style="border-color: rgba(99, 102, 241, 0.2);">
+                                <div class="popover-arrow"
+                                    style="border-left-color: rgba(99, 102, 241, 0.2); border-top-color: rgba(99, 102, 241, 0.2);">
+                                </div>
+                                <h4 style="color: #4f46e5;">📈 Product Insights</h4>
+                                <p>These are your <strong>Top 3</strong> revenue generators. We calculate this based on
+                                    your finalized invoices to show you exactly what's driving your business success!
+                                </p>
+                                <button onclick="toggleTopProductsPopover(event)" class="popover-btn"
+                                    style="background: #6366f1;">Understood</button>
+                            </div>
+                        </div>
+                    </h4>
+                    <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 20px;">Top 3 revenue contributors.</p>
+                    <div id="topProductsList"
+                        style="display: flex; flex-direction: column; gap: 12px; flex: 1; justify-content: flex-start;">
+                        <!-- JS populated -->
+                    </div>
+                </div>
+
+                <!-- Point 1: Low Stock Alarm -->
+                <div class="card"
+                    style="padding: 24px; border-left: 4px solid #f43f5e; position: relative; min-height: 280px; display: flex; flex-direction: column;">
+                    <h4
+                        style="font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; color: #e11d48;">
+                        <span style="display: flex; align-items: center; gap: 8px;">🚨 Inventory Alerts</span>
+                        <div class="custom-popover-wrapper">
+                            <i class="fa-solid fa-circle-info"
+                                style="font-size: 0.85rem; color: #f43f5e; cursor: pointer; padding: 4px;"
+                                onclick="toggleInventoryPopover(event)" title="About Alerts"></i>
+
+                            <div id="inventoryPopover" class="custom-popover"
+                                style="border-color: rgba(244, 63, 94, 0.2);">
+                                <div class="popover-arrow"
+                                    style="border-left-color: rgba(244, 63, 94, 0.2); border-top-color: rgba(244, 63, 94, 0.2);">
+                                </div>
+                                <h4 style="color: #e11d48;">🚨 Smart Alerts</h4>
+                                <p>We track your stock in real-time. If a sale drops an item below <strong>10
+                                        units</strong>, it appears here instantly. Items in red are your most urgent
+                                    restocking priorities!</p>
+                                <button onclick="toggleInventoryPopover(event)" class="popover-btn"
+                                    style="background: #e11d48;">Got it!</button>
+                            </div>
+                        </div>
+                    </h4>
+                    <div id="lowStockList" style="display: flex; flex-direction: column; gap: 12px; flex: 1;">
+                        <!-- JS populated -->
+                    </div>
+                </div>
+
+                <!-- Point 4: Overdue/Balance Due Tracker -->
+                <div class="card" style="padding: 24px; min-height: 280px; display: flex; flex-direction: column;">
+                    <h4
+                        style="font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+                        <span style="display: flex; align-items: center; gap: 8px;">⏳ Outstanding Payments</span>
+                        <div class="custom-popover-wrapper">
+                            <i class="fa-solid fa-circle-info"
+                                style="font-size: 0.85rem; color: #f59e0b; cursor: pointer; padding: 4px;"
+                                onclick="toggleOutstandingPopover(event)" title="About Payments"></i>
+
+                            <div id="outstandingPopover" class="custom-popover"
+                                style="border-color: rgba(245, 158, 11, 0.2);">
+                                <div class="popover-arrow"
+                                    style="border-left-color: rgba(245, 158, 11, 0.2); border-top-color: rgba(245, 158, 11, 0.2);">
+                                </div>
+                                <h4 style="color: #d97706;">💰 Cash Flow Tracker</h4>
+                                <p>These are your <strong>'Final'</strong> invoices with a pending balance. Keeping this
+                                    list empty means better cash flow for your business!</p>
+                                <button onclick="toggleOutstandingPopover(event)" class="popover-btn"
+                                    style="background: #f59e0b;">Understood</button>
+                            </div>
+                        </div>
+                    </h4>
+                    <div id="overdueList" style="display: flex; flex-direction: column; gap: 12px; flex: 1;">
+                        <!-- JS populated -->
+                    </div>
+                </div>
+
+                <!-- Point 5: Draft Shortcuts -->
+                <div class="card"
+                    style="padding: 24px; background: #fffcf0; position: relative; min-height: 280px; display: flex; flex-direction: column;">
+                    <h4
+                        style="font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+                        <span style="display: flex; align-items: center; gap: 8px;">📝 Quick Draft Actions</span>
+                        <div class="custom-popover-wrapper">
+                            <i class="fa-solid fa-circle-info"
+                                style="font-size: 0.85rem; color: #f59e0b; cursor: pointer; padding: 4px;"
+                                onclick="toggleDraftPopover(event)" title="About Drafts"></i>
+
+                            <div id="draftPopover" class="custom-popover">
+                                <div class="popover-arrow"></div>
+                                <h4>💡 Quick Tip</h4>
+                                <p>Hey! These are your works-in-progress. Instead of starting from scratch, use
+                                    <strong>'Finalize'</strong> to jump back into any draft. We've saved all your items
+                                    and client info so you can finish the bill in seconds!
+                                </p>
+                                <button onclick="toggleDraftPopover(event)" class="popover-btn">Understood</button>
+                            </div>
+                        </div>
+                    </h4>
+                    <div id="draftShortcutsList" style="display: flex; flex-direction: column; gap: 12px; flex: 1;">
+                        <!-- JS populated -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <div th:if="${userRole == 'CLIENT'}">
             <h2 class="section-title">🚀 Create New Bill</h2>
             <div class="billing-types">
@@ -388,48 +938,28 @@
 
         <!-- Bottom Sections -->
         <div class="bottom-sections">
-            <!-- Elite Clients Section (Admin Only) -->
+            <!-- Top Performing Merchants Section (Admin Only) -->
             <div class="card" th:if="${userRole == 'ADMIN'}"
                 style="background: linear-gradient(to right, #ffffff, #f0f9ff);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="font-weight: 800;">🏆 Elite Clients</h3>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                            🏆 Top Performing Merchants
+                            <i class="fa-solid fa-circle-info"
+                                style="font-size: 0.85rem; color: #94a3b8; cursor: pointer;"
+                                onclick="toggleInfoModal()"></i>
+                        </h3>
+                        <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Top performing businesses based
+                            on total finalized revenue.</p>
+                    </div>
                     <a href="/billing-app/api/ManageClients"
-                        style="font-size: 0.8rem; color: var(--primary); font-weight: 700; text-decoration: none;">View
+                        style="font-size: 0.8rem; color: var(--primary); font-weight: 700; text-decoration: none; margin-top: 4px;">View
                         All Clients →</a>
                 </div>
-                <div class="client-grid">
-                    <div class="client-item" style="background: white; padding: 20px; border: 1px solid var(--border);">
-                        <div class="avatar" style="background: #e0f2fe; color: #0369a1; width: 44px; height: 44px;">TS
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 1rem; font-weight: 800;">TechSoft Systems</div>
-                            <div style="font-size: 0.8rem; color: #64748b;">₹4.2L Revenue</div>
-                        </div>
-                        <div
-                            style="background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 800;">
-                            ★ 4.9</div>
-                    </div>
-                    <div class="client-item" style="background: white; padding: 20px; border: 1px solid var(--border);">
-                        <div class="avatar" style="background: #fef2f2; color: #991b1b; width: 44px; height: 44px;">GP
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 1rem; font-weight: 800;">Global Pharma</div>
-                            <div style="font-size: 0.8rem; color: #64748b;">₹2.8L Revenue</div>
-                        </div>
-                        <div
-                            style="background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 800;">
-                            ★ 4.8</div>
-                    </div>
-                    <div class="client-item" style="background: white; padding: 20px; border: 1px solid var(--border);">
-                        <div class="avatar" style="background: #ecfdf5; color: #065f46; width: 44px; height: 44px;">RN
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 1rem; font-weight: 800;">Retail Nation</div>
-                            <div style="font-size: 0.8rem; color: #64748b;">₹1.5L Revenue</div>
-                        </div>
-                        <div
-                            style="background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 800;">
-                            ★ 4.7</div>
+                <div class="client-grid" id="eliteClientsGrid">
+                    <!-- Populated via JS for Admin -->
+                    <div style="text-align:center; width:100%; color:#64748b; padding:20px;">Computing top performers...
                     </div>
                 </div>
             </div>
@@ -437,59 +967,887 @@
             <!-- Recent Invoices Full Width -->
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="font-weight: 800;">📜 Recent Requests</h3>
+                    <h3 style="font-weight: 800;" id="recentSectionTitle">📜 Recent Activity</h3>
                     <div style="display: flex; gap: 10px;">
-                        <input type="text" placeholder="Search invoice..."
-                            style="padding: 6px 15px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.8rem; width: 200px;">
-                        <button class="status paid" style="border: none; cursor: pointer;">Download All</button>
+                        <input type="text" id="invoiceSearch" placeholder="Search invoices..."
+                            onkeyup="filterInvoices()"
+                            style="padding: 6px 15px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.8rem; width: 220px;">
+                        <select id="statusFilter" onchange="filterInvoices()"
+                            style="padding: 6px 15px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.8rem; outline: none; background: white; cursor: pointer;">
+                            <option value="">All Status</option>
+                            <option value="FINAL">Final/Paid</option>
+                            <option value="DRAFT">Draft/Pending</option>
+                        </select>
                     </div>
                 </div>
                 <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Request</th>
-                                <th>Type</th>
-                                <th>Client</th>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
+                    <table id="recentInvoicesTable">
+                        <thead id="recentInvoicesHeader">
+                            <!-- Headers populated by JS -->
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td style="font-weight: 700;">#INV-2026-001</td>
-                                <td><span
-                                        style="font-size: 0.7rem; padding: 2px 8px; background: #eef2ff; color: var(--primary); border-radius: 4px; font-weight: 700;">SERVICE</span>
-                                </td>
-                                <td>ABC Tech Solutions</td>
-                                <td>Feb 21, 2026</td>
-                                <td>₹45,000.00</td>
-                                <td><span class="status paid">Paid</span></td>
-                                <td><a href="#"
-                                        style="text-decoration:none; color:var(--primary); font-weight:700; font-size:0.8rem; border:1px solid var(--primary); padding:4px 12px; border-radius:6px;">View
-                                        Bill</a></td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: 700;">#INV-2026-002</td>
-                                <td><span
-                                        style="font-size: 0.7rem; padding: 2px 8px; background: #eef2ff; color: var(--primary); border-radius: 4px; font-weight: 700;">PRODUCT</span>
-                                </td>
-                                <td>Global Pharma Ltd</td>
-                                <td>Feb 20, 2026</td>
-                                <td>₹12,400.00</td>
-                                <td><span class="status pending">Pending</span></td>
-                                <td><a href="#"
-                                        style="text-decoration:none; color:var(--primary); font-weight:700; font-size:0.8rem; border:1px solid var(--primary); padding:4px 12px; border-radius:6px;">View
-                                        Bill</a></td>
-                            </tr>
+                        <tbody id="recentInvoicesBody">
+                            <!-- Items populated by JS -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+
     </div>
+
+    <!-- Review Request Modal (Admin Only) - Shared with Requests Page -->
+    <div id="reviewModal" class="modal-overlay" onclick="closeReviewModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeReviewModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header">
+                <div id="modalLogo" class="modal-logo">U</div>
+                <h2 id="modalIdTitle">Reviewing Request</h2>
+            </div>
+            <div class="info-grid">
+                <div class="info-block">
+                    <label>Full Name</label>
+                    <p id="mFullName">-</p>
+                </div>
+                <div class="info-block">
+                    <label>Designation</label>
+                    <p id="mDesignation">-</p>
+                </div>
+                <div class="info-block">
+                    <label>Company Name</label>
+                    <p id="mCompanyName">-</p>
+                </div>
+                <div class="info-block">
+                    <label>Industry Type</label>
+                    <p id="mCompanyType">-</p>
+                </div>
+                <div class="info-block">
+                    <label>Email Address</label>
+                    <p id="mEmail">-</p>
+                </div>
+                <div class="info-block">
+                    <label>Mobile Number</label>
+                    <p id="mMobile">-</p>
+                </div>
+                <div class="info-block">
+                    <label>Date Requested</label>
+                    <p id="mDate">-</p>
+                </div>
+                <div class="info-block">
+                    <label>System Role</label>
+                    <p>CLIENT (Standard)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal (Elite Clients Insight) -->
+    <div class="modal-overlay" id="infoModalOverlay" onclick="closeInfoModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="toggleInfoModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header">
+                <div class="modal-logo">🏆</div>
+                <h2 style="font-weight: 800; font-size: 1.25rem; margin: 0;">Top Performing Merchants Insight</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 4px 0 0 0;">Ranking Logic & Transparency
+                </p>
+            </div>
+            <div style="color: #475569; font-size: 0.95rem; line-height: 1.6;">
+                <p>This leaderboard honors the <strong>Top 3 businesses</strong> on the platform. Rankings are
+                    calculated live based on:</p>
+                <div style="margin: 20px 0; display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <i class="fa-solid fa-bolt" style="color: #6366f1; margin-top: 4px;"></i>
+                        <span><strong>Revenue Aggregation:</strong> Only 100% finalized bills contribute to a client's
+                            total wallet.</span>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <i class="fa-solid fa-sync" style="color: #10b981; margin-top: 4px;"></i>
+                        <span><strong>Real-time Updates:</strong> Leaderboard positions shift instantly as new bills are
+                            generated.</span>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <i class="fa-solid fa-shield-halved" style="color: #f59e0b; margin-top: 4px;"></i>
+                        <span><strong>Verified Data:</strong> Calculations are server-side and tamper-proof.</span>
+                    </div>
+                </div>
+                <div
+                    style="background: #f8fafc; padding: 14px; border-radius: 16px; font-size: 0.85rem; border: 1px solid #e2e8f0; color: #64748b;">
+                    💡 <em>Note: Draft quotations and pending payments do not affect Elite status until fully
+                        finalized.</em>
+                </div>
+            </div>
+            <button onclick="toggleInfoModal()"
+                style="width: 100%; margin-top: 28px; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: transform 0.2s;"
+                onmouseover="this.style.transform='scale(1.02)'"
+                onmouseout="this.style.transform='scale(1)'">Understood, Thanks!</button>
+        </div>
+    </div>
+
+    <!-- Floating Action Button for ADMIN -->
+    <div th:if="${userRole == 'ADMIN'}">
+        <div class="broadcast-fab" id="broadcastFab" onclick="toggleBroadcastPopup()">
+            <i class="fa-solid fa-bullhorn"></i>
+        </div>
+
+        <div class="broadcast-popup" id="broadcastPopup">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>🔔 System Announcement</h3>
+                <i class="fa-solid fa-xmark" style="cursor: pointer; color: #94a3b8;"
+                    onclick="toggleBroadcastPopup()"></i>
+            </div>
+            <p style="font-size: 0.8rem; color: #64748b; margin: 0;">Broadcast a message to all live client dashboards.
+            </p>
+            <textarea id="broadcastInput" placeholder="Enter message (e.g., Maintenance at 11 PM)..."
+                style="width: 100%; height: 100px; padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0; font-size: 0.9rem; resize: none; outline: none;"></textarea>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="postBroadcast()" class="bill-type-btn"
+                    style="flex: 2; padding: 12px; background: var(--primary); border: none; border-radius: 12px; color: white; cursor: pointer; font-weight: 700;">Publish
+                    Now</button>
+                <button onclick="clearBroadcast()"
+                    style="flex: 1; padding: 12px; background: #f1f5f9; color: #475569; border: none; border-radius: 12px; cursor: pointer; font-weight: 600;">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const userRole = /*[[${userRole}]]*/ 'CLIENT';
+
+        function toggleBroadcastPopup() {
+            const popup = document.getElementById('broadcastPopup');
+            popup.classList.toggle('active');
+            if (popup.classList.contains('active')) {
+                document.getElementById('broadcastInput').focus();
+            }
+        }
+
+        function toggleInfoModal() {
+            const modal = document.getElementById('infoModalOverlay');
+            modal.classList.toggle('active');
+        }
+
+        function closeInfoModal(e) {
+            if (e.target.id === 'infoModalOverlay') {
+                toggleInfoModal();
+            }
+        }
+
+        function toggleTopProductsPopover(e) {
+            if (e) e.stopPropagation();
+            const popover = document.getElementById('topProductsPopover');
+            popover.classList.toggle('active');
+        }
+
+        function toggleDraftPopover(e) {
+            if (e) e.stopPropagation();
+            const popover = document.getElementById('draftPopover');
+            popover.classList.toggle('active');
+        }
+
+        function toggleInventoryPopover(e) {
+            if (e) e.stopPropagation();
+            const popover = document.getElementById('inventoryPopover');
+            popover.classList.toggle('active');
+        }
+
+        function toggleOutstandingPopover(e) {
+            if (e) e.stopPropagation();
+            const popover = document.getElementById('outstandingPopover');
+            popover.classList.toggle('active');
+        }
+
+        // Close popovers when clicking outside
+        document.addEventListener('click', function (e) {
+            const topProductsPopover = document.getElementById('topProductsPopover');
+            const draftPopover = document.getElementById('draftPopover');
+            const invPopover = document.getElementById('inventoryPopover');
+            const outPopover = document.getElementById('outstandingPopover');
+            const infoBtn = e.target.closest('.fa-circle-info');
+
+            if (topProductsPopover && topProductsPopover.classList.contains('active') && !topProductsPopover.contains(e.target) && !infoBtn) {
+                topProductsPopover.classList.remove('active');
+            }
+            if (draftPopover && draftPopover.classList.contains('active') && !draftPopover.contains(e.target) && !infoBtn) {
+                draftPopover.classList.remove('active');
+            }
+            if (invPopover && invPopover.classList.contains('active') && !invPopover.contains(e.target) && !infoBtn) {
+                invPopover.classList.remove('active');
+            }
+            if (outPopover && outPopover.classList.contains('active') && !outPopover.contains(e.target) && !infoBtn) {
+                outPopover.classList.remove('active');
+            }
+        });
+
+        async function initDashboard() {
+            try {
+                const response = await fetch('/billing-app/api/dashboard/stats');
+                const data = await response.json();
+
+                renderBroadcast(data.broadcastMessage);
+                renderStats(data);
+                if (userRole === 'ADMIN') {
+                    renderEliteClients(data.eliteClients);
+                    renderPendingRequests(data.latestPendingRequests);
+                } else {
+                    renderClientInsights(data);
+                }
+                renderRecentInvoices(data.recentInvoices);
+                renderCharts(data);
+            } catch (error) {
+                console.error("Dashboard Load Error:", error);
+            }
+        }
+
+        function renderBroadcast(msg) {
+            const banner = document.getElementById('broadcastBanner');
+            const text = document.getElementById('broadcastText');
+            // Do not show banner to Admins, even if active
+            if (userRole === 'ADMIN') {
+                banner.style.display = 'none';
+                return;
+            }
+            if (msg && sessionStorage.getItem('dismissedBroadcast') !== msg) {
+                banner.style.display = 'flex';
+                text.innerText = msg;
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        function dismissBroadcast() {
+            const text = document.getElementById('broadcastText').innerText;
+            sessionStorage.setItem('dismissedBroadcast', text);
+            document.getElementById('broadcastBanner').style.display = 'none';
+        }
+
+        async function postBroadcast() {
+            const msg = document.getElementById('broadcastInput').value;
+            if (!msg) return alert("Please type a message first.");
+
+            const res = await fetch('/billing-app/api/dashboard/broadcast', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg })
+            });
+            if (res.ok) {
+                alert("Broadcast posted! It will appear on all client dashboards.");
+                location.reload();
+            }
+        }
+
+        async function clearBroadcast() {
+            const res = await fetch('/billing-app/api/dashboard/broadcast', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: "" })
+            });
+            if (res.ok) {
+                alert("Broadcast cleared.");
+                location.reload();
+            }
+        }
+
+        function renderPendingRequests(requests) {
+            const list = document.getElementById('latestPendingList');
+            if (!list) return;
+            if (!requests || requests.length === 0) {
+                list.innerHTML = `
+                    <div class="premium-empty-state" style="padding: 20px 10px;">
+                        <i class="fa-solid fa-circle-check" style="color: #10b981; background: #ecfdf5; width: 60px; height: 60px; font-size: 2rem;"></i>
+                        <h3>Queue is Clear!</h3>
+                        <p>No registration requests waiting for approval.</p>
+                    </div>
+                `;
+                return;
+            }
+            list.innerHTML = requests.map(r => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: white; border: 1px solid #f1f5f9; border-radius: 12px; transition: all 0.2s;">
+                    <div style="flex: 1;">
+                        <div style="font-weight:700; font-size:0.9rem; color: #1e293b;">${r.fullName}</div>
+                        <div style="font-size:0.75rem; color:#64748b;">${r.companyName} • ${r.requestDate}</div>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button onclick="openReviewModal(${r.id})" title="View Detail" style="background: #f1f5f9; color: #475569; border: none; padding: 8px; border-radius: 8px; cursor: pointer;"><i class="fa-solid fa-eye"></i></button>
+                        <button onclick="approveUser(${r.id})" title="Approve" style="background: #ecfdf5; color: #10b981; border: none; padding: 8px; border-radius: 8px; cursor: pointer;"><i class="fa-solid fa-check"></i></button>
+                        <button onclick="rejectUser(${r.id})" title="Reject" style="background: #fff1f2; color: #e11d48; border: none; padding: 8px; border-radius: 8px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        let pendingRequestsCache = []; // To store full data for modal
+
+        async function openReviewModal(id) {
+            const modal = document.getElementById('reviewModal');
+            modal.style.display = 'flex';
+
+            // Set Loading
+            document.getElementById('mFullName').innerText = 'Loading...';
+            document.getElementById('mEmail').innerText = '...';
+
+            try {
+                // Fetch full pending list to get all details
+                if (pendingRequestsCache.length === 0) {
+                    const res = await fetch('/billing-app/api/admin/pending-requests');
+                    pendingRequestsCache = await res.json();
+                }
+
+                const req = pendingRequestsCache.find(r => r.id == id);
+                if (req) {
+                    const logo = document.getElementById('modalLogo');
+                    if (req.clientImage) {
+                        logo.style.backgroundImage = `url(${req.clientImage})`;
+                        logo.style.backgroundSize = 'cover';
+                        logo.style.backgroundPosition = 'center';
+                        logo.innerText = '';
+                    } else {
+                        logo.style.backgroundImage = 'none';
+                        logo.innerText = req.fullName.charAt(0);
+                    }
+
+                    document.getElementById('modalIdTitle').innerText = 'Request #' + req.id;
+                    document.getElementById('mFullName').innerText = req.fullName;
+                    document.getElementById('mEmail').innerText = req.email;
+                    document.getElementById('mCompanyName').innerText = req.companyName;
+                    document.getElementById('mCompanyType').innerText = req.companyType || 'Standard Business';
+                    document.getElementById('mMobile').innerText = req.mobileNumber;
+                    document.getElementById('mDesignation').innerText = req.designation || 'N/A';
+                    document.getElementById('mDate').innerText = req.createdAt ? new Date(req.createdAt).toLocaleString() : 'N/A';
+                }
+            } catch (error) {
+                console.error("Modal Data Fetch Error:", error);
+            }
+        }
+
+        function closeReviewModal(e) {
+            if (!e || e.target.id === 'reviewModal' || e.target.closest('.close-modal')) {
+                document.getElementById('reviewModal').style.display = 'none';
+            }
+        }
+
+        async function approveUser(id) {
+            if (!confirm("Are you sure you want to approve this registration?")) return;
+            try {
+                const res = await fetch(`/billing-app/api/admin/approve/${id}`, { method: 'POST' });
+                if (res.ok) {
+                    alert("User approved successfully!");
+                    initDashboard(); // Refresh data
+                } else {
+                    alert("Failed to approve user.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("An error occurred.");
+            }
+        }
+
+        async function rejectUser(id) {
+            if (!confirm("Are you sure you want to REJECT this registration?")) return;
+            try {
+                const res = await fetch(`/billing-app/api/admin/reject/${id}`, { method: 'POST' });
+                if (res.ok) {
+                    alert("User request rejected.");
+                    initDashboard(); // Refresh data
+                } else {
+                    alert("Failed to reject user.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("An error occurred.");
+            }
+        }
+
+        function renderClientInsights(data) {
+            // Point 3: Sales Goal Tracker
+            const current = data.currentMonthRevenue || 0;
+            const target = data.monthlyTarget || 100000;
+            const percentage = Math.min(100, Math.round((current / target) * 100));
+
+            document.getElementById('goalCurrentText').innerText = `₹${current.toLocaleString('en-IN')}`;
+            document.getElementById('goalTargetText').innerText = `Target: ₹${target.toLocaleString('en-IN')}`;
+            document.getElementById('goalProgressBar').style.width = percentage + '%';
+            document.getElementById('goalInsight').innerText = percentage >= 100
+                ? "🎉 Amazing! You've surpassed your monthly target."
+                : `You are at ${percentage}% of your monthly goal. Keep growing!`;
+
+            // Store current target for quick edit reference
+            window.currentMonthlyTarget = target;
+
+            // Point 2: Top Products
+            const topProductsList = document.getElementById('topProductsList');
+            if (data.topProducts && data.topProducts.length > 0) {
+                topProductsList.innerHTML = data.topProducts.map(p => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9;">
+                        <span style="font-weight: 600; font-size: 0.9rem;">${p.itemName}</span>
+                        <span style="color: #6366f1; font-weight: 800; font-size: 0.85rem;">₹${p.revenue.toLocaleString('en-IN')}</span>
+                    </div>
+                `).join('');
+            } else {
+                topProductsList.innerHTML = `
+                    <div class="premium-empty-state" style="height: 100%; padding: 20px 0;">
+                        <i class="fa-solid fa-chart-line" style="width: 60px; height: 60px; font-size: 1.8rem;"></i>
+                        <h3>No Sales Yet</h3>
+                        <p>Generate some bills to see your top performing items here.</p>
+                    </div>
+                `;
+            }
+
+            // Point 1: Low Stock Alerts
+            const lowStockList = document.getElementById('lowStockList');
+            if (data.lowStockAlerts && data.lowStockAlerts.length > 0) {
+                lowStockList.innerHTML = data.lowStockAlerts.map(s => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #fff1f2; border-radius: 8px;">
+                        <span style="font-weight: 600; font-size: 0.85rem;">${s.itemName}</span>
+                        <span style="background: #e11d48; color: white; padding: 2px 8px; border-radius: 50px; font-size: 0.7rem; font-weight: 800;">Qty: ${s.currentStock}</span>
+                    </div>
+                `).join('');
+            } else {
+                lowStockList.innerHTML = `
+                    <div class="premium-empty-state" style="height: 100%; padding: 20px 0;">
+                        <i class="fa-solid fa-circle-check" style="color: #10b981; background: #ecfdf5; width: 60px; height: 60px; font-size: 1.8rem;"></i>
+                        <h3>Stock is Full</h3>
+                        <p>All items are well above the low stock threshold.</p>
+                    </div>
+                `;
+            }
+
+            // Point 4: Overdue/Balance Tracker
+            const overdueList = document.getElementById('overdueList');
+            if (data.overdueBills && data.overdueBills.length > 0) {
+                overdueList.innerHTML = data.overdueBills.map(b => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fffbeb; border-radius: 10px; border: 1px solid #fef3c7;">
+                        <div style="font-size: 0.85rem; cursor: pointer;" onclick="location.href='/billing-app/api/GenerateBill?invoice=${b.invoiceNumber}'">
+                            <span style="font-weight: 800; color: #d97706;">#${b.invoiceNumber}</span>
+                            <div style="font-size: 0.75rem; color: #92400e; font-weight: 500;">${b.recipientName}</div>
+                        </div>
+                        <span style="background: #f59e0b; color: white; padding: 4px 10px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);">
+                            ₹${b.amount.toLocaleString('en-IN')}
+                        </span>
+                    </div>
+                `).join('');
+            } else {
+                overdueList.innerHTML = `
+                    <div class="premium-empty-state" style="height: 100%; padding: 20px 0;">
+                        <i class="fa-solid fa-hand-holding-dollar" style="color: #f59e0b; background: #fffbeb; width: 60px; height: 60px; font-size: 1.8rem;"></i>
+                        <h3>All Settled</h3>
+                        <p>Great job! You have no outstanding payments to track.</p>
+                    </div>
+                `;
+            }
+
+            // Point 5: Draft Shortcuts
+            const draftShortcutsList = document.getElementById('draftShortcutsList');
+            if (data.draftShortcuts && data.draftShortcuts.length > 0) {
+                draftShortcutsList.innerHTML = data.draftShortcuts.map(b => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fffbeb; border-radius: 10px; border: 1px solid #fef3c7;">
+                        <div style="font-size: 0.8rem;">
+                            <span style="font-weight: 700;">#${b.invoiceNumber}</span>
+                            <div style="font-size: 0.7rem; color: #92400e;">${b.recipientName}</div>
+                        </div>
+                        <a href="/billing-app/api/GenerateBill?id=${b.id}" style="text-decoration: none; background: #f59e0b; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 700;">Finalize →</a>
+                    </div>
+                `).join('');
+            } else {
+                draftShortcutsList.innerHTML = `
+                    <div class="premium-empty-state" style="height: 100%; padding: 20px 0;">
+                        <i class="fa-solid fa-file-circle-check" style="width: 60px; height: 60px; font-size: 1.8rem;"></i>
+                        <h3>No Drafts</h3>
+                        <p>Your workspace is clean. No pending drafts to finalize.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function updateMonthlyTarget() {
+            const newTarget = prompt("Enter your new Monthly Sales Target (₹):", window.currentMonthlyTarget);
+            if (newTarget === null || newTarget === "" || isNaN(newTarget)) return;
+
+            try {
+                const res = await fetch('/billing-app/api/update-profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        monthlyTarget: newTarget
+                    })
+                });
+
+                if (res.ok) {
+                    alert("Target updated successfully!");
+                    initDashboard(); // Refresh data
+                } else {
+                    alert("Failed to update target.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("An error occurred.");
+            }
+        }
+
+        function renderStats(data) {
+            const grid = document.getElementById('statsGrid');
+            if (userRole === 'ADMIN') {
+                grid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background: #eef2ff; color: #6366f1;">
+                                <i class="fa-solid fa-sack-dollar"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">₹${data.globalRevenue.toLocaleString('en-IN')}</div>
+                        <div class="stat-label">Global Revenue</div>
+                        <div class="trend" style="color: #6366f1;">
+                            <i class="fa-solid fa-arrow-trend-up"></i> Collected
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background: #ecfdf5; color: #10b981;">
+                                <i class="fa-solid fa-users-gear"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">${data.totalClientsCount}</div>
+                        <div class="stat-label">Active Business Partners</div>
+                        <div class="trend" style="color: #10b981;">
+                            <i class="fa-solid fa-circle-check"></i> Verified
+                        </div>
+                    </div>
+                    <div class="stat-card" style="cursor:pointer;" onclick="location.href='/billing-app/api/ManageAccessRequests'">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background: #fff1f2; color: #e11d48;">
+                                <i class="fa-solid fa-id-card-clip"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">${data.pendingRequestsCount}</div>
+                        <div class="stat-label">Pending Access Requests</div>
+                        <div class="trend" style="color: #e11d48;">
+                            Action Required <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
+                        </div>
+                    </div>
+                `;
+            } else {
+                grid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background: #eef2ff; color: #6366f1;">
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">₹${data.totalRevenue.toLocaleString('en-IN')}</div>
+                        <div class="stat-label">Total Earnings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background: #ecfdf5; color: #10b981;">
+                                <i class="fa-solid fa-file-invoice"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">${data.pendingQuotations}</div>
+                        <div class="stat-label">Draft Quotations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background: #fffbeb; color: #f59e0b;">
+                                <i class="fa-solid fa-hourglass-start"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">₹${data.balanceDue.toLocaleString('en-IN')}</div>
+                        <div class="stat-label">Unpaid Balance</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background: #f1f5f9; color: #64748b;">
+                                <i class="fa-solid fa-receipt"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">${data.totalInvoices}</div>
+                        <div class="stat-label">Lifetime Invoices</div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderEliteClients(clients) {
+            const grid = document.getElementById('eliteClientsGrid');
+            if (!grid) return;
+            if (!clients || clients.length === 0) {
+                grid.innerHTML = `
+                    <div class="premium-empty-state" style="grid-column: 1 / -1;">
+                        <i class="fa-solid fa-users-slash"></i>
+                        <h3>No Elite Clients</h3>
+                        <p>Detailed performance stats will appear here as businesses generate finalized bills.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = clients.map(c => `
+                <div class="client-item" style="background: white; padding: 20px; border: 1px solid var(--border);">
+                    <div class="avatar" style="width: 44px; height: 44px; font-weight:800; ${c.image ? `background-image: url(${c.image}); background-size: cover;` : 'background: #eef2ff; color: #6366f1;'}">
+                        ${!c.image ? c.clientName.substring(0, 1).toUpperCase() : ''}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 1rem; font-weight: 800;">${c.companyName || c.clientName}</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">₹${c.totalRevenue.toLocaleString('en-IN')} Revenue</div>
+                    </div>
+                    <div style="background: #f0fdf4; color: #16a34a; padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 800;">
+                        ACTIVE
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRecentInvoices(invoices) {
+            const tableBody = document.getElementById('recentInvoicesBody');
+            const tableHeader = document.getElementById('recentInvoicesHeader');
+            const sectionTitle = document.getElementById('recentSectionTitle');
+
+            // Set Role Based Title
+            sectionTitle.innerHTML = userRole === 'ADMIN' ? '📜 Real-Time Billing Logs' : '📜 Your Recent Invoices';
+
+            // Set Role Based Headers
+            if (userRole === 'ADMIN') {
+                tableHeader.innerHTML = `
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Business</th>
+                        <th>Recipient</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                `;
+            } else {
+                tableHeader.innerHTML = `
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Recipient</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                `;
+            }
+
+            if (!invoices || invoices.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="${userRole === 'ADMIN' ? 7 : 6}">
+                            <div class="premium-empty-state" style="padding: 60px 0;">
+                                <i class="fa-solid fa-receipt"></i>
+                                <h3>No Recent Activity</h3>
+                                <p>Invoices and billing logs will appear here once transactions start occurring.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = invoices.map(inv => {
+                const businessCol = userRole === 'ADMIN' ? `<td><span style="font-weight:600; color:var(--primary);">${inv.businessName}</span></td>` : '';
+                return `
+                    <tr>
+                        <td style="font-weight: 700;">#${inv.invoiceNumber}</td>
+                        ${businessCol}
+                        <td>${inv.recipientName}</td>
+                        <td>${inv.date}</td>
+                        <td style="font-weight:600;">₹${inv.amount.toLocaleString('en-IN')}</td>
+                        <td><span class="status ${inv.status === 'FINAL' ? 'paid' : 'pending'}">${inv.status}</span></td>
+                        <td><a href="/billing-app/api/Reports/BillDetail/${inv.id}" style="text-decoration:none; color:var(--primary); font-weight:700;">View</a></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterInvoices() {
+            const input = document.getElementById("invoiceSearch");
+            const filter = input.value.toUpperCase();
+            const statusFilter = document.getElementById("statusFilter").value.toUpperCase();
+            const table = document.getElementById("recentInvoicesTable");
+            const tr = table.getElementsByTagName("tr");
+
+            // Status is at different columns based on role
+            const statusIdx = userRole === 'ADMIN' ? 5 : 4;
+
+            for (let i = 1; i < tr.length; i++) {
+                let textMatch = false;
+                let statusMatch = false;
+                const tds = tr[i].getElementsByTagName("td");
+
+                // 1. Check Text Search Match (Across all columns)
+                if (filter === "") {
+                    textMatch = true;
+                } else {
+                    for (let j = 0; j < tds.length; j++) {
+                        if (tds[j]) {
+                            const txtValue = tds[j].textContent || tds[j].innerText;
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                textMatch = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // 2. Check Status Match
+                const rowStatus = tds[statusIdx] ? (tds[statusIdx].textContent || tds[statusIdx].innerText).toUpperCase() : "";
+                if (statusFilter === "" || rowStatus.indexOf(statusFilter) > -1) {
+                    statusMatch = true;
+                }
+
+                // Show row only if both match
+                tr[i].style.display = (textMatch && statusMatch) ? "" : "none";
+            }
+        }
+
+        function renderCharts(data) {
+            // Helper for empty states in charts
+            const showChartFallback = (canvasId, icon, title, text) => {
+                const canvas = document.getElementById(canvasId);
+                const parent = canvas.parentElement;
+                canvas.style.display = 'none';
+                parent.innerHTML = `
+                    <div class="premium-empty-state" style="padding: 20px 0; height: 100%;">
+                        <i class="fa-solid ${icon}" style="width: 60px; height: 60px; font-size: 1.8rem;"></i>
+                        <h3 style="font-size: 1rem;">${title}</h3>
+                        <p style="font-size: 0.8rem;">${text}</p>
+                    </div>
+                `;
+            };
+
+            // 1. Performance / Growth Chart
+            const hasMonthlyData = data.monthlyRevenue && data.monthlyRevenue.length > 0;
+            if (hasMonthlyData) {
+                const perfCtx = document.getElementById('performanceChart').getContext('2d');
+                new Chart(perfCtx, {
+                    type: 'line',
+                    data: {
+                        labels: data.monthlyRevenue.map(m => m.month),
+                        datasets: [{
+                            label: 'Revenue (₹)',
+                            data: data.monthlyRevenue.map(m => m.revenue),
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#6366f1'
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { font: { size: 10 }, callback: value => '₹' + value.toLocaleString('en-IN') }
+                            },
+                            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                        }
+                    }
+                });
+            } else {
+                showChartFallback('performanceChart', 'fa-chart-line', 'No Trend Data', 'Growth insights will appear as you generate monthly revenue.');
+            }
+
+            // 2. Distribution Chart
+            const distCtx = document.getElementById('distributionChart').getContext('2d');
+            if (userRole === 'ADMIN') {
+                const hasCategories = data.topCategories && data.topCategories.length > 0;
+                if (hasCategories) {
+                    new Chart(distCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.topCategories.map(c => c.categoryName),
+                            datasets: [{
+                                label: 'Revenue (₹)',
+                                data: data.topCategories.map(c => c.value),
+                                backgroundColor: '#6366f1',
+                                borderRadius: 8
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { grid: { display: false }, ticks: { font: { size: 9 } } },
+                                y: { grid: { display: false }, ticks: { font: { size: 9 } } }
+                            }
+                        }
+                    });
+                } else {
+                    showChartFallback('distributionChart', 'fa-chart-pie', 'No Categories', 'Platform-wide category revenue distribution will appear here.');
+                }
+
+                // 3. Admin Efficiency Chart
+                const hasBillingStats = data.globalFinalizedInvoices > 0 || data.globalDraftInvoices > 0;
+                if (hasBillingStats) {
+                    const billCtx = document.getElementById('billStatsChart').getContext('2d');
+                    new Chart(billCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Finalized Invoices', 'Draft Quotations'],
+                            datasets: [{
+                                data: [data.globalFinalizedInvoices, data.globalDraftInvoices],
+                                backgroundColor: ['#10b981', '#f59e0b'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            cutout: '70%',
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: { usePointStyle: true, padding: 15, font: { size: 11 } }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    showChartFallback('billStatsChart', 'fa-file-invoice-dollar', 'No Invoices', 'Global billing efficiency metrics will show once clients start creating bills.');
+                }
+
+            } else {
+                // Client Distribution
+                const hasInventory = data.totalProducts > 0 || data.totalServices > 0;
+                if (hasInventory) {
+                    new Chart(distCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Products', 'Services'],
+                            datasets: [{
+                                data: [data.totalProducts, data.totalServices],
+                                backgroundColor: ['#6366f1', '#10b981'],
+                                borderWidth: 0,
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            cutout: '75%',
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: { usePointStyle: true, padding: 20, font: { size: 11 } }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    showChartFallback('distributionChart', 'fa-chart-pie', 'Inventory Empty', 'Add products or services to see your business distribution.');
+                }
+            }
+        }
+
+        window.onload = initDashboard;
+        /*]]>*/
+    </script>
 </body>
 
 </html>

@@ -858,6 +858,7 @@
                 background-color: #f8fafc !important;
                 color: #1e293b !important;
                 -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
         }
 
@@ -915,8 +916,12 @@
                 <button class="btn-outline" onclick="window.print()">
                     <i class="fa-solid fa-print"></i> Print
                 </button>
-                <button class="btn-primary-action" id="saveBillBtn" onclick="saveBill()">
-                    <i class="fa-solid fa-file-invoice"></i> Save & Generate
+                <button class="btn-outline" id="saveQuotationBtn" onclick="saveBill('DRAFT')"
+                    style="border-color: #6366f1; color: #6366f1;">
+                    <i class="fa-solid fa-file-lines"></i> Save as Quotation
+                </button>
+                <button class="btn-primary-action" id="finalizeBillBtn" onclick="saveBill('FINAL')">
+                    <i class="fa-solid fa-file-circle-check"></i> Finalize Invoice
                 </button>
             </div>
         </div>
@@ -1028,10 +1033,16 @@
                             <!-- Items will be dynamically added here -->
                         </tbody>
                     </table>
-                    <div class="empty-items" id="emptyState">
-                        <i class="fa-solid fa-box-open"></i>
-                        <p>No items added yet</p>
-                        <span class="hint">Search your stock or add items manually</span>
+                    <div class="empty-items" id="emptyState"
+                        style="background: #fcfcfd; border-radius: 16px; border: 1px dashed #e2e8f0; margin-top: 10px; padding: 40px 20px;">
+                        <div
+                            style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <i class="fa-solid fa-cart-plus" style="font-size: 1.5rem; color: #94a3b8;"></i>
+                        </div>
+                        <p style="font-weight: 700; color: #1e293b; font-size: 1rem; margin-bottom: 4px;">No items added
+                            yet</p>
+                        <span class="hint" style="color: #64748b; font-size: 0.85rem;">Search your stock above or add
+                            items manually to start building this invoice</span>
                     </div>
                 </div>
 
@@ -1512,10 +1523,113 @@ For international transfers, please include all beneficiary details and use the 
             // Bind live-update events
             bindLiveUpdates();
 
+            // Load existing bill if invoice parameter exists
+            const urlParams = new URLSearchParams(window.location.search);
+            const editInv = urlParams.get('invoice');
+            if (editInv) {
+                loadBillForEditing(editInv);
+            } else {
+                generateInvoiceNumber();
+            }
+
             // Initial render
             updateBillDisplay();
             renderBankList();
         });
+
+        // ======================== LOAD BILL FOR EDITING ========================
+        async function loadBillForEditing(invoiceNumber) {
+            try {
+                const res = await fetch(`/billing-app/api/getBill/${invoiceNumber}`);
+                if (!res.ok) {
+                    showToast('Could not load bill ' + invoiceNumber, 'error');
+                    generateInvoiceNumber();
+                    return;
+                }
+                const b = await res.json();
+
+                // Populate fields
+                document.getElementById('invoiceNumber').value = b.invoiceNumber;
+                if (b.invoiceDate) document.getElementById('invoiceDate').value = b.invoiceDate;
+                if (b.dueDate) document.getElementById('dueDate').value = b.dueDate;
+
+                // Business Info (often stored in the bill snapshot)
+                const biz = b.businessBillingInfo || {};
+                document.getElementById('fromBusinessName').value = biz.businessName || '';
+                document.getElementById('fromBusinessAddress').value = biz.businessStreetAddress || '';
+                document.getElementById('fromBusinessCity').value = biz.businessCity || '';
+                document.getElementById('fromBusinessState').value = biz.businessState || '';
+                document.getElementById('fromBusinessCountry').value = biz.businessCountry || '';
+                document.getElementById('fromBusinessPin').value = biz.pinCode || '';
+                document.getElementById('fromGSTIN').value = biz.businessGstNumber || '';
+                document.getElementById('fromPhone').value = biz.businessNumber || '';
+                document.getElementById('fromEmail').value = biz.businessEmail || '';
+                document.getElementById('fromContactPerson').value = biz.contactPerson || '';
+                document.getElementById('fromContactPersonPhone').value = biz.contactPersonNumber || '';
+                document.getElementById('fromContactPersonEmail').value = biz.contactPersonEmail || '';
+                document.getElementById('fromBusinessType').value = biz.businessType || '';
+                document.getElementById('fromAdCode').value = biz.adCode || '';
+                document.getElementById('fromIecCode').value = biz.iecCode || '';
+                document.getElementById('fromPanNumber').value = biz.panNumber || '';
+
+                // Bank Details
+                if (biz.bankDetails && biz.bankDetails.length > 0) {
+                    window.__bankDetails = biz.bankDetails.map(entry => {
+                        const [holder, bank, acc, ifsc, br] = entry.split('|');
+                        return { holder, bank, account: acc, ifsc, branch: br };
+                    });
+                    renderBankList();
+                }
+
+                // Recipient Info
+                const rec = b.recipientBillingInfo || {};
+                document.getElementById('toRecipientName').value = rec.recipientName || '';
+                document.getElementById('toRecipientBusinessName').value = rec.recipientBusinessName || '';
+                document.getElementById('toRecipientStreet').value = rec.recipientBusinessStreetAddress || '';
+                document.getElementById('toRecipientCity').value = rec.recipientBusinessCity || '';
+                document.getElementById('toRecipientState').value = rec.recipientBusinessState || '';
+                document.getElementById('toRecipientCountry').value = rec.recipientBusinessCountry || '';
+                document.getElementById('toRecipientPin').value = rec.recipientBusinessPinCode || '';
+                document.getElementById('toGSTIN').value = rec.recipientGstNumber || '';
+                document.getElementById('toPhone').value = rec.recipientMobileNumber || '';
+                document.getElementById('toEmail').value = rec.recipientEmail || '';
+                document.getElementById('toADCode').value = rec.recipientAdCode || '';
+                document.getElementById('toIECCode').value = rec.recipientIecCode || '';
+                document.getElementById('toPANNumber').value = rec.recipientPanNumber || '';
+
+                // Items
+                billItems = (b.billItems || []).map(item => ({
+                    id: nextItemId++,
+                    itemName: item.itemName,
+                    itemDescription: item.itemDescription,
+                    hsnCode: item.hsnCode,
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                    cgstRate: item.cgstRate,
+                    sgstRate: item.sgstRate,
+                    igstRate: item.igstRate,
+                    fromStock: false
+                }));
+                renderItems();
+
+                document.getElementById('advancePaid').value = b.advancedPayment || 0;
+                document.getElementById('billTerms').value = biz.termsAndCondition || '';
+
+                recalculate();
+                updateBillDisplay();
+                showToast('Draft Quotation loaded for editing', 'success');
+
+                // If FINAL, disable the inputs (extra protection)
+                if (b.status === 'FINAL') {
+                    showToast('Warning: This invoice is locked (FINAL).', 'error');
+                    document.getElementById('finalizeBillBtn').disabled = true;
+                    document.getElementById('saveQuotationBtn').disabled = true;
+                }
+
+            } catch (err) {
+                console.error('Failed to load bill', err);
+            }
+        }
 
         // ======================== STOCK LOADING ========================
         async function loadStocks() {
@@ -2031,18 +2145,29 @@ For international transfers, please include all beneficiary details and use the 
         }
 
         // ======================== SAVE BILL ========================
-        async function saveBill() {
+        async function saveBill(status) {
             if (billItems.length === 0) {
                 showToast('Please add at least one item to the bill.', 'error');
                 return;
             }
 
-            const btn = document.getElementById('saveBillBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            const qBtn = document.getElementById('saveQuotationBtn');
+            const fBtn = document.getElementById('finalizeBillBtn');
+
+            qBtn.disabled = true;
+            fBtn.disabled = true;
+
+            if (status === 'FINAL') {
+                fBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Finalizing...';
+            } else {
+                qBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            }
 
             const payload = {
                 invoiceNumber: document.getElementById('invoiceNumber').value,
+                invoiceDate: document.getElementById('invoiceDate').value,
+                dueDate: document.getElementById('dueDate').value,
+                status: status,
                 businessName: document.getElementById('fromBusinessName').value,
                 businessStreetAddress: document.getElementById('fromBusinessAddress').value,
                 businessCity: document.getElementById('fromBusinessCity').value,
@@ -2104,9 +2229,10 @@ For international transfers, please include all beneficiary details and use the 
                 });
 
                 if (res.ok) {
-                    showToast('Invoice generated successfully! Redirecting...', 'success');
+                    const data = await res.json();
+                    showToast(data.message, 'success');
                     setTimeout(() => {
-                        window.location.href = '/billing-app/api/Reports';
+                        window.location.href = `/billing-app/api/Reports/BillDetail/${data.id}`;
                     }, 2000);
                 } else {
                     const err = await res.text();
@@ -2116,8 +2242,10 @@ For international transfers, please include all beneficiary details and use the 
                 showToast('Could not connect to server.', 'error');
             }
 
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-file-invoice"></i> Save & Generate';
+            qBtn.disabled = false;
+            fBtn.disabled = false;
+            qBtn.innerHTML = '<i class="fa-solid fa-file-lines"></i> Save as Quotation';
+            fBtn.innerHTML = '<i class="fa-solid fa-file-circle-check"></i> Finalize Invoice';
         }
 
         // ======================== CLEAR BILL ========================

@@ -139,6 +139,45 @@
             transition: var(--transition);
         }
 
+        .premium-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            width: 100%;
+        }
+
+        .premium-empty-state i {
+            font-size: 2.5rem;
+            color: #f1f5f9;
+            margin-bottom: 24px;
+            background: #f8fafc;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .premium-empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .premium-empty-state p {
+            font-size: 0.95rem;
+            max-width: 360px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
         /* Modal Styles */
         .sfp-modal-overlay {
             position: fixed;
@@ -500,17 +539,30 @@
         const userRole = /*[[${userRole}]]*/ 'CLIENT';
 
         const renderTable = (items) => {
-            els.tbody.innerHTML = items.length === 0
-                ? `<tr><td colspan="${userRole === 'ADMIN' ? 8 : 9}" style="text-align: center; color: var(--text-muted); padding: 40px;">No matching items found.</td></tr>`
-                : items.map(stk => {
-                    const isProduct = stk.stockType === 'PRODUCT' || !stk.stockType;
-                    const code = isProduct ? (stk.hsnCode || '-') : (stk.sacCode || '-');
-                    const img = stk.stockImage ? `data:image/png;base64,${stk.stockImage}` : 'https://via.placeholder.com/48';
+            if (items.length === 0) {
+                els.tbody.innerHTML = `
+                    <tr>
+                        <td colspan="${userRole === 'ADMIN' ? 8 : 9}">
+                            <div class="premium-empty-state">
+                                <i class="fa-solid fa-box-open"></i>
+                                <h3>No Items Found</h3>
+                                <p>No products or services matched your current filters. Try adjusting your search or add a new entry to your inventory.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
 
-                    const taxType = stk.taxable ? 'Taxable' : 'Exempt';
-                    const taxColor = stk.taxable ? '#059669' : '#64748b';
+            els.tbody.innerHTML = items.map(stk => {
+                const isProduct = stk.stockType === 'PRODUCT' || !stk.stockType;
+                const code = isProduct ? (stk.hsnCode || '-') : (stk.sacCode || '-');
+                const img = stk.stockImage ? `data:image/png;base64,${stk.stockImage}` : 'https://via.placeholder.com/48';
 
-                    let actionsHtml = `
+                const taxType = stk.taxable ? 'Taxable' : 'Exempt';
+                const taxColor = stk.taxable ? '#059669' : '#64748b';
+
+                let actionsHtml = `
                         <td>
                             <div class="actions">
                                 <button class="action-btn view-btn" onclick="viewStock(${stk.id})" title="View Details"><i class="fa-solid fa-eye"></i></button>
@@ -522,7 +574,7 @@
                         </td>
                     `;
 
-                    return `
+                return `
                         <tr>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -538,13 +590,13 @@
                             <td style="font-weight: 700;">₹ ${parseFloat(stk.unitPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                             <td>
                                 ${isProduct
-                            ? `<span class="stock-qty ${stk.availableQuantity < 10 ? 'qty-low' : 'qty-ok'}">${stk.availableQuantity} ${stk.unit || 'Pcs'}</span>`
-                            : `<span class="stock-qty" style="background: #f5f3ff; color: #7c3aed;">${stk.availableQuantity || 1} ${stk.unit || 'Service'}</span>`}
+                        ? `<span class="stock-qty ${stk.availableQuantity < 10 ? 'qty-low' : 'qty-ok'}">${stk.availableQuantity} ${stk.unit || 'Pcs'}</span>`
+                        : `<span class="stock-qty" style="background: #f5f3ff; color: #7c3aed;">${stk.availableQuantity || 1} ${stk.unit || 'Service'}</span>`}
                             </td>
                             ${actionsHtml}
                         </tr>
                     `;
-                }).join('');
+            }).join('');
         };
 
         const applyFilters = () => {

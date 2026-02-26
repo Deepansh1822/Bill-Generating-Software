@@ -508,7 +508,19 @@
 
         const renderTable = (requests) => {
             if (requests.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:80px; color:#94a3b8;">No pending requests found. Good job!</td></tr>`;
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 100px 20px;">
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #10b981;">
+                                <div style="width: 80px; height: 80px; background: #ecfdf5; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+                                    <i class="fa-solid fa-circle-check" style="font-size: 2.5rem; color: #10b981;"></i>
+                                </div>
+                                <h3 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 10px;">All caught up!</h3>
+                                <p style="color: #64748b; max-width: 360px; margin: 0 auto; line-height: 1.6;">There are no pending access requests at the moment. You have successfully onboarded all applicants.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
                 return;
             }
 

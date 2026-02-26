@@ -1,6 +1,7 @@
 package in.sfp.main.models;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,19 +61,25 @@ public class TotalStockBillingInfo {
     private String companyName;
     private String companyType;
 
-    private LocalTime stockCreatedAt;
+    private String status; // DRAFT or FINAL
+    private LocalDate invoiceDate;
+    private LocalDate dueDate;
+
+    private LocalDateTime stockCreatedAt;
 
     @PrePersist
     protected void onCreate() {
-        stockCreatedAt = LocalTime.now();
+        stockCreatedAt = LocalDateTime.now();
+        if (status == null)
+            status = "DRAFT";
     }
 
     private String stockCreatedBy;
-    private LocalTime stockUpdatedAt;
+    private LocalDateTime stockUpdatedAt;
 
     @PreUpdate
     protected void onUpdate() {
-        stockUpdatedAt = LocalTime.now();
+        stockUpdatedAt = LocalDateTime.now();
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

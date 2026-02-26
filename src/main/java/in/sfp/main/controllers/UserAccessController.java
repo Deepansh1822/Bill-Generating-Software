@@ -145,6 +145,8 @@ public class UserAccessController {
             user.setMobileNumber(payload.get("mobileNumber"));
         if (payload.containsKey("clientImage"))
             user.setClientImage(payload.get("clientImage"));
+        if (payload.containsKey("monthlyTarget"))
+            user.setMonthlyTarget(Double.parseDouble(payload.get("monthlyTarget")));
 
         UserAccessInfo updated = usersAccessRepoService.updateUsersAccessInfo(user);
         return ResponseEntity.ok(updated);

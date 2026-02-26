@@ -392,7 +392,15 @@
 
         const renderClients = (clients) => {
             if (clients.length === 0) {
-                grid.innerHTML = `<div class="loader-box" style="color: #64748b;">No clients found matching your criteria.</div>`;
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; background: white; border-radius: 24px; border: 1px dashed #e2e8f0; margin-top: 20px;">
+                        <div style="width: 80px; height: 80px; background: #f8fafc; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+                            <i class="fa-solid fa-users-slash" style="font-size: 2.5rem; color: #cbd5e1;"></i>
+                        </div>
+                        <h3 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 10px;">No clients found</h3>
+                        <p style="color: #64748b; max-width: 360px; margin: 0 auto; line-height: 1.6;">We couldn't find any clients matching your criteria. Try adjusting your search or add a new client to get started.</p>
+                    </div>
+                `;
                 return;
             }
 
