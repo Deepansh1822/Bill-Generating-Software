@@ -243,7 +243,7 @@
 
         .premium-empty-state i {
             font-size: 2.5rem;
-            color: #f1f5f9;
+            color: #94a3b8;
             margin-bottom: 24px;
             background: #f8fafc;
             width: 80px;
@@ -411,7 +411,13 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="categoryTableBody"></tbody>
+                <tbody id="categoryTableBody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 60px; color: var(--text-muted);">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i> Loading data...
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>

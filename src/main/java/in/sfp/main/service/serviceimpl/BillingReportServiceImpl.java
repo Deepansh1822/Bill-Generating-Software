@@ -17,15 +17,36 @@ public class BillingReportServiceImpl implements BillingReportService {
     @Override
     @Transactional(readOnly = true)
     public TotalStockBillingInfo getBillDetailById(Long id) {
-        return stockRepo.findById(id)
+        TotalStockBillingInfo bill = stockRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Bill not found with ID: " + id));
+
+        validateOwnership(bill);
+        return bill;
     }
 
     @Override
     @Transactional(readOnly = true)
     public TotalStockBillingInfo getBillDetailByInvoiceNumber(String invoiceNumber) {
-        return stockRepo.findByInvoiceNumber(invoiceNumber)
+        TotalStockBillingInfo bill = stockRepo.findByInvoiceNumber(invoiceNumber)
                 .orElseThrow(() -> new RuntimeException("Bill not found with Invoice: " + invoiceNumber));
+
+        validateOwnership(bill);
+        return bill;
+    }
+
+    private void validateOwnership(TotalStockBillingInfo bill) {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth == null)
+            return;
+
+        String currentUser = auth.getName();
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin && !currentUser.equalsIgnoreCase(bill.getStockCreatedBy())) {
+            throw new org.springframework.security.access.AccessDeniedException("Unauthorized access to this bill.");
+        }
     }
 
     @Override
@@ -41,5 +62,25 @@ public class BillingReportServiceImpl implements BillingReportService {
             return stockRepo.findAll();
         }
         return stockRepo.findByStockCreatedBy(email);
+    }
+
+    @Override
+    public String getNextInvoiceNumber(String email) {
+        return stockRepo.findFirstByStockCreatedByOrderByIdDesc(email)
+                .map(lastBill -> {
+                    String lastNum = lastBill.getInvoiceNumber();
+                    try {
+                        // Attempt to find the numeric part at the end
+                        String numericPart = lastNum.replaceAll("[^0-9]", "");
+                        if (numericPart.isEmpty())
+                            return "INV-1001";
+                        long nextVal = Long.parseLong(numericPart) + 1;
+                        String prefix = lastNum.substring(0, lastNum.lastIndexOf(numericPart));
+                        return prefix + nextVal;
+                    } catch (Exception e) {
+                        return "INV-1001";
+                    }
+                })
+                .orElse("INV-1001");
     }
 }

@@ -20,4 +20,6 @@ public interface StockBillingInfoRepository extends JpaRepository<TotalStockBill
     java.util.List<TotalStockBillingInfo> findByStockCreatedBy(String email);
 
     boolean existsByInvoiceNumber(String invoiceNumber);
+
+    Optional<TotalStockBillingInfo> findFirstByStockCreatedByOrderByIdDesc(String email);
 }

@@ -46,4 +46,13 @@ public class ReportsController {
 
         return ResponseEntity.ok(reportService.getAllBillsByUser(email, role));
     }
+
+    @GetMapping("/next-invoice-number")
+    public ResponseEntity<java.util.Map<String, String>> getNextInvoiceNumber() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        String email = auth.getName();
+        String nextNum = reportService.getNextInvoiceNumber(email);
+        return ResponseEntity.ok(java.util.Map.of("nextInvoiceNumber", nextNum));
+    }
 }

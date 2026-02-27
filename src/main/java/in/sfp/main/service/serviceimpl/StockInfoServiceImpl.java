@@ -48,23 +48,34 @@ public class StockInfoServiceImpl implements StockInfoService {
 
     @Override
     public StockInfo getStockById(Long id) {
-        return stockInfoRepository.findById(id).orElse(null);
+        StockInfo stock = stockInfoRepository.findById(id).orElse(null);
+        if (stock != null)
+            validateOwnership(stock);
+        return stock;
     }
 
     @Override
     public StockInfo getStockByName(String itemName) {
-        return stockInfoRepository.findByItemName(itemName);
+        StockInfo stock = stockInfoRepository.findByItemName(itemName);
+        if (stock != null)
+            validateOwnership(stock);
+        return stock;
     }
 
     @Override
     public void deleteStock(Long id) {
-        stockInfoRepository.deleteById(id);
+        StockInfo stock = stockInfoRepository.findById(id).orElse(null);
+        if (stock != null) {
+            validateOwnership(stock);
+            stockInfoRepository.deleteById(id);
+        }
     }
 
     @Override
     public StockInfo updateStock(Long id, StockInfo stock) {
         StockInfo existingStock = stockInfoRepository.findById(id).orElse(null);
         if (existingStock != null) {
+            validateOwnership(existingStock);
             existingStock.setItemName(stock.getItemName());
             existingStock.setItemDescription(stock.getItemDescription());
             existingStock.setHsnCode(stock.getHsnCode());
@@ -87,6 +98,22 @@ public class StockInfoServiceImpl implements StockInfoService {
             return stockInfoRepository.save(existingStock);
         }
         return null;
+    }
+
+    private void validateOwnership(StockInfo stock) {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth == null || auth.getName().equals("anonymousUser"))
+            return;
+
+        String currentUser = auth.getName();
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin && !currentUser.equalsIgnoreCase(stock.getCreatedBy())) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Unauthorized access to this stock item.");
+        }
     }
 
 }

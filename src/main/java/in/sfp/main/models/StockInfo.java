@@ -20,6 +20,8 @@ public class StockInfo {
     private Long id;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "stock_image", columnDefinition = "LONGBLOB")
     private byte[] stockImage; // for both product and service
 
     private String itemName; // for both product and service

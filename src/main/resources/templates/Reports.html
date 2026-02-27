@@ -243,6 +243,45 @@
             color: var(--text-main);
             margin-top: 4px;
         }
+
+        .premium-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            width: 100%;
+        }
+
+        .premium-empty-state i {
+            font-size: 2.5rem;
+            color: #94a3b8;
+            margin-bottom: 24px;
+            background: #f8fafc;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .premium-empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .premium-empty-state p {
+            font-size: 0.95rem;
+            max-width: 360px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
     </style>
 </head>
 
@@ -387,13 +426,11 @@
             if (bills.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="${userRole === 'ADMIN' ? 7 : 6}" style="text-align: center; padding: 100px 20px;">
-                            <div style="display: flex; flex- direction: column; align-items: center; justify-content: center; color: #94a3b8;">
-                                <div style="width: 80px; height: 80px; background: #f8fafc; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
-                                    <i class="fa-solid fa-file-invoice" style="font-size: 2.5rem; color: #cbd5e1;"></i>
-                                </div>
-                                <h3 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 10px;">No reports found</h3>
-                                <p style="color: #64748b; max-width: 360px; margin: 0 auto; line-height: 1.6;">No invoices matched your current search or filters. Try checking a different date range or status.</p>
+                        <td colspan="${userRole === 'ADMIN' ? 7 : 6}">
+                            <div class="premium-empty-state">
+                                <i class="fa-solid fa-file-invoice"></i>
+                                <h3>No reports found</h3>
+                                <p>No invoices matched your current search or filters. Try checking a different date range or status.</p>
                             </div>
                         </td>
                     </tr>

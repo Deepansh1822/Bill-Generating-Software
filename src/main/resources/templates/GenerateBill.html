@@ -397,6 +397,93 @@
             border-bottom: 1px solid #e2e8f0;
         }
 
+        @media (max-width: 1200px) {
+            .bill-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .bill-sidebar-panel {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .btn-outline,
+            .btn-primary-action {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .invoice-header {
+                flex-direction: column;
+                align-items: center;
+                gap: 24px;
+                text-align: center;
+            }
+
+            .party-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .party-card.contact-right {
+                text-align: left;
+            }
+
+            .party-card.contact-right .party-label {
+                justify-content: flex-start;
+            }
+
+            .party-card.contact-right .party-name,
+            .party-card.contact-right .party-detail {
+                text-align: left;
+            }
+
+            .items-section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .stock-search-wrapper {
+                width: 100%;
+            }
+
+            #stockSearchInput {
+                width: 100% !important;
+            }
+
+            .totals-section {
+                flex-direction: column;
+            }
+
+            .totals-box {
+                max-width: 100%;
+            }
+
+            .bill-paper {
+                padding: 24px 16px;
+            }
+
+            .items-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
         .items-table thead th:first-child {
             border-radius: 12px 0 0 0;
         }
@@ -1183,13 +1270,7 @@
                     <h3><i class="fa-solid fa-gear" style="color: #6366f1;"></i> Invoice Essentials</h3>
                     <div class="form-field">
                         <label>Invoice Number</label>
-                        <div style="display:flex; gap:8px;">
-                            <input type="text" id="invoiceNumber" value="" placeholder="INV-0001" style="flex:1">
-                            <button type="button" class="btn-outline" style="padding: 0 12px; height: 42px;"
-                                onclick="generateInvoiceNumber()" title="Generate unique number">
-                                <i class="fa-solid fa-rotate"></i>
-                            </button>
-                        </div>
+                        <input type="text" id="invoiceNumber" value="" placeholder="INV-0001" style="flex:1" readonly>
                     </div>
                     <div class="form-field">
                         <label>Invoice Date</label>
@@ -1497,8 +1578,6 @@ For international transfers, please include all beneficiary details and use the 
             due.setDate(due.getDate() + 30);
             document.getElementById('dueDate').value = due.toISOString().split('T')[0];
 
-            // Generate unique invoice number
-            generateInvoiceNumber();
 
             // Load stock items
             loadStocks();
@@ -1529,7 +1608,7 @@ For international transfers, please include all beneficiary details and use the 
             if (editInv) {
                 loadBillForEditing(editInv);
             } else {
-                generateInvoiceNumber();
+                fetchNextInvoiceNumber();
             }
 
             // Initial render
@@ -1543,7 +1622,7 @@ For international transfers, please include all beneficiary details and use the 
                 const res = await fetch(`/billing-app/api/getBill/${invoiceNumber}`);
                 if (!res.ok) {
                     showToast('Could not load bill ' + invoiceNumber, 'error');
-                    generateInvoiceNumber();
+                    fetchNextInvoiceNumber();
                     return;
                 }
                 const b = await res.json();
@@ -2300,28 +2379,16 @@ For international transfers, please include all beneficiary details and use the 
         }
 
         // ======================== AUTO GENERATE INVOICE ========================
-        async function generateInvoiceNumber() {
-            const btn = document.querySelector('button[onclick="generateInvoiceNumber()"]');
-            const icon = btn.querySelector('i');
-            icon.classList.add('fa-spin');
-            btn.disabled = true;
-
+        async function fetchNextInvoiceNumber() {
             try {
                 const res = await fetch('/billing-app/api/generateUniqueInvoiceNumber');
                 if (res.ok) {
                     const num = await res.text();
                     document.getElementById('invoiceNumber').value = num;
                     updateBillDisplay();
-                    showToast('Unique invoice number generated!', 'success');
-                } else {
-                    const err = await res.text();
-                    showToast('Failed to generate: ' + err, 'error');
                 }
             } catch (e) {
-                showToast('Server error while generating number.', 'error');
-            } finally {
-                icon.classList.remove('fa-spin');
-                btn.disabled = false;
+                console.error('Failed to fetch next invoice number:', e);
             }
         }
     </script>

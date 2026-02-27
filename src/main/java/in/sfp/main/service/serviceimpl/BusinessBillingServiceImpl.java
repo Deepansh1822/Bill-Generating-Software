@@ -22,18 +22,26 @@ public class BusinessBillingServiceImpl implements BusinessBillingService {
 
     @Override
     public BusinessBillingInfo findByEmail(String email) {
-        return businessRepo.findByBusinessEmail(email);
+        BusinessBillingInfo info = businessRepo.findByBusinessEmail(email);
+        if (info != null)
+            validateOwnership(info);
+        return info;
     }
 
     @Override
     public BusinessBillingInfo findByBusinessNumber(String businessNumber) {
-        return businessRepo.findByBusinessNumber(businessNumber);
+        BusinessBillingInfo info = businessRepo.findByBusinessNumber(businessNumber);
+        if (info != null)
+            validateOwnership(info);
+        return info;
     }
 
     @Override
     public BusinessBillingInfo updateBusinessBillingInfo(BusinessBillingInfo businessBillingInfo, Long id) {
         BusinessBillingInfo existing = businessRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Business profile not found"));
+
+        validateOwnership(existing);
 
         existing.setBusinessLogo(businessBillingInfo.getBusinessLogo());
         existing.setBusinessName(businessBillingInfo.getBusinessName());
@@ -53,10 +61,32 @@ public class BusinessBillingServiceImpl implements BusinessBillingService {
         existing.setAdCode(businessBillingInfo.getAdCode());
         existing.setIecCode(businessBillingInfo.getIecCode());
         existing.setBankDetails(businessBillingInfo.getBankDetails());
-        existing.setUpdatedAt(businessBillingInfo.getUpdatedAt());
-        existing.setUpdatedBy(businessBillingInfo.getUpdatedBy());
+        existing.setUpdatedAt(java.time.LocalTime.now());
+        existing.setUpdatedBy(getCurrentUser());
 
         return businessRepo.save(existing);
+    }
+
+    private String getCurrentUser() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        return (auth != null) ? auth.getName() : "System";
+    }
+
+    private void validateOwnership(BusinessBillingInfo info) {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth == null || auth.getName().equals("anonymousUser"))
+            return;
+
+        String currentUser = auth.getName();
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin && !currentUser.equalsIgnoreCase(info.getCreatedBy())) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Unauthorized access to this business profile.");
+        }
     }
 
     @Override

@@ -269,31 +269,38 @@ public class BillGenerationController {
         }
     }
 
+    @Autowired
+    private in.sfp.main.service.BillingReportService reportService;
+
     @GetMapping("/getBill/{invoiceNumber}")
     public ResponseEntity<?> getBillByInvoiceNumber(@PathVariable String invoiceNumber) {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        String email = auth.getName();
+        String role = auth.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .filter(a -> a.startsWith("ROLE_"))
+                .map(a -> a.substring(5))
+                .findFirst()
+                .orElse("CLIENT");
+
         return stockBillingRepo.findByInvoiceNumber(invoiceNumber)
-                .map(ResponseEntity::ok)
+                .map(bill -> {
+                    // SEC-CHECK: Only ADMIN or the creator can view
+                    if (!"ADMIN".equals(role) && !email.equalsIgnoreCase(bill.getStockCreatedBy())) {
+                        return (ResponseEntity) ResponseEntity.status(403).body("Access Denied");
+                    }
+                    return ResponseEntity.ok(bill);
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/generateUniqueInvoiceNumber")
     public ResponseEntity<String> generateUniqueInvoiceNumber() {
-        java.util.Random random = new java.util.Random();
-        String invoiceNum;
-        boolean exists;
-        int attempts = 0;
-        do {
-            // Generate a random 6-digit number
-            int num = 100000 + random.nextInt(900000);
-            invoiceNum = "INV-" + num;
-            exists = stockBillingRepo.existsByInvoiceNumber(invoiceNum);
-            attempts++;
-            // Safety break to prevent infinite loop
-            if (attempts > 100) {
-                return ResponseEntity.internalServerError().body("Could not generate unique invoice number");
-            }
-        } while (exists);
-
-        return ResponseEntity.ok(invoiceNum);
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        String email = auth.getName();
+        String nextNum = reportService.getNextInvoiceNumber(email);
+        return ResponseEntity.ok(nextNum);
     }
 }

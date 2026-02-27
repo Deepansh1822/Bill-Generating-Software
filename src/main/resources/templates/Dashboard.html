@@ -281,6 +281,49 @@
             transform: scale(1.02);
         }
 
+        @media (max-width: 1024px) {
+            .billing-types {
+                grid-template-columns: 1fr;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .user-profile {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bill-type-card {
+                padding: 24px;
+            }
+
+            .bill-type-info h3 {
+                font-size: 1.25rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
         .bill-type-info h3 {
             font-size: 1.5rem;
             font-weight: 800;
@@ -598,7 +641,7 @@
 
         .premium-empty-state i {
             font-size: 2.5rem;
-            color: #f1f5f9;
+            color: #94a3b8;
             margin-bottom: 16px;
             background: #f8fafc;
             width: 70px;
@@ -986,7 +1029,12 @@
                             <!-- Headers populated by JS -->
                         </thead>
                         <tbody id="recentInvoicesBody">
-                            <!-- Items populated by JS -->
+                            <tr>
+                                <td colspan="${userRole === 'ADMIN' ? 7 : 6}"
+                                    style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                    <i class="fa-solid fa-circle-notch fa-spin"></i> Loading activity...
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
