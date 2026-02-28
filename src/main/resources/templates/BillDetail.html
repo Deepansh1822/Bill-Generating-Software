@@ -800,20 +800,33 @@
         });
 
         async function shareWhatsApp() {
-            const invNum = document.getElementById('invoiceNumber').innerText;
-            const total = document.getElementById('grandTotal').innerText;
-            const link = window.location.href;
-            const text = `Hello, please find the Invoice ${invNum} for ${total}. View here: ${link}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            try {
+                showShareToast('Sending PDF to WhatsApp...');
+                const response = await fetch(`/billing-app/api/whatsapp/sendInvoice/${billId}`, { method: 'POST' });
+                const result = await response.json();
+                if (response.ok) {
+                    showShareToast('✅ WhatsApp PDF sent successfully!');
+                } else {
+                    showShareToast('❌ Failed: ' + (result.message || 'Check API keys'));
+                }
+            } catch (err) {
+                showShareToast('❌ Error sending WhatsApp');
+            }
         }
 
-        function shareEmail() {
-            const invNum = document.getElementById('invoiceNumber').innerText;
-            const total = document.getElementById('grandTotal').innerText;
-            const link = window.location.href;
-            const subject = `Invoice ${invNum} from SFP Billing`;
-            const body = `Hello,\n\nPlease find the invoice details below:\nInvoice No: ${invNum}\nTotal Amount: ${total}\n\nYou can view the full invoice here: ${link}\n\nThank you!`;
-            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        async function shareEmail() {
+            try {
+                showShareToast('Generating PDF & Sending Email...');
+                const response = await fetch(`/billing-app/api/email/sendInvoice/${billId}`, { method: 'POST' });
+                const result = await response.json();
+                if (response.ok) {
+                    showShareToast('✅ Email sent with PDF attachment!');
+                } else {
+                    showShareToast('❌ Failed: ' + (result.message || 'Server error'));
+                }
+            } catch (err) {
+                showShareToast('❌ Error sending email');
+            }
         }
 
         function copyInvoiceLink() {

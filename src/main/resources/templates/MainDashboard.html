@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -10,15 +10,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #3f37c9;
-            --primary-dark: #302b97;
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --primary-light: #e0f2fe;
             --secondary: #64748b;
-            --dark: #0f172a;
+            --dark: #082f49;
             --light: #f8fafc;
             --white: #ffffff;
-            --glass: rgba(255, 255, 255, 0.8);
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass: rgba(255, 255, 255, 0.75);
+            --shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.05), 0 8px 16px -4px rgba(0, 0, 0, 0.03);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             --container-width: 1440px;
         }
 
@@ -46,6 +47,7 @@
             color: var(--dark);
             line-height: 1.6;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* --- Navbar Styles --- */
@@ -55,15 +57,16 @@
             left: 0;
             width: 100%;
             height: 70px;
-            background: transparent;
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 6%;
             z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
         }
 
         .logo {
@@ -89,22 +92,22 @@
         }
 
         .login-btn {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #0ea5e9);
             color: var(--white);
             padding: 10px 24px;
-            border-radius: 12px;
+            border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
             font-size: 15px;
             transition: var(--transition);
-            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
-            border: 1px solid transparent;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .login-btn:hover {
-            background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
+            filter: brightness(1.1);
         }
 
         .feature-btn {
@@ -139,6 +142,162 @@
             border-bottom: 1px solid var(--primary);
         }
 
+        /* --- How It Works --- */
+        .how-it-works {
+            padding: 100px 0;
+            background: var(--white);
+            text-align: center;
+        }
+
+        .step-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+            position: relative;
+        }
+
+        .step-item {
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), #38bdf8);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin: 0 auto 25px;
+            font-size: 20px;
+            box-shadow: 0 10px 20px rgba(2, 132, 199, 0.3);
+            border: 3px solid white;
+            outline: 2px solid rgba(2, 132, 199, 0.1);
+        }
+
+        .step-item h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .step-item p {
+            color: var(--secondary);
+            font-size: 16px;
+        }
+
+        /* --- Modules Section --- */
+        .modules-section {
+            padding: 100px 0;
+            background: var(--light);
+        }
+
+        .module-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 24px;
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            transition: var(--transition);
+            border: 1px solid rgba(241, 245, 249, 1);
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border-color: rgba(2, 132, 199, 0.1);
+        }
+
+        .module-icon {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, rgba(2, 132, 199, 0.1), rgba(14, 165, 233, 0.05));
+            color: var(--primary);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+            box-shadow: inset 0 0 0 1px rgba(2, 132, 199, 0.1);
+        }
+
+        /* --- CTA Section --- */
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--primary), #0ea5e9);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" class="opacity-10" stroke="white" stroke-width="0.5" stroke-opacity="0.2"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            z-index: 0;
+        }
+
+        .cta-section .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section h2 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-btn {
+            background: white;
+            color: var(--primary);
+            padding: 18px 48px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
+            display: inline-block;
+            transition: var(--transition);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            background: #f8fafc;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .cta-section h2 {
+                font-size: 32px;
+            }
+        }
+
         /* --- Hero Section --- */
         .hero {
             min-height: 100vh;
@@ -148,17 +307,19 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent),
-                radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.05), transparent);
+            background: radial-gradient(circle at top right, rgba(2, 132, 199, 0.08), transparent 40%),
+                radial-gradient(circle at bottom left, rgba(2, 132, 199, 0.06), transparent 40%), var(--light);
         }
 
         .hero-container {
             width: 100%;
             padding: 80px;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: 40px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06), 0 10px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(255, 255, 255, 1);
             position: relative;
             overflow: hidden;
             animation: fadeInUp 0.8s ease-out;
@@ -170,15 +331,16 @@
         }
 
         .hero-content {
-            flex: 1.3;
+            flex: 1.1;
             position: relative;
             z-index: 1;
         }
 
         .hero-image {
-            flex: 0.7;
+            flex: 0.9;
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
+            /* Align right to eliminate the gap */
             align-items: center;
             position: relative;
             z-index: 1;
@@ -186,7 +348,8 @@
 
         .hero-image img {
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
+            /* Increased from 600px */
             height: auto;
             border-radius: 20px;
             box-shadow: 20px 20px 60px rgba(0, 0, 0, 0.1);
@@ -205,7 +368,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.03) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.03) 0%, transparent 70%);
             z-index: 0;
         }
 
@@ -224,7 +387,7 @@
         .badge {
             display: inline-block;
             padding: 6px 16px;
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(14, 165, 233, 0.1);
             color: var(--primary);
             border-radius: 100px;
             font-size: 13px;
@@ -254,15 +417,16 @@
         }
 
         .word-rotator {
-            display: inline-block;
+            display: inline-flex;
+            justify-content: flex-start;
             position: relative;
-            vertical-align: top;
+            vertical-align: baseline;
             height: 1.3em;
             overflow: hidden;
-            min-width: 300px;
-            /* Increased to accommodate longer words */
+            min-width: 5.2em;
+            /* Em-based width makes it perfectly responsive */
             padding-bottom: 10px;
-            /* Extra room for descenders like 'g' */
+            /* Extra room for descenders */
         }
 
         .rotator-item {
@@ -321,7 +485,7 @@
         }
 
         .request-btn {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #0ea5e9);
             color: var(--white);
             padding: 16px 40px;
             border-radius: 14px;
@@ -329,16 +493,34 @@
             font-weight: 700;
             font-size: 16px;
             transition: var(--transition);
-            border: 1px solid transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: inline-flex;
             align-items: center;
             gap: 12px;
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .request-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transform: skewX(-20deg);
+            transition: 0.5s;
+        }
+
+        .request-btn:hover::after {
+            left: 150%;
         }
 
         .request-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(2, 132, 199, 0.4);
         }
 
         /* --- Floating Shapes (Aesthetics) --- */
@@ -362,7 +544,7 @@
         .shape-2 {
             width: 400px;
             height: 400px;
-            background: #818cf8;
+            background: #38bdf8;
             bottom: 10%;
             right: -5%;
             animation: move 25s infinite alternate-reverse;
@@ -432,6 +614,7 @@
         }
 
         .section-tag {
+            text-align: center;
             color: var(--primary);
             font-weight: 700;
             text-transform: uppercase;
@@ -442,6 +625,7 @@
         }
 
         .section-title {
+            text-align: center;
             font-size: clamp(28px, 3vw, 42px);
             margin-bottom: 50px;
             color: var(--dark);
@@ -459,24 +643,42 @@
             padding: 50px 35px;
             border-radius: 30px;
             text-align: left;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
             transition: var(--transition);
-            border: 1px solid #e2e8f0;
+            border: 1px solid rgba(226, 232, 240, 0.8);
             position: relative;
             overflow: hidden;
             color: var(--dark);
+            z-index: 1;
+        }
+
+        .feature-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(2, 132, 199, 0.03) 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .feature-box:hover::before {
+            opacity: 1;
         }
 
         .feature-box:hover {
-            transform: translateY(-10px);
+            transform: translateY(-8px);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
-            border-color: var(--primary);
+            border-color: rgba(2, 132, 199, 0.3);
         }
 
         .feature-box i {
             width: 70px;
             height: 70px;
-            background: var(--primary-light);
+            background: var(--light);
             color: var(--primary);
             display: flex;
             align-items: center;
@@ -485,12 +687,14 @@
             border-radius: 20px;
             margin-bottom: 25px;
             transition: var(--transition);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04);
         }
 
         .feature-box:hover i {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #38bdf8);
             color: var(--white);
-            transform: scale(1.1);
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 15px 30px rgba(2, 132, 199, 0.3);
         }
 
         .feature-box h3 {
@@ -630,26 +834,28 @@
             font-weight: 700;
             text-align: center;
             transition: var(--transition);
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #0ea5e9);
             color: var(--white);
+            box-shadow: 0 10px 20px rgba(2, 132, 199, 0.25);
         }
 
         .pricing-card:not(.popular) .pricing-plan-btn {
             background: #f1f5f9;
             color: var(--dark);
+            box-shadow: none;
         }
 
         .pricing-plan-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(63, 55, 201, 0.2);
-            background: var(--primary-dark);
-            color: var(--white);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(2, 132, 199, 0.4);
+            filter: brightness(1.1);
         }
 
         .pricing-card:not(.popular) .pricing-plan-btn:hover {
-            background: var(--primary);
-            color: var(--white);
-            border-color: var(--primary);
+            background: rgba(2, 132, 199, 0.1);
+            color: var(--primary);
+            box-shadow: none;
+            filter: none;
         }
 
         /* ---------- Footer Section ---------- */
@@ -765,15 +971,25 @@
             <span>SFP Billing</span>
         </a>
         <div class="nav-links">
-            <a href="#features" class="feature-btn">
-                Features
-            </a>
-            <a href="#pricing" class="pricing-btn">
-                Pricing
-            </a>
-            <a href="/billing-app/api/Login" class="login-btn">
-                <i class="fa-solid fa-right-to-bracket"></i> &nbsp; Login
-            </a>
+            <a href="#how-it-works" class="feature-btn">How it Works</a>
+            <a href="#modules" class="feature-btn">Modules</a>
+            <a href="#invoice-gallery" class="feature-btn">Invoices</a>
+            <a href="#features" class="feature-btn">Features</a>
+            <a href="#pricing" class="pricing-btn">Pricing</a>
+            <a href="#roadmap" class="feature-btn">Roadmap</a>
+
+            <!-- Conditional links for logged-in users -->
+            <th:block th:if="${authStatus == 'authenticated'}">
+                <a href="/billing-app/api/Dashboard" class="feature-btn">Dashboard</a>
+                <a href="/billing-app/api/Profile" class="feature-btn">My Profile</a>
+                <a href="/billing-app/api/logout" class="login-btn" style="background: #ef4444;">Logout</a>
+            </th:block>
+
+            <th:block th:if="${authStatus != 'authenticated'}">
+                <a href="/billing-app/api/Login" class="login-btn">
+                    <i class="fa-solid fa-right-to-bracket"></i> &nbsp; Login
+                </a>
+            </th:block>
         </div>
     </nav>
 
@@ -787,31 +1003,267 @@
             <div class="hero-container">
                 <!-- Left Content -->
                 <div class="hero-content">
-                    <div class="badge">Professional Management</div>
-                    <h1 style="font-size: 52px;">The Smarter Way to <br>Manage Your
-                        <span class="word-rotator">
-                            <span class="rotator-item" id="rotate-word">Billing</span>
+                    <div class="badge"
+                        style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.1), rgba(14, 165, 233, 0.1)); border: 1px solid rgba(2, 132, 199, 0.2); backdrop-filter: blur(4px); box-shadow: 0 4px 12px rgba(2, 132, 199, 0.05); transform: translateY(0); transition: all 0.3s ease; padding: 8px 16px;"
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(2, 132, 199, 0.1)';"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(2, 132, 199, 0.05)';">
+                        <i class="fa-solid fa-wand-magic-sparkles" style="color: #0ea5e9; margin-right: 6px;"></i> Smart
+                        &
+                        Automated Billing
+                    </div>
+                    <h1
+                        style="font-size: clamp(36px, 4.5vw, 64px); font-weight: 900; line-height: 1.15; letter-spacing: -1.5px;">
+                        <span
+                            style="background: linear-gradient(135deg, #082f49 0%, #334155 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;">The
+                            Smarter Way to <br></span>
+                        <span
+                            style="white-space: nowrap; display: inline-flex; align-items: baseline; background: linear-gradient(135deg, #082f49 0%, #334155 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;">
+                            Manage Your &nbsp;
+                            <span class="word-rotator">
+                                <span class="rotator-item" id="rotate-word"
+                                    style="background: linear-gradient(135deg, var(--primary), #0ea5e9); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; filter: drop-shadow(0px 4px 12px rgba(2, 132, 199, 0.3)); padding-top: 0px;">Inventory</span>
+                            </span>
                         </span>
                     </h1>
-                    <p class="description" align="justify">
+                    <p class="description" align="justify"
+                        style="font-size: 19px; line-height: 1.7; color: #475569; border-left: 4px solid #0ea5e9; padding-left: 20px; background: linear-gradient(90deg, rgba(14, 165, 233, 0.05) 0%, transparent 100%); padding-top: 10px; padding-bottom: 10px; border-radius: 0 12px 12px 0;">
                         Elevate your business with our professional-grade billing software.
                         Track invoices, manage customers, and generate real-time reports
                         effortlessly—all in one secure place.
                     </p>
 
-                    <div class="hero-actions">
-                        <a href="/billing-app/api/RequestAccess" class="request-btn">
-                            <i class="fa-solid fa-user-plus"></i>
-                            Request Access
-                        </a>
+                    <div class="hero-actions" style="margin-top: 45px;">
+                        <style>
+                            .btn-arrow-hover:hover i {
+                                transform: translateX(5px) !important;
+                            }
+
+                            .btn-transparent-hover:hover {
+                                border-color: #0284c7 !important;
+                                color: #0284c7 !important;
+                            }
+                        </style>
+                        <th:block th:if="${authStatus != 'authenticated'}">
+                            <a href="/billing-app/api/RequestAccess" class="request-btn btn-arrow-hover"
+                                style="padding: 18px 45px; font-size: 17px; border-radius: 50px; background: linear-gradient(135deg, var(--primary), #0ea5e9);">
+                                <span>Request Access</span>
+                                <i class="fa-solid fa-arrow-right"
+                                    style="background: rgba(255,255,255,0.2); padding: 8px; border-radius: 50%; margin-left: 8px; font-size: 14px; transition: 0.3s; transform: translateX(0);"></i>
+                            </a>
+                            <a href="#how-it-works" class="request-btn btn-transparent-hover"
+                                style="background: transparent; color: #082f49; box-shadow: none; border: 2px solid #cbd5e1; padding: 16px 45px; font-size: 17px; border-radius: 50px;">
+                                <i class="fa-solid fa-circle-play" style="font-size: 20px; color: #0ea5e9;"></i>
+                                See How it Works
+                            </a>
+                        </th:block>
+                        <th:block th:if="${authStatus == 'authenticated'}">
+                            <a href="/billing-app/api/Dashboard" class="request-btn btn-arrow-hover"
+                                style="padding: 18px 45px; font-size: 17px; border-radius: 50px; background: linear-gradient(135deg, var(--primary), #0ea5e9);">
+                                <span>Go to Dashboard</span>
+                                <i class="fa-solid fa-arrow-right"
+                                    style="background: rgba(255,255,255,0.2); padding: 8px; border-radius: 50%; margin-left: 8px; font-size: 14px; transition: 0.3s; transform: translateX(0);"></i>
+                            </a>
+                        </th:block>
                     </div>
                 </div>
 
-                <!-- Right Image -->
-                <div class="hero-image">
-                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=2426&ixlib=rb-4.0.3"
-                        alt="Billing Dashboard Mockup">
+                <!-- Right Image Presentation (Clean & Professional) -->
+                <div class="hero-image" style="position: relative;">
+                    <style>
+                        @keyframes widgetFloat {
+
+                            0%,
+                            100% {
+                                transform: translateY(0);
+                            }
+
+                            50% {
+                                transform: translateY(8px);
+                            }
+                        }
+                    </style>
+                    <div style="position: relative; padding: 10px; width: 100%; max-width: 750px; margin-left: auto;">
+
+                        <!-- Simple Soft Background Glow -->
+                        <div
+                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; height: 85%; background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 60%); filter: blur(40px); z-index: 1;">
+                        </div>
+
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=2426&ixlib=rb-4.0.3"
+                            alt="Billing Dashboard Mockup"
+                            style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 20px 40px rgba(8, 47, 73, 0.12), 0 1px 3px rgba(0,0,0,0.05); border: 1px solid rgba(226, 232, 240, 1); position: relative; z-index: 2; transition: all 0.4s ease;"
+                            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 30px 50px rgba(8, 47, 73, 0.15), 0 1px 3px rgba(0,0,0,0.05)';"
+                            onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 20px 40px rgba(8, 47, 73, 0.12), 0 1px 3px rgba(0,0,0,0.05)';">
+
+                        <!-- Floating Live Analytics widget -->
+                        <div
+                            style="position: absolute; bottom: 0px; left: -10px; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 16px 20px; border-radius: 16px; box-shadow: 0 15px 35px rgba(2, 132, 199, 0.15); border: 1px solid rgba(226, 232, 240, 1); display: flex; align-items: center; gap: 14px; animation: widgetFloat 5s ease-in-out infinite alternate; z-index: 4;">
+                            <div
+                                style="width: 42px; height: 42px; background: #0284c7; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: white; font-size: 16px; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2);">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <div>
+                                <p
+                                    style="margin: 0; font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Live Analytics</p>
+                                <h4
+                                    style="margin: 0; font-size: 18px; color: #082f49; font-weight: 900; display: flex; align-items: center; gap: 8px;">
+                                    Tracking
+                                    <span
+                                        style="font-size: 11px; color: #10b981; font-weight: 800; background: rgba(16, 185, 129, 0.15); padding: 3px 8px; border-radius: 100px; display: flex; align-items: center; gap: 4px;">
+                                        <i class="fa-solid fa-bolt"></i> Real-time
+                                    </span>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <span class="section-tag">Getting Started</span>
+            <h2 class="section-title">Three steps to organized billing</h2>
+            <div class="step-grid">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <h3>Setup Inventory</h3>
+                    <p>Create categories and add your products or services with custom GST rates.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <h3>Manage Business</h3>
+                    <p>Track stock levels in real-time and manage your recurring customer base.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <h3>Generate & Grow</h3>
+                    <p>Create professional invoices and monitor your growth via the live dashboard.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modules Section -->
+    <section class="modules-section" id="modules">
+        <div class="container">
+            <span class="section-tag">Powerful Modules</span>
+            <h2 class="section-title">Everything you need to succeed</h2>
+
+            <div class="module-card">
+                <div class="module-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                <div>
+                    <h3>Stock & Inventory</h3>
+                    <p>Full control over your inventory with automated low-stock alerts and smart grouping. Categorize
+                        items into Groups for better organization and tracking.</p>
+                </div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                <div>
+                    <h3>GST Ready Invoicing</h3>
+                    <p>Generate professional, GST-compliant invoices instantly. Handles CGST, SGST, and IGST
+                        automatically based on your customer's location.</p>
+                </div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-icon"><i class="fa-solid fa-users-gear"></i></div>
+                <div>
+                    <h3>Client Management</h3>
+                    <p>Detailed client profiles with historical invoice tracking, unpaid balance monitoring, and
+                        professional quotation management.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Invoice Gallery Section ==================== -->
+    <section class="invoice-gallery" id="invoice-gallery" style="padding: 100px 0; background: #ffffff;">
+        <div class="container">
+            <span class="section-tag">Perfect Formats</span>
+            <h2 class="section-title">Professional Bills for Every Need</h2>
+            <p
+                style="text-align: center; color: var(--secondary); max-width: 600px; margin: -30px auto 50px auto; font-size: 18px;">
+                Whether you sell goods, provide services, or require transit documents, our software generates
+                pixel-perfect, GST-compliant documents instantly.
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px;">
+
+                <!-- Product Bill Card -->
+                <div style="background: var(--light); border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03);"
+                    onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 25px 50px rgba(2, 132, 199, 0.1)'; this.style.borderColor='rgba(2, 132, 199, 0.3)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.03)'; this.style.borderColor='#e2e8f0';">
+                    <div
+                        style="width: 100%; height: 250px; border-radius: 16px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; border: 1px solid rgba(0,0,0,0.05);">
+                        <img src="https://images.unsplash.com/photo-1544604957-61b47fb59f81?auto=format&fit=crop&q=80&w=800"
+                            alt="Product Invoice Example"
+                            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
+                            onmouseover="this.style.transform='scale(1.05)'"
+                            onmouseout="this.style.transform='scale(1)'">
+                        <div
+                            style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); padding: 5px 12px; border-radius: 50px; font-size: 13px; font-weight: 700; color: #0284c7; backdrop-filter: blur(4px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                            <i class="fa-solid fa-box-open"></i> Retail
+                        </div>
+                    </div>
+                    <h3 style="font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 12px;">
+                        Product-Based Bill</h3>
+                    <p style="color: var(--secondary); font-size: 15px; line-height: 1.6;">Includes detailed columns for
+                        HSN codes, quantity, unit price, and automatic CGST/SGST/IGST tax calculation splits per item.
+                    </p>
+                </div>
+
+                <!-- Service Bill Card -->
+                <div style="background: var(--light); border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03);"
+                    onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 25px 50px rgba(2, 132, 199, 0.1)'; this.style.borderColor='rgba(2, 132, 199, 0.3)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.03)'; this.style.borderColor='#e2e8f0';">
+                    <div
+                        style="width: 100%; height: 250px; border-radius: 16px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; border: 1px solid rgba(0,0,0,0.05);">
+                        <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=800"
+                            alt="Service Invoice Example"
+                            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
+                            onmouseover="this.style.transform='scale(1.05)'"
+                            onmouseout="this.style.transform='scale(1)'">
+                        <div
+                            style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); padding: 5px 12px; border-radius: 50px; font-size: 13px; font-weight: 700; color: #0284c7; backdrop-filter: blur(4px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                            <i class="fa-solid fa-bell-concierge"></i> Service
+                        </div>
+                    </div>
+                    <h3 style="font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 12px;">
+                        Service-Based Bill</h3>
+                    <p style="color: var(--secondary); font-size: 15px; line-height: 1.6;">Clean layout tailored for
+                        freelancers and agencies. SAC codes support, customizable service descriptions, and clean tax
+                        summarization.</p>
+                </div>
+
+                <!-- E-Way Bill Card -->
+                <div style="background: var(--light); border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03);"
+                    onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 25px 50px rgba(2, 132, 199, 0.1)'; this.style.borderColor='rgba(2, 132, 199, 0.3)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.03)'; this.style.borderColor='#e2e8f0';">
+                    <div
+                        style="width: 100%; height: 250px; border-radius: 16px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; border: 1px solid rgba(0,0,0,0.05);">
+                        <img src="https://images.unsplash.com/photo-1620127265819-2f5a09b301fb?auto=format&fit=crop&q=80&w=800"
+                            alt="E-Way Bill Example"
+                            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; filter: contrast(1.1);"
+                            onmouseover="this.style.transform='scale(1.05)'"
+                            onmouseout="this.style.transform='scale(1)'">
+                        <div
+                            style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); padding: 5px 12px; border-radius: 50px; font-size: 13px; font-weight: 700; color: #0284c7; backdrop-filter: blur(4px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                            <i class="fa-solid fa-truck-fast"></i> Transit
+                        </div>
+                    </div>
+                    <h3 style="font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 12px;">E-Way
+                        Document</h3>
+                    <p style="color: var(--secondary); font-size: 15px; line-height: 1.6;">Fully compliant E-Way bills
+                        featuring vehicle details, transporter ID, driver info, and standardized barcode/QR code
+                        mapping.</p>
+                </div>
+
             </div>
         </div>
     </section>
@@ -899,6 +1351,43 @@
         </div>
     </section>
 
+    <!-- ==================== Future Roadmap ==================== -->
+    <section class="how-it-works" id="roadmap" style="background: var(--light);">
+        <div class="container">
+            <span class="section-tag">Coming Soon</span>
+            <h2 class="section-title">What's next for SFP Billing</h2>
+            <div class="step-grid">
+                <div class="step-item">
+                    <i class="fa-solid fa-mobile-screen-button"
+                        style="font-size: 32px; color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3>Mobile App</h3>
+                    <p>Native iOS and Android apps for billing on the go.</p>
+                </div>
+                <div class="step-item">
+                    <i class="fa-solid fa-robot"
+                        style="font-size: 32px; color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3>AI Insights</h3>
+                    <p>Automated sales forecasting and inventory planning.</p>
+                </div>
+                <div class="step-item">
+                    <i class="fa-solid fa-link"
+                        style="font-size: 32px; color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3>Tally Sync</h3>
+                    <p>One-click data export to Tally and other ERPs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Final CTA ==================== -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to streamline your billing?</h2>
+            <p>Join thousands of businesses already growing with SFP Billing. Get started today with our free trial.</p>
+            <a href="/billing-app/api/RequestAccess" class="cta-btn">Start Your Free Trial</a>
+        </div>
+    </section>
+
     <!-- ==================== Footer Section ==================== -->
     <footer>
         <div class="container">
@@ -955,7 +1444,7 @@
     </footer>
 
     <script>
-        const words = ["Billing", "Invoices", "Stocks", "Reports", "Customers"];
+        const words = ["Inventory", "Invoicing", "Analytics", "Business", "Finances"];
         let index = 0;
         const rotateWord = document.getElementById('rotate-word');
 
@@ -966,6 +1455,8 @@
                 rotateWord.textContent = words[index];
             }, 900); // Syncs with CSS fade-out (25-30% mark of 3s)
         }
+
+        updateWord();
 
         setInterval(updateWord, 3000);
     </script>

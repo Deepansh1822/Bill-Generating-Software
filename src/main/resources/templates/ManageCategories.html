@@ -230,6 +230,16 @@
             transition: var(--transition);
         }
 
+        .add-btn:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+        .add-btn:active {
+            transform: translateY(0);
+        }
+
         .premium-empty-state {
             display: flex;
             flex-direction: column;
@@ -269,10 +279,6 @@
             line-height: 1.6;
         }
 
-        .add-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
 
         /* Modal Styles */
         .sfp-modal-overlay {
@@ -353,6 +359,12 @@
             font-weight: 600;
             border: none;
             cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .secondary-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -430,17 +442,31 @@
             <form id="categoryForm">
                 <input type="hidden" id="categoryId">
                 <div class="form-group">
-                    <label>Item Group Name</label>
+                    <label for="categoryName">Item Group Name</label>
                     <input type="text" id="categoryName" required>
                 </div>
                 <div class="form-group">
-                    <label>Description</label>
+                    <label for="categoryDescription">Description</label>
                     <textarea id="categoryDescription" rows="4" required
                         placeholder="Describe the items in this group..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Group Image</label>
-                    <input type="file" id="categoryImage" accept="image/*">
+                    <label>Group Image (Optional)</label>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-top: 8px;">
+                        <label for="categoryImage"
+                            style="cursor: pointer; padding: 10px 20px; background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 10px; font-size: 0.85rem; color: #475569; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>Choose Image</span>
+                        </label>
+                        <input type="file" id="categoryImage" accept="image/*" style="display: none;"
+                            onchange="previewCatImage(this)">
+                        <div id="catImagePreview" style="display: none; align-items: center;">
+                            <img id="catImageThumb"
+                                style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border);">
+                            <span id="catImageName"
+                                style="font-size: 12px; color: var(--text-muted); margin-left: 10px; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="secondary-btn" onclick="closeModal()">Cancel</button>
@@ -516,7 +542,7 @@
 
                     return `
                         <tr>
-                            <td><img src="${cat.categoryImage ? 'data:image/png;base64,' + cat.categoryImage : 'https://via.placeholder.com/64'}" class="category-img"></td>
+                            <td><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%23f1f5f9' rx='14'/%3E%3C/svg%3E" data-cat-id="${cat.id}" class="category-img lazy-cat-img"></td>
                             <td style="font-weight: 600;">${cat.categoryName}</td>
                             <td style="color: var(--text-muted); max-width: 300px;">${cat.categoryDescription}</td>
                             <td><span class="${pillClass}"><i class="fa-solid fa-box" style="font-size:10px;"></i> ${count}</span></td>
@@ -524,8 +550,28 @@
                         </tr>
                     `;
                 }).join('');
+                observeLazyCatImages();
             });
         };
+
+        // ---- Lazy category image loading ----
+        const catImgObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const id = img.dataset.catId;
+                    if (id) {
+                        img.src = `/billing-app/api/getCategoryImage/${id}`;
+                        img.onerror = () => { img.removeAttribute('src'); img.style.background = '#f1f5f9'; };
+                        catImgObserver.unobserve(img);
+                    }
+                }
+            });
+        }, { rootMargin: '100px' });
+
+        function observeLazyCatImages() {
+            document.querySelectorAll('.lazy-cat-img').forEach(img => catImgObserver.observe(img));
+        }
 
         const openModal = () => {
             els.title.innerText = 'Add New Item Group';
@@ -533,6 +579,9 @@
             els.id.value = '';
             els.form.querySelectorAll('input, textarea').forEach(el => el.disabled = false);
             els.form.querySelector('button[type="submit"]').style.display = 'block';
+            // Reset image preview
+            document.getElementById('catImagePreview').style.display = 'none';
+            document.getElementById('categoryImage').value = '';
             els.modal.classList.add('active');
         };
 
@@ -549,6 +598,22 @@
                         els.desc.value = cat.categoryDescription;
                         els.form.querySelectorAll('input, textarea').forEach(el => el.disabled = false);
                         els.form.querySelector('button[type="submit"]').style.display = 'block';
+
+                        // Show existing image preview if one exists
+                        const preview = document.getElementById('catImagePreview');
+                        const thumb = document.getElementById('catImageThumb');
+                        const nameSpan = document.getElementById('catImageName');
+
+                        thumb.src = `/billing-app/api/getCategoryImage/${id}`;
+                        nameSpan.textContent = 'Existing Image';
+                        preview.style.display = 'flex';
+                        preview.style.alignItems = 'center';
+
+                        // If the backend returned 404 for existing image, hide the preview
+                        thumb.onerror = () => {
+                            preview.style.display = 'none';
+                        };
+
                         els.modal.classList.add('active');
                     }
                 });
@@ -565,42 +630,51 @@
             }
         };
 
-        els.form.onsubmit = (e) => {
+        els.form.onsubmit = async (e) => {
             e.preventDefault();
             const id = els.id.value;
             const name = els.name.value;
 
-            const processSave = (base64Image = null) => {
-                const data = {
-                    categoryName: name,
-                    categoryDescription: els.desc.value,
-                    categoryImage: base64Image
-                };
+            let base64Image = null;
+            const imageFile = els.image.files[0];
 
-                const url = id ? `/updateCategory/${id}` : '/saveCategory';
-                const method = id ? 'PUT' : 'POST';
+            if (imageFile) {
+                try {
+                    base64Image = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result.split(',')[1]);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(imageFile);
+                    });
+                } catch (err) {
+                    console.error("Image read error:", err);
+                }
+            }
 
-                fetch(`${apiBase}${url}`, {
+            const data = {
+                categoryName: name,
+                categoryDescription: els.desc.value,
+                categoryImage: base64Image
+            };
+
+            const url = id ? `${apiBase}/updateCategory/${id}` : `${apiBase}/saveCategory`;
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, {
                     method: method,
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
-                }).then(res => {
-                    if (res.ok) {
-                        closeModal();
-                        loadData();
-                    } else {
-                        alert('Failed to save category.');
-                    }
                 });
-            };
-
-            const imageFile = els.image.files[0];
-            if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = () => processSave(reader.result.split(',')[1]);
-                reader.readAsDataURL(imageFile);
-            } else {
-                processSave();
+                if (res.ok) {
+                    closeModal();
+                    loadData();
+                } else {
+                    alert('Failed to save category. Please try again.');
+                }
+            } catch (err) {
+                console.error("Save error:", err);
+                alert("An error occurred while saving.");
             }
         };
 
@@ -615,6 +689,26 @@
         });
 
         window.onclick = (e) => (e.target == els.modal) && closeModal();
+
+        // Image preview for category form
+        function previewCatImage(input) {
+            const preview = document.getElementById('catImagePreview');
+            const thumb = document.getElementById('catImageThumb');
+            const name = document.getElementById('catImageName');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    thumb.src = e.target.result;
+                    name.textContent = input.files[0].name;
+                    preview.style.display = 'flex';
+                    preview.style.alignItems = 'center';
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
         loadData();
     </script>
 </body>

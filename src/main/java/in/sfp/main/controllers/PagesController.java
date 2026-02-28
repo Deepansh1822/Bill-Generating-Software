@@ -25,6 +25,9 @@ public class PagesController {
         model.addAttribute("displayUsername", "User");
         model.addAttribute("userFullName", "");
         model.addAttribute("userProfileImage", "");
+        model.addAttribute("userCompanyName", "");
+        model.addAttribute("userCompanyType", "");
+        model.addAttribute("userEmail", "");
 
         if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
             in.sfp.main.models.UserAccessInfo user = userAccessService.findByUsername(auth.getName());
@@ -32,17 +35,21 @@ public class PagesController {
                 user = userAccessService.findByEmail(auth.getName());
             }
 
-                if (user != null) {
-                    String role = user.getRole() != null ? user.getRole().toUpperCase() : "CLIENT";
-                    model.addAttribute("userRole", role);
-                    model.addAttribute("displayUsername", user.getUsername() != null ? user.getUsername() : auth.getName());
-                    model.addAttribute("userFullName", user.getFullName() != null ? user.getFullName() : "");
-                    model.addAttribute("userProfileImage", user.getClientImage() != null ? user.getClientImage() : "");
-                    // Expose company fields so templates can pre-fill invoice form when businessInfo is absent
-                    model.addAttribute("userCompanyName", user.getCompanyName() != null ? user.getCompanyName() : "");
-                    model.addAttribute("userCompanyType", user.getCompanyType() != null ? user.getCompanyType() : "");
-                } else {
+            if (user != null) {
+                String role = user.getRole() != null ? user.getRole().toUpperCase() : "CLIENT";
+                model.addAttribute("userRole", role);
+                model.addAttribute("displayUsername", user.getUsername() != null ? user.getUsername()
+                        : (user.getEmail() != null ? user.getEmail() : auth.getName()));
+                model.addAttribute("userFullName", user.getFullName() != null ? user.getFullName() : "");
+                model.addAttribute("userProfileImage", ""); // Loaded async via /api/profile-image to avoid large Base64
+                                                            // in HTML
+                model.addAttribute("userCompanyName", user.getCompanyName() != null ? user.getCompanyName() : "");
+                model.addAttribute("userCompanyType", user.getCompanyType() != null ? user.getCompanyType() : "");
+                model.addAttribute("userEmail", user.getEmail() != null ? user.getEmail() : auth.getName());
+                model.addAttribute("authStatus", "authenticated");
+            } else {
                 model.addAttribute("displayUsername", auth.getName());
+                model.addAttribute("userEmail", auth.getName());
                 // Fallback to role from Authorities in Token
                 String role = auth.getAuthorities().stream()
                         .map(a -> a.getAuthority())
@@ -51,7 +58,10 @@ public class PagesController {
                         .findFirst()
                         .orElse("CLIENT");
                 model.addAttribute("userRole", role);
+                model.addAttribute("authStatus", "authenticated");
             }
+        } else {
+            model.addAttribute("authStatus", "unauthenticated");
         }
     }
 
@@ -62,6 +72,13 @@ public class PagesController {
             in.sfp.main.models.UserAccessInfo user = userAccessService.findByUsername(auth.getName());
             if (user == null) {
                 user = userAccessService.findByEmail(auth.getName());
+            }
+            if (user != null) {
+                // Strip the clientImage to prevent a massive Base64 blob being embedded in
+                // HTML.
+                // The profile avatar image is loaded asynchronously via /api/profile-image
+                // instead.
+                user.setClientImage(null);
             }
             model.addAttribute("user", user);
         }

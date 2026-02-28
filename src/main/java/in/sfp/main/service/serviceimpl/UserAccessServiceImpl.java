@@ -39,12 +39,16 @@ public class UserAccessServiceImpl implements UserAccessService {
             body.append("Hello ");
             body.append(saved.getFullName() != null ? saved.getFullName() : "");
             body.append(",\n\n");
-            body.append("Thanks for requesting access to SFP Billing. We have received your request and will review it shortly.\n\n");
+            body.append(
+                    "Thanks for requesting access to SFP Billing. We have received your request and will review it shortly.\n\n");
             body.append("Submitted details:\n");
-            body.append("Company Name: ").append(saved.getCompanyName() != null ? saved.getCompanyName() : "-").append("\n");
-            body.append("Company Type: ").append(saved.getCompanyType() != null ? saved.getCompanyType() : "-").append("\n");
+            body.append("Company Name: ").append(saved.getCompanyName() != null ? saved.getCompanyName() : "-")
+                    .append("\n");
+            body.append("Company Type: ").append(saved.getCompanyType() != null ? saved.getCompanyType() : "-")
+                    .append("\n");
             body.append("Email: ").append(saved.getEmail()).append("\n");
-            body.append("Mobile: ").append(saved.getMobileNumber() != null ? saved.getMobileNumber() : "-").append("\n\n");
+            body.append("Mobile: ").append(saved.getMobileNumber() != null ? saved.getMobileNumber() : "-")
+                    .append("\n\n");
             body.append("We'll notify you when your account is approved.\n\nRegards,\nSFP Team");
             msg.setText(body.toString());
             mailSender.send(msg);
@@ -135,6 +139,11 @@ public class UserAccessServiceImpl implements UserAccessService {
     @Override
     public List<UserAccessInfo> getAllClients() {
         return usersAccessRepo.findByRole("CLIENT");
+    }
+
+    @Override
+    public UserAccessInfo findById(Long id) {
+        return usersAccessRepo.findById(id).orElse(null);
     }
 
     private void sendSetupEmail(String email, String username, String token) {

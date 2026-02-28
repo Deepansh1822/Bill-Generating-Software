@@ -138,6 +138,21 @@
                 padding: 2px 10px;
                 border-radius: 20px;
                 font-weight: 700;
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+                }
+
+                70% {
+                    box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+                }
+
+                100% {
+                    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+                }
             }
 
             .sidebar-footer {
@@ -292,6 +307,7 @@
         <!-- Debug Marker -->
         <div style="display:none" id="sidebar-loaded-marker"></div>
         <div class="sidebar-header">
+            <!-- Points to Profile for easy back-navigation -->
             <a href="/billing-app/api/Dashboard" class="sidebar-brand">
                 <div class="sidebar-logo">B</div>
                 <span style="font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px;">SFP Billing</span>
@@ -302,14 +318,38 @@
                 <a href="/billing-app/api/Dashboard" class="nav-link"
                     th:classappend="${activePage == 'dashboard' ? 'active' : ''}">
                     <i class="fa-solid fa-house nav-icon"></i>
-                    <span>Overview</span>
+                    <span>Dashboard</span>
                 </a>
+            </li>
+            <!-- Inventory Dropdown -->
+            <li class="nav-item">
+                <button class="nav-dropdown-toggle" id="inv-toggle"
+                    th:classappend="${activePage == 'stocks' or activePage == 'categories' ? 'open' : ''}">
+                    <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                    <span>Inventory</span>
+                    <i class="fa-solid fa-chevron-down nav-dropdown-arrow"></i>
+                </button>
+                <ul class="nav-submenu" id="inv-submenu"
+                    th:classappend="${activePage == 'stocks' or activePage == 'categories' ? 'open' : ''}">
+                    <li>
+                        <a href="/billing-app/api/ManageCategories" class="nav-sublink"
+                            th:classappend="${activePage == 'categories' ? 'active' : ''}">
+                            Item Groups
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/billing-app/api/ManageStocks" class="nav-sublink"
+                            th:classappend="${activePage == 'stocks' ? 'active' : ''}">
+                            Products & Services
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li class="nav-item" th:if="${userRole == 'CLIENT'}">
                 <a href="/billing-app/api/GenerateBill" class="nav-link"
                     th:classappend="${activePage == 'generate-bill' ? 'active' : ''}">
                     <i class="fa-solid fa-file-invoice nav-icon"></i>
-                    <span>Generate Bill</span>
+                    <span>Generate Invoice</span>
                 </a>
             </li>
             <li class="nav-item" th:if="${userRole == 'ADMIN'}">
@@ -326,30 +366,6 @@
                     <i class="fa-solid fa-chart-column nav-icon"></i>
                     <span>Reports</span>
                 </a>
-            </li>
-            <!-- Inventory Dropdown -->
-            <li class="nav-item">
-                <button class="nav-dropdown-toggle" id="inv-toggle"
-                    th:classappend="${activePage == 'stocks' or activePage == 'categories' ? 'open' : ''}">
-                    <i class="fa-solid fa-boxes-stacked nav-icon"></i>
-                    <span>Inventory</span>
-                    <i class="fa-solid fa-chevron-down nav-dropdown-arrow"></i>
-                </button>
-                <ul class="nav-submenu" id="inv-submenu"
-                    th:classappend="${activePage == 'stocks' or activePage == 'categories' ? 'open' : ''}">
-                    <li>
-                        <a href="/billing-app/api/ManageStocks" class="nav-sublink"
-                            th:classappend="${activePage == 'stocks' ? 'active' : ''}">
-                            Products & Services
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/billing-app/api/ManageCategories" class="nav-sublink"
-                            th:classappend="${activePage == 'categories' ? 'active' : ''}">
-                            Item Groups
-                        </a>
-                    </li>
-                </ul>
             </li>
             <li class="nav-item" th:if="${userRole == 'ADMIN'}">
                 <a href="/billing-app/api/ManageClients" class="nav-link"
@@ -392,19 +408,30 @@
             }, true); // capture phase — fires before any overlay can eat it
 
             /*[# th:if="${userRole == 'ADMIN'}"]*/
-            // Update the pending badge if possible
-            fetch('/billing-app/api/admin/pending-requests')
-                .then(res => res.json())
-                .then(data => {
-                    if (Array.isArray(data)) {
-                        const pending = data.filter(u => u.status === 'PENDING').length;
-                        const badge = document.getElementById('sidebar-pending-badge');
-                        if (badge && pending > 0) {
-                            badge.innerText = pending;
-                            badge.style.display = 'block';
+            window.updateSidebarBadge = function () {
+                fetch('/billing-app/api/admin/pending-requests')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (Array.isArray(data)) {
+                            const pending = data.filter(u => u.status === 'PENDING').length;
+                            const badge = document.getElementById('sidebar-pending-badge');
+                            if (badge) {
+                                if (pending > 0) {
+                                    badge.innerText = pending;
+                                    badge.style.display = 'block';
+                                    badge.style.animation = 'pulse 2s infinite';
+                                } else {
+                                    badge.style.display = 'none';
+                                }
+                            }
                         }
-                    }
-                }).catch(() => { });
+                    }).catch(() => { });
+            };
+
+            // Run on load
+            updateSidebarBadge();
+            // Heartbeat: Check every 30 seconds
+            setInterval(updateSidebarBadge, 30000);
             /*[/]*/
         </script>
     </aside>

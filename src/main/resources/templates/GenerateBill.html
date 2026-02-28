@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate Bill | SFP Billing</title>
+    <title>Generate Invoice | SFP Billing</title>
     <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -1763,6 +1763,9 @@ For international transfers, please include all beneficiary details and use the 
             const stock = stockCache.find(s => s.id === stockId);
             if (!stock) return;
 
+            // If item is Tax Exempt, all GST rates must be 0 regardless of stored values
+            const isTaxable = stock.taxable !== false; // defaults to taxable if undefined
+
             billItems.push({
                 id: nextItemId++,
                 itemName: stock.itemName,
@@ -1770,9 +1773,9 @@ For international transfers, please include all beneficiary details and use the 
                 hsnCode: stock.hsnCode || stock.sacCode || '',
                 quantity: 1,
                 unitPrice: stock.unitPrice || 0,
-                cgstRate: stock.cgstRate || 0,
-                sgstRate: stock.sgstRate || 0,
-                igstRate: stock.igstRate || 0,
+                cgstRate: isTaxable ? (stock.cgstRate || 0) : 0,
+                sgstRate: isTaxable ? (stock.sgstRate || 0) : 0,
+                igstRate: isTaxable ? (stock.igstRate || 0) : 0,
                 fromStock: true,
                 stockId: stock.id
             });

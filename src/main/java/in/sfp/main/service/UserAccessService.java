@@ -28,4 +28,6 @@ public interface UserAccessService {
     public UserAccessInfo createAdminAccount(UserAccessInfo adminInfo);
 
     public List<UserAccessInfo> getAllClients();
+
+    public UserAccessInfo findById(Long id);
 }

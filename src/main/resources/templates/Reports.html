@@ -282,6 +282,91 @@
             margin: 0 auto;
             line-height: 1.6;
         }
+
+        /* Share Dropdown in Table */
+        .share-cell {
+            position: relative;
+        }
+
+        .share-menu {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 160px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .share-menu.show {
+            display: block;
+            animation: popIn 0.2s ease-out;
+        }
+
+        .share-menu-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .share-menu-item:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .share-menu-item i {
+            width: 16px;
+            text-align: center;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Toast notification */
+        #shareToast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 9999;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0;
+        }
+
+        #shareToast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -463,9 +548,22 @@
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
                         ` : ''}
-                        <button class="btn-share" title="Quick Share" onclick="shareReportBill('${bill.invoiceNumber}', '${bill.stockTotalAmount}', ${bill.id})">
-                            <i class="fa-solid fa-share-nodes"></i>
-                        </button>
+                        <div class="share-cell">
+                            <button class="btn-share" title="Share Options" onclick="toggleShareMenu(event, ${bill.id})">
+                                <i class="fa-solid fa-share-nodes"></i>
+                            </button>
+                            <div class="share-menu" id="shareMenu-${bill.id}">
+                                <div class="share-menu-item" onclick="shareReportAction('whatsapp', '${bill.invoiceNumber}', '${bill.stockTotalAmount}', ${bill.id}, '${(bill.recipientBillingInfo?.recipientName || 'Valued Customer').replace(/'/g, "\\'")}')">
+                                    <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp
+                                </div>
+                                <div class="share-menu-item" onclick="shareReportAction('email', '${bill.invoiceNumber}', '${bill.stockTotalAmount}', ${bill.id}, '${(bill.recipientBillingInfo?.recipientName || 'Valued Customer').replace(/'/g, "\\'")}')">
+                                    <i class="fa-solid fa-envelope" style="color: #ea4335;"></i> Email
+                                </div>
+                                <div class="share-menu-item" onclick="shareReportAction('copy', '${bill.invoiceNumber}', '${bill.stockTotalAmount}', ${bill.id})">
+                                    <i class="fa-solid fa-link" style="color: var(--primary);"></i> Copy Link
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -486,10 +584,65 @@
             return dateData;
         }
 
-        function shareReportBill(invNum, amount, id) {
+        function toggleShareMenu(event, id) {
+            event.stopPropagation();
+            // Close all other menus
+            document.querySelectorAll('.share-menu').forEach(menu => {
+                if (menu.id !== `shareMenu-${id}`) menu.classList.remove('show');
+            });
+            const menu = document.getElementById(`shareMenu-${id}`);
+            menu.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function (e) {
+            document.querySelectorAll('.share-menu').forEach(menu => {
+                menu.classList.remove('show');
+            });
+        });
+
+        async function shareReportAction(type, invNum, amount, id, recipient) {
             const link = `${window.location.origin}/billing-app/api/Reports/BillDetail/${id}`;
-            const text = `Hello, please find the Invoice #${invNum} for ₹${amount}. View here: ${link}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            const businessName = "SFP Billing";
+
+            if (type === 'whatsapp') {
+                try {
+                    showToast('Sending PDF to WhatsApp...');
+                    const response = await fetch(`/billing-app/api/whatsapp/sendInvoice/${id}`, { method: 'POST' });
+                    const result = await response.json();
+                    if (response.ok) {
+                        showToast('✅ WhatsApp PDF sent successfully!');
+                    } else {
+                        showToast('❌ Failed: ' + (result.message || 'Check API keys'));
+                    }
+                } catch (err) {
+                    showToast('❌ Error sending WhatsApp');
+                }
+            } else if (type === 'email') {
+                try {
+                    showToast('Generating PDF & Sending Email...');
+                    const response = await fetch(`/billing-app/api/email/sendInvoice/${id}`, { method: 'POST' });
+                    const result = await response.json();
+                    if (response.ok) {
+                        showToast('✅ Email sent with PDF attachment!');
+                    } else {
+                        showToast('❌ Failed: ' + (result.message || 'Server error'));
+                    }
+                } catch (err) {
+                    showToast('❌ Error sending email');
+                }
+            } else if (type === 'copy') {
+                navigator.clipboard.writeText(link).then(() => {
+                    showToast('Link copied to clipboard!');
+                });
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('shareToast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
         async function downloadCSV() {
@@ -547,6 +700,8 @@
 
         window.onload = loadReports;
     </script>
+    <!-- Toast -->
+    <div id="shareToast">Link copied to clipboard!</div>
 </body>
 
 </html>

@@ -690,7 +690,7 @@
                 style="text-decoration: none; color: inherit; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border);">
                 <div class="avatar"
                     th:style="${userProfileImage != null and userProfileImage != '' ? 'background-image: url(' + userProfileImage + '); background-size: cover; background-position: center;' : 'background: #eef2ff;'}"
-                    th:text="${(userProfileImage == null or userProfileImage == '') ? (displayUsername != null and displayUsername.length() > 0 ? #strings.substring(displayUsername,0,1).toUpperCase() : 'U') : ''}">
+                    th:text="${(userProfileImage == null or userProfileImage == '') ? (displayUsername != null and #strings.length(displayUsername) > 0 ? #strings.substring(displayUsername,0,1).toUpperCase() : 'U') : ''}">
                     U</div>
                 <div style="font-size: 0.9rem; font-weight: 700;" th:text="${displayUsername}">Username</div>
                 <span class="role-badge" th:classappend="${userRole == 'ADMIN' ? 'role-admin' : 'role-client'}"
@@ -769,7 +769,7 @@
                         </div>
                         <div>
                             <h3 style="font-weight: 800; font-size: 1.1rem; color: #1e293b;"
-                                th:text="${userRole == 'ADMIN' ? 'Revenue Distribution' : 'Service vs Product'}">
+                                th:text="${userRole == 'ADMIN' ? 'Revenue Distribution' : 'Inventory Distribution'}">
                                 Distribution</h3>
                             <p style="font-size: 0.8rem; color: #64748b;"
                                 th:text="${userRole == 'ADMIN' ? 'Top 10 high-performing categories across the platform.' : 'Breakdown of your billing across Products and Services.'}">
@@ -1160,6 +1160,7 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         const userRole = /*[[${userRole}]]*/ 'CLIENT';
+        const userEmail = /*[[${userEmail}]]*/ '';
 
         function toggleBroadcastPopup() {
             const popup = document.getElementById('broadcastPopup');
@@ -1380,6 +1381,7 @@
                 if (res.ok) {
                     alert("User approved successfully!");
                     initDashboard(); // Refresh data
+                    if (window.updateSidebarBadge) window.updateSidebarBadge();
                 } else {
                     alert("Failed to approve user.");
                 }
@@ -1396,6 +1398,7 @@
                 if (res.ok) {
                     alert("User request rejected.");
                     initDashboard(); // Refresh data
+                    if (window.updateSidebarBadge) window.updateSidebarBadge();
                 } else {
                     alert("Failed to reject user.");
                 }
@@ -1583,6 +1586,9 @@
                         </div>
                         <div class="stat-value">₹${data.totalRevenue.toLocaleString('en-IN')}</div>
                         <div class="stat-label">Total Earnings</div>
+                        <div class="trend" style="color: #6366f1;">
+                            <i class="fa-solid fa-arrow-trend-up"></i> Lifetime Revenue
+                        </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
@@ -1592,15 +1598,21 @@
                         </div>
                         <div class="stat-value">${data.pendingQuotations}</div>
                         <div class="stat-label">Draft Quotations</div>
+                        <div class="trend" style="color: #10b981;">
+                            <i class="fa-solid fa-signature"></i> Pending Finalization
+                        </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon" style="background: #fffbeb; color: #f59e0b;">
-                                <i class="fa-solid fa-hourglass-start"></i>
+                            <div class="stat-icon" style="background: #fff1f2; color: #e11d48;">
+                                <i class="fa-solid fa-hourglass-half"></i>
                             </div>
                         </div>
                         <div class="stat-value">₹${data.balanceDue.toLocaleString('en-IN')}</div>
                         <div class="stat-label">Unpaid Balance</div>
+                        <div class="trend" style="color: #e11d48;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Action Required
+                        </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
@@ -1610,6 +1622,9 @@
                         </div>
                         <div class="stat-value">${data.totalInvoices}</div>
                         <div class="stat-label">Lifetime Invoices</div>
+                        <div class="trend" style="color: #64748b;">
+                            <i class="fa-solid fa-box-archive"></i> Total Records
+                        </div>
                     </div>
                 `;
             }
@@ -1651,7 +1666,7 @@
             const sectionTitle = document.getElementById('recentSectionTitle');
 
             // Set Role Based Title
-            sectionTitle.innerHTML = userRole === 'ADMIN' ? '📜 Real-Time Billing Logs' : '📜 Your Recent Invoices';
+            sectionTitle.innerHTML = userRole === 'ADMIN' ? '📜 Real-Time Billing Logs' : '📜 Real-Time Billing Logs';
 
             // Set Role Based Headers
             if (userRole === 'ADMIN') {
@@ -1893,7 +1908,24 @@
             }
         }
 
-        window.onload = initDashboard;
+        window.onload = function () {
+            initDashboard();
+            // Load profile image asynchronously to avoid embedding large Base64 in HTML
+            fetch('/billing-app/api/profile-image')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.clientImage) {
+                        const avatar = document.querySelector('.user-profile .avatar');
+                        if (avatar) {
+                            avatar.style.backgroundImage = `url(${data.clientImage})`;
+                            avatar.style.backgroundSize = 'cover';
+                            avatar.style.backgroundPosition = 'center';
+                            avatar.innerText = '';
+                        }
+                    }
+                })
+                .catch(() => { /* silently ignore if image not set */ });
+        };
         /*]]>*/
     </script>
 </body>

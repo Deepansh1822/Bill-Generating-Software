@@ -365,10 +365,43 @@
             margin: 60px auto;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+        .premium-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px;
+            text-align: center;
+            color: #64748b;
+            width: 100%;
+        }
+
+        .premium-empty-state i {
+            font-size: 2.5rem;
+            color: #94a3b8;
+            margin-bottom: 24px;
+            background: #f8fafc;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .premium-empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .premium-empty-state p {
+            font-size: 0.95rem;
+            max-width: 360px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -512,7 +545,7 @@
                     <tr>
                         <td colspan="5">
                             <div class="premium-empty-state">
-                                <i class="fa-solid fa-circle-check" style="color: #10b981;"></i>
+                                <i class="fa-solid fa-circle-check"></i>
                                 <h3>All caught up!</h3>
                                 <p>There are no pending access requests at the moment. You have successfully onboarded all applicants.</p>
                             </div>
@@ -578,7 +611,10 @@
                     el.style.transform = 'translateX(20px)';
                     el.style.opacity = '0';
                     el.style.transition = 'all 0.3s ease';
-                    setTimeout(loadData, 300);
+                    setTimeout(() => {
+                        loadData();
+                        if (window.updateSidebarBadge) window.updateSidebarBadge();
+                    }, 300);
                 } else { alert('Action failed. Please try again.'); }
             } catch (err) { alert('An error occurred.'); }
         };

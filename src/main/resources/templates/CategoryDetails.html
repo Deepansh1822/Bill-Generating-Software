@@ -609,23 +609,29 @@
                         <textarea id="itemDescription" rows="2"></textarea>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="cgstGroup">
                         <label>CGST (%)</label>
                         <input type="number" step="0.01" id="cgstRate" value="0">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="sgstGroup">
                         <label>SGST (%)</label>
                         <input type="number" step="0.01" id="sgstRate" value="0">
                     </div>
-                    <div class="form-group" style="grid-column: span 2;">
+                    <div class="form-group" id="igstGroup" style="grid-column: span 2;">
                         <label>IGST (%)</label>
                         <input type="number" step="0.01" id="igstRate" value="0">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Image (Optional)</label>
-                    <input type="file" id="stockImage" accept="image/*">
+                    <label for="stockImage">Image (Optional)</label>
+                    <input type="file" id="stockImage" accept="image/*" onchange="previewStockImage(this)">
+                    <div id="stockImagePreview" style="margin-top: 10px; display: none;">
+                        <img id="stockImageThumb"
+                            style="width: 80px; height: 80px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border);">
+                        <span id="stockImageName"
+                            style="font-size: 12px; color: var(--text-muted); margin-left: 10px;"></span>
+                    </div>
                 </div>
 
                 <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
@@ -637,16 +643,9 @@
     </div>
 
     <script th:inline="javascript">
+        const apiBase = '/billing-app/api';
         const userRole = /*[[${userRole}]]*/ 'CLIENT';
         const userName = /*[[${userName}]]*/ 'User';
-        const apiBase = '/billing-app/api';
-        const urlParams = new URLSearchParams(window.location.search);
-        const catId = urlParams.get('id');
-        let allItems = [];
-
-        if (!catId) {
-            window.location.href = '/billing-app/api/ManageCategories';
-        }
 
         const els = {
             tbody: document.getElementById('productsTableBody'),
@@ -656,7 +655,52 @@
             idInput: document.getElementById('stockId')
         };
 
-        const setType = (type) => {
+        const handleRedirect = () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('action') === 'add') {
+                openModal();
+            }
+        };
+
+        // Image preview for stock form
+        function previewStockImage(input) {
+            const preview = document.getElementById('stockImagePreview');
+            const thumb = document.getElementById('stockImageThumb');
+            const name = document.getElementById('stockImageName');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    thumb.src = e.target.result;
+                    name.textContent = input.files[0].name;
+                    preview.style.display = 'flex';
+                    preview.style.alignItems = 'center';
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        function toggleTaxFields() {
+            const isTaxable = document.getElementById('taxPreference').value === 'true';
+            document.getElementById('cgstGroup').style.display = isTaxable ? 'block' : 'none';
+            document.getElementById('sgstGroup').style.display = isTaxable ? 'block' : 'none';
+            document.getElementById('igstGroup').style.display = isTaxable ? 'block' : 'none';
+        }
+
+        document.getElementById('taxPreference').addEventListener('change', toggleTaxFields);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const catId = urlParams.get('id');
+        let allItems = [];
+
+        if (!catId) {
+            window.location.href = '/billing-app/api/ManageCategories';
+        }
+
+
+
+        function setType(type) {
             els.typeInput.value = type;
             document.querySelectorAll('.type-opt').forEach(el => el.classList.remove('active'));
             document.getElementById(`opt-${type.toLowerCase()}`).classList.add('active');
@@ -669,7 +713,7 @@
             if (label) {
                 label.innerText = type === 'PRODUCT' ? 'Current Stock Level' : 'Base Billing Unit (Qty)';
             }
-        };
+        }
 
         const formatDate = (dateArr) => {
             if (!dateArr) return '-';
@@ -685,60 +729,89 @@
             return '-';
         };
 
-        const loadCategoryDetails = () => {
-            // Fetch All Categories for modal dropdown
-            fetch(`${apiBase}/getAllCategories`).then(res => res.json()).then(cats => {
-                document.getElementById('categoryId').innerHTML = cats.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
-            });
+        const loadCategoryDetails = async () => {
+            try {
+                // 1. Fetch Categories for dropdown
+                const catsRes = await fetch(`${apiBase}/getAllCategories`);
+                if (catsRes.ok) {
+                    const cats = await catsRes.json();
+                    document.getElementById('categoryId').innerHTML = cats.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
+                }
 
-            // Fetch Category Details
-            fetch(`${apiBase}/getCategoryById/${catId}`)
-                .then(res => res.json())
-                .then(cat => {
-                    document.getElementById('categoryName').innerText = cat.categoryName;
-                    document.getElementById('categoryDescription').innerText = cat.categoryDescription || 'No description provided for this category.';
+                // 2. Fetch specific Category Info
+                const catRes = await fetch(`${apiBase}/getCategoryById/${catId}`);
+                if (!catRes.ok) {
+                    throw new Error(`Category not found (Status: ${catRes.status})`);
+                }
+                const cat = await catRes.json();
 
-                    document.getElementById('createdAt').innerText = formatDate(cat.categoryCreatedAt);
-                    document.getElementById('createdBy').innerText = cat.categoryCreatedBy || 'System';
+                // Update UI with Category Info
+                document.getElementById('categoryName').innerText = cat.categoryName || 'Unnamed Group';
+                document.getElementById('categoryDescription').innerText = cat.categoryDescription || 'No description provided.';
+                document.getElementById('createdAt').innerText = formatDate(cat.categoryCreatedAt);
+                document.getElementById('createdBy').innerText = cat.categoryCreatedBy || 'System';
 
-                    if (cat.categoryUpdatedAt) {
-                        document.getElementById('updatedMeta').style.display = 'flex';
-                        document.getElementById('updatedAt').innerText = formatDate(cat.categoryUpdatedAt);
-                        document.getElementById('updatedBy').innerText = cat.categoryUpdatedBy || 'System';
-                    } else {
-                        document.getElementById('updatedMeta').style.display = 'none';
-                    }
+                if (cat.categoryUpdatedAt) {
+                    document.getElementById('updatedMeta').style.display = 'flex';
+                    document.getElementById('updatedAt').innerText = formatDate(cat.categoryUpdatedAt);
+                    document.getElementById('updatedBy').innerText = cat.categoryUpdatedBy || 'System';
+                } else {
+                    document.getElementById('updatedMeta').style.display = 'none';
+                }
 
-                    if (cat.categoryImage) {
-                        document.getElementById('categoryHeroImg').src = 'data:image/png;base64,' + cat.categoryImage;
-                    }
+                // Load category hero image lazily via API
+                if (cat.id) {
+                    const heroImg = document.getElementById('categoryHeroImg');
+                    heroImg.src = `/billing-app/api/getCategoryImage/${cat.id}`;
+                    heroImg.onerror = () => { heroImg.src = 'https://via.placeholder.com/200'; };
+                }
 
-                    return fetch(`${apiBase}/getAllStocks`);
-                })
-                .then(res => res.json())
-                .then(stocks => {
-                    allItems = stocks.filter(s => s.stockCategories && s.stockCategories.id == catId);
+                // 3. Fetch Items
+                const stocksRes = await fetch(`${apiBase}/getAllStocks`);
+                if (!stocksRes.ok) throw new Error("Could not fetch items");
 
-                    const products = allItems.filter(s => s.stockType === 'PRODUCT' || !s.stockType);
-                    const services = allItems.filter(s => s.stockType === 'SERVICE');
+                const stocks = await stocksRes.json();
+                console.log("All stocks fetched:", stocks);
+                console.log("Filtering for catId:", catId);
 
-                    document.getElementById('productCount').innerHTML = `
-                        <div class="stat-badge">
-                            <i class="fa-solid fa-box" style="color: #2563eb;"></i>
-                            <span>${products.length} ${products.length === 1 ? 'Product' : 'Products'}</span>
-                        </div>
-                        <div class="stat-badge">
-                            <i class="fa-solid fa-handshake" style="color: #7c3aed;"></i>
-                            <span>${services.length} ${services.length === 1 ? 'Service' : 'Services'}</span>
-                        </div>
-                    `;
-
-                    renderTable(allItems);
-                })
-                .catch(err => {
-                    console.error('Error:', err);
-                    alert('Error loading category details.');
+                // Filter items. Compare strings to avoid type issues.
+                allItems = (stocks || []).filter(s => {
+                    if (!s.stockCategories) return false;
+                    const stockCatId = String(s.stockCategories.id);
+                    const targetCatId = String(catId);
+                    return stockCatId === targetCatId;
                 });
+
+                const products = allItems.filter(s => s.stockType === 'PRODUCT' || !s.stockType);
+                const services = allItems.filter(s => s.stockType === 'SERVICE');
+
+                document.getElementById('productCount').innerHTML = `
+                    <div class="stat-badge">
+                        <i class="fa-solid fa-box" style="color: #2563eb;"></i>
+                        <span>${products.length} ${products.length === 1 ? 'Product' : 'Products'}</span>
+                    </div>
+                    <div class="stat-badge">
+                        <i class="fa-solid fa-handshake" style="color: #7c3aed;"></i>
+                        <span>${services.length} ${services.length === 1 ? 'Service' : 'Services'}</span>
+                    </div>
+                `;
+
+                renderTable(allItems);
+                observeLazyStockImages();
+            } catch (err) {
+                console.error('Error in loadCategoryDetails:', err);
+                document.getElementById('productsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; color: #ef4444; padding: 40px;">
+                            <i class="fa-solid fa-triangle-exclamation" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                            <p style="font-weight: 700;">Failed to load data</p>
+                            <p style="font-size: 0.85rem; opacity: 0.8;">${err.message}</p>
+                            <button onclick="location.reload()" class="secondary-btn" style="margin-top: 15px;">Retry</button>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('productCount').innerHTML = `<span style="color: #ef4444;">Error loading stats</span>`;
+            }
         };
 
         const renderTable = (items) => {
@@ -760,7 +833,7 @@
             els.tbody.innerHTML = items.map(s => {
                 const isProduct = s.stockType === 'PRODUCT' || !s.stockType;
                 const code = isProduct ? (s.hsnCode || '-') : (s.sacCode || '-');
-                const img = s.stockImage ? `data:image/png;base64,${s.stockImage}` : 'https://via.placeholder.com/48';
+                const imgPlaceholder = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Crect width='48' height='48' fill='%23f1f5f9' rx='12'/%3E%3C/svg%3E`;
                 const taxType = s.taxable ? 'Taxable' : 'Exempt';
                 const taxColor = s.taxable ? '#059669' : '#64748b';
 
@@ -768,7 +841,7 @@
                     <tr>
                         <td>
                             <div style="display: flex; align-items: center; gap: 12px;">
-                                <img src="${img}" class="category-img">
+                                <img src="${imgPlaceholder}" data-stock-id="${s.id}" class="category-img lazy-stock-img">
                                 <span style="font-weight: 600;">${s.itemName}</span>
                             </div>
                         </td>
@@ -821,20 +894,28 @@
                 return matchQuery && matchType;
             });
             renderTable(filtered);
+            observeLazyStockImages();
         };
 
-        const openModal = () => {
+        function openModal() {
             els.form.reset();
             els.idInput.value = '';
-            document.getElementById('modalTitle').innerText = 'Add New Entry';
+            document.getElementById('modalTitle').innerText = 'Add Product / Service';
             setType('PRODUCT');
+            // Reset image preview
+            document.getElementById('stockImagePreview').style.display = 'none';
+            document.getElementById('stockImage').value = '';
+            // Pre-select current category
             document.getElementById('categoryId').value = catId;
+            toggleTaxFields();
             els.modal.classList.add('active');
-        };
+        }
 
-        const closeModal = () => els.modal.classList.remove('active');
+        function closeModal() {
+            els.modal.classList.remove('active');
+        }
 
-        const editStock = (id) => {
+        function editStock(id) {
             fetch(`${apiBase}/getStockById/${id}`).then(res => res.json()).then(stk => {
                 document.getElementById('modalTitle').innerText = 'Edit Item';
                 els.idInput.value = stk.id;
@@ -860,58 +941,68 @@
                 }
                 els.modal.classList.add('active');
             });
-        };
+        }
 
-        const deleteStock = (id) => {
+        function deleteStock(id) {
             if (confirm('Are you sure you want to delete this item?')) {
                 fetch(`${apiBase}/deleteStock/${id}`, { method: 'DELETE' }).then(() => loadCategoryDetails());
             }
-        };
+        }
 
         els.form.onsubmit = async (e) => {
             e.preventDefault();
             const id = els.idInput.value;
             const type = els.typeInput.value;
 
+            const categoryIdValue = document.getElementById('categoryId').value;
+            if (!categoryIdValue) {
+                alert("Please select a valid category");
+                return;
+            }
+
             const data = {
                 itemName: document.getElementById('itemName').value,
                 stockType: type,
-                unitPrice: parseFloat(document.getElementById('unitPrice').value),
+                unitPrice: parseFloat(document.getElementById('unitPrice').value || 0),
                 itemDescription: document.getElementById('itemDescription').value,
                 cgstRate: parseFloat(document.getElementById('cgstRate').value || 0),
                 sgstRate: parseFloat(document.getElementById('sgstRate').value || 0),
                 igstRate: parseFloat(document.getElementById('igstRate').value || 0),
                 unit: document.getElementById('itemUnit').value,
                 taxable: document.getElementById('taxPreference').value === 'true',
-                stockCategories: { id: parseInt(document.getElementById('categoryId').value) },
+                stockCategories: { id: parseInt(categoryIdValue) },
                 createdBy: document.getElementById('createdBy').value || null,
                 createdAt: document.getElementById('createdAt').value || null
             };
 
             if (type === 'PRODUCT') {
                 data.hsnCode = document.getElementById('hsnCode').value;
-                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value) || 0;
+                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value || 0);
                 data.sacCode = null;
             } else {
                 data.sacCode = document.getElementById('sacCode').value;
                 data.hsnCode = null;
-                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value) || 1;
+                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value || 1);
             }
 
             const imageFile = document.getElementById('stockImage').files[0];
             if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = async () => {
-                    data.stockImage = reader.result.split(',')[1];
-                    saveToServer(id, data);
-                };
-                reader.readAsDataURL(imageFile);
-            } else {
-                saveToServer(id, data);
+                try {
+                    const base64 = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result.split(',')[1]);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(imageFile);
+                    });
+                    data.stockImage = base64;
+                } catch (err) {
+                    console.error("Image read error:", err);
+                }
             }
+            saveToServer(id, data);
         };
 
-        const saveToServer = (id, data) => {
+        function saveToServer(id, data) {
             const url = id ? `${apiBase}/updateStock/${id}` : `${apiBase}/saveStock`;
             const method = id ? 'PUT' : 'POST';
 
@@ -927,17 +1018,41 @@
                     alert('Error saving data');
                 }
             });
-        };
+        }
 
+        const addItemBtn = document.getElementById('addItemBtn');
+        if (addItemBtn) addItemBtn.onclick = openModal;
+
+        const backBtn = document.getElementById('backBtn');
+        if (backBtn) {
+            backBtn.onclick = function (e) {
+                e.preventDefault();
+                window.location.href = this.href;
+            };
+        }
+
+        window.onclick = (e) => (e.target == els.modal) && closeModal();
         document.getElementById('itemSearch').addEventListener('input', applyFilters);
         document.getElementById('typeFilter').addEventListener('change', applyFilters);
-        document.getElementById('addItemBtn').onclick = openModal;
-        window.onclick = (e) => (e.target == els.modal) && closeModal();
 
-        document.getElementById('backBtn').onclick = function (e) {
-            e.preventDefault();
-            window.location.href = this.href;
-        };
+        // ---- Lazy stock image loading for CategoryDetails ----
+        const stockImgObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const id = img.dataset.stockId;
+                    if (id) {
+                        img.src = `/billing-app/api/getStockImage/${id}`;
+                        img.onerror = () => { img.removeAttribute('src'); img.style.background = '#f1f5f9'; };
+                        stockImgObserver.unobserve(img);
+                    }
+                }
+            });
+        }, { rootMargin: '100px' });
+
+        function observeLazyStockImages() {
+            document.querySelectorAll('.lazy-stock-img').forEach(img => stockImgObserver.observe(img));
+        }
 
         loadCategoryDetails();
     </script>

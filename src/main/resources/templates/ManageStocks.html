@@ -139,6 +139,16 @@
             transition: var(--transition);
         }
 
+        .add-btn:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+        .add-btn:active {
+            transform: translateY(0);
+        }
+
         .premium-empty-state {
             display: flex;
             flex-direction: column;
@@ -326,7 +336,7 @@
 
         .secondary-btn {
             background: #f1f5f9;
-            color: var(--text-muted);
+            color: var(--text-main);
             padding: 12px 24px;
             border-radius: 12px;
             font-weight: 600;
@@ -337,7 +347,7 @@
 
         .secondary-btn:hover {
             background: #e2e8f0;
-            color: var(--text-main);
+            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -349,7 +359,7 @@
         <div class="header-section">
             <h1>Products & Services</h1>
             <button th:if="${userRole != 'ADMIN'}" class="add-btn" onclick="openModal()">
-                <i class="fa-solid fa-plus"></i> Add New Entry
+                <i class="fa-solid fa-plus"></i> Add Product / Service
             </button>
         </div>
 
@@ -397,7 +407,7 @@
     <!-- Modal -->
     <div class="sfp-modal-overlay" id="stockModal">
         <div class="modal-card">
-            <h2 id="modalTitle" style="margin-bottom: 20px;">Add New Entry</h2>
+            <h2 id="modalTitle" style="margin-bottom: 20px;">Add Product / Service</h2>
 
             <div class="type-selector">
                 <div class="type-opt active" id="opt-product" onclick="setType('PRODUCT')">
@@ -416,22 +426,22 @@
 
                 <div class="form-grid">
                     <div class="form-group" style="grid-column: span 2;">
-                        <label>Name</label>
+                        <label for="itemName">Name</label>
                         <input type="text" id="itemName" required placeholder="e.g. Dell Monitor or Website Dev">
                     </div>
 
                     <div class="form-group">
-                        <label>Category</label>
+                        <label for="categoryId">Category</label>
                         <select id="categoryId" required></select>
                     </div>
 
                     <div class="form-group">
-                        <label>Unit Price (₹)</label>
+                        <label for="unitPrice">Unit Price (₹)</label>
                         <input type="number" step="0.01" id="unitPrice" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Unit of Measure</label>
+                        <label for="itemUnit">Unit of Measure</label>
                         <select id="itemUnit">
                             <option value="Pcs">Pcs (Pieces)</option>
                             <option value="Box">Box</option>
@@ -446,7 +456,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Tax Preference</label>
+                        <label for="taxPreference">Tax Preference</label>
                         <select id="taxPreference">
                             <option value="true">Taxable</option>
                             <option value="false">Tax Exempt</option>
@@ -455,46 +465,60 @@
 
                     <!-- Quantity & Code Fields -->
                     <div class="form-group conditional-field field-product show">
-                        <label>HSN Code</label>
+                        <label for="hsnCode">HSN Code</label>
                         <input type="text" id="hsnCode" placeholder="Enter HSN Code">
                     </div>
                     <div class="form-group conditional-field field-service" style="grid-column: span 2;">
-                        <label>SAC Code</label>
+                        <label for="sacCode">SAC Code</label>
                         <input type="text" id="sacCode" placeholder="Enter SAC Code (Service Accounting Code)">
                     </div>
 
                     <div class="form-group" style="grid-column: span 2;">
-                        <label id="qtyLabel">Current Stock / Base Unit</label>
+                        <label for="availableQuantity" id="qtyLabel">Current Stock / Base Unit</label>
                         <input type="number" id="availableQuantity" value="1">
                     </div>
 
                     <div class="form-group" style="grid-column: span 2;">
-                        <label>Description</label>
+                        <label for="itemDescription">Description</label>
                         <textarea id="itemDescription" rows="2"></textarea>
                     </div>
 
-                    <div class="form-group">
-                        <label>CGST (%)</label>
+                    <div class="form-group" id="cgstGroup">
+                        <label for="cgstRate">CGST (%)</label>
                         <input type="number" step="0.01" id="cgstRate" value="0">
                     </div>
-                    <div class="form-group">
-                        <label>SGST (%)</label>
+                    <div class="form-group" id="sgstGroup">
+                        <label for="sgstRate">SGST (%)</label>
                         <input type="number" step="0.01" id="sgstRate" value="0">
                     </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>IGST (%)</label>
+                    <div class="form-group" id="igstGroup" style="grid-column: span 2;">
+                        <label for="igstRate">IGST (%)</label>
                         <input type="number" step="0.01" id="igstRate" value="0">
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="grid-column: span 2;">
                     <label>Image (Optional)</label>
-                    <input type="file" id="stockImage" accept="image/*">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-top: 8px;">
+                        <label for="stockImage"
+                            style="cursor: pointer; padding: 10px 20px; background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 10px; font-size: 0.85rem; color: #475569; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>Choose Image</span>
+                        </label>
+                        <input type="file" id="stockImage" accept="image/*" style="display: none;"
+                            onchange="previewStockImage(this)">
+                        <div id="stockImagePreview" style="display: none; align-items: center;">
+                            <img id="stockImageThumb"
+                                style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border);">
+                            <span id="stockImageName"
+                                style="font-size: 12px; color: var(--text-muted); margin-left: 10px; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></span>
+                        </div>
+                    </div>
                 </div>
 
                 <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
                     <button type="button" class="secondary-btn" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="add-btn">Save Entry</button>
+                    <button type="submit" class="add-btn" id="submitBtn">Save Product</button>
                 </div>
             </form>
         </div>
@@ -540,7 +564,47 @@
             if (label) {
                 label.innerText = type === 'PRODUCT' ? 'Current Stock Level' : 'Base Billing Unit (Qty)';
             }
+
+            // Dynamic Submit Button
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.innerText = type === 'PRODUCT' ? 'Save Product' : 'Save Service';
+            }
         };
+
+        // Show/hide GST fields based on tax preference
+        function toggleTaxFields() {
+            const isTaxable = document.getElementById('taxPreference').value === 'true';
+            ['cgstGroup', 'sgstGroup', 'igstGroup'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = isTaxable ? '' : 'none';
+            });
+            if (!isTaxable) {
+                document.getElementById('cgstRate').value = 0;
+                document.getElementById('sgstRate').value = 0;
+                document.getElementById('igstRate').value = 0;
+            }
+        }
+        document.getElementById('taxPreference').addEventListener('change', toggleTaxFields);
+
+        // Preview stock image on file select
+        function previewStockImage(input) {
+            const preview = document.getElementById('stockImagePreview');
+            const thumb = document.getElementById('stockImageThumb');
+            const name = document.getElementById('stockImageName');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    thumb.src = e.target.result;
+                    name.textContent = input.files[0].name;
+                    preview.style.display = 'flex';
+                    preview.style.alignItems = 'center';
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
 
         const userRole = /*[[${userRole}]]*/ 'CLIENT';
 
@@ -563,7 +627,7 @@
             els.tbody.innerHTML = items.map(stk => {
                 const isProduct = stk.stockType === 'PRODUCT' || !stk.stockType;
                 const code = isProduct ? (stk.hsnCode || '-') : (stk.sacCode || '-');
-                const img = stk.stockImage ? `data:image/png;base64,${stk.stockImage}` : 'https://via.placeholder.com/48';
+                const imgPlaceholder = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Crect width='48' height='48' fill='%23f1f5f9' rx='12'/%3E%3C/svg%3E`;
 
                 const taxType = stk.taxable ? 'Taxable' : 'Exempt';
                 const taxColor = stk.taxable ? '#059669' : '#64748b';
@@ -584,7 +648,7 @@
                         <tr>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 12px;">
-                                    <img src="${img}" class="category-img">
+                                    <img src="${imgPlaceholder}" data-stock-id="${stk.id}" class="category-img lazy-stock-img">
                                     <span style="font-weight: 600;">${stk.itemName}</span>
                                 </div>
                             </td>
@@ -603,7 +667,27 @@
                         </tr>
                     `;
             }).join('');
+            observeLazyStockImages();
         };
+
+        // ---- Lazy image loading via IntersectionObserver ----
+        const stockImgObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const id = img.dataset.stockId;
+                    if (id) {
+                        img.src = `${apiBase}/getStockImage/${id}`;
+                        img.onerror = () => { img.removeAttribute('src'); img.style.background = '#f1f5f9'; };
+                        stockImgObserver.unobserve(img);
+                    }
+                }
+            });
+        }, { rootMargin: '100px' });
+
+        function observeLazyStockImages() {
+            document.querySelectorAll('.lazy-stock-img').forEach(img => stockImgObserver.observe(img));
+        }
 
         const applyFilters = () => {
             const query = document.getElementById('itemSearch').value.toLowerCase();
@@ -639,6 +723,10 @@
             els.idInput.value = '';
             setType('PRODUCT');
             els.modal.classList.add('active');
+            // Reset image preview
+            document.getElementById('stockImagePreview').style.display = 'none';
+            document.getElementById('stockImage').value = '';
+            toggleTaxFields();
         };
 
         const closeModal = () => els.modal.classList.remove('active');
@@ -667,6 +755,24 @@
                     document.getElementById('availableQuantity').value = stk.availableQuantity || 0;
                 }
                 els.modal.classList.add('active');
+
+                // Show existing image preview if one exists
+                const preview = document.getElementById('stockImagePreview');
+                const thumb = document.getElementById('stockImageThumb');
+                const nameSpan = document.getElementById('stockImageName');
+
+                thumb.src = `/billing-app/api/getStockImage/${id}`;
+                nameSpan.textContent = 'Existing Image';
+                preview.style.display = 'flex';
+                preview.style.alignItems = 'center';
+
+                // If the backend returned 404 for existing image, hide the preview
+                thumb.onerror = () => {
+                    preview.style.display = 'none';
+                };
+
+                // Sync GST visibility with loaded taxPreference value
+                toggleTaxFields();
             });
         };
 
@@ -681,45 +787,55 @@
             const id = els.idInput.value;
             const type = els.typeInput.value;
 
+            const categoryIdValue = document.getElementById('categoryId').value;
+            if (!categoryIdValue) {
+                alert("Please select a valid category");
+                return;
+            }
+
             const data = {
                 itemName: document.getElementById('itemName').value,
                 stockType: type,
-                unitPrice: parseFloat(document.getElementById('unitPrice').value),
+                unitPrice: parseFloat(document.getElementById('unitPrice').value || 0),
                 itemDescription: document.getElementById('itemDescription').value,
                 cgstRate: parseFloat(document.getElementById('cgstRate').value || 0),
                 sgstRate: parseFloat(document.getElementById('sgstRate').value || 0),
                 igstRate: parseFloat(document.getElementById('igstRate').value || 0),
                 unit: document.getElementById('itemUnit').value,
                 taxable: document.getElementById('taxPreference').value === 'true',
-                stockCategories: { id: parseInt(document.getElementById('categoryId').value) },
+                stockCategories: { id: parseInt(categoryIdValue) },
                 createdBy: document.getElementById('createdBy').value || null,
                 createdAt: document.getElementById('createdAt').value || null
             };
 
             if (type === 'PRODUCT') {
                 data.hsnCode = document.getElementById('hsnCode').value;
-                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value) || 0;
+                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value || 0);
                 data.sacCode = null;
             } else {
                 data.sacCode = document.getElementById('sacCode').value;
                 data.hsnCode = null;
-                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value) || 1;
+                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value || 1);
             }
 
             const imageFile = document.getElementById('stockImage').files[0];
             if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = async () => {
-                    data.stockImage = reader.result.split(',')[1];
-                    await saveToServer(id, data);
-                };
-                reader.readAsDataURL(imageFile);
-            } else {
-                await saveToServer(id, data);
+                try {
+                    const base64 = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result.split(',')[1]);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(imageFile);
+                    });
+                    data.stockImage = base64;
+                } catch (err) {
+                    console.error("Image read error:", err);
+                }
             }
+            await saveToServer(id, data);
         };
 
-        const saveToServer = async (id, data) => {
+        async function saveToServer(id, data) {
             const url = id ? `${apiBase}/updateStock/${id}` : `${apiBase}/saveStock`;
             const method = id ? 'PUT' : 'POST';
 
@@ -735,7 +851,7 @@
             } else {
                 alert('Error saving data');
             }
-        };
+        }
 
         window.onclick = (e) => (e.target == els.modal) && closeModal();
 

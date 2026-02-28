@@ -36,7 +36,22 @@ public class StockInfoController {
                 .orElse("CLIENT");
 
         List<StockInfo> stocks = stockInfoService.getAllStocksByUser(email, role);
+        // Strip image bytes from list response — images are served separately via
+        // /getStockImage/{id}
+        stocks.forEach(s -> s.setStockImage(null));
         return ResponseEntity.ok(stocks);
+    }
+
+    @GetMapping("/getStockImage/{id}")
+    public ResponseEntity<byte[]> getStockImage(@PathVariable Long id) {
+        StockInfo stock = stockInfoService.getStockById(id);
+        if (stock == null || stock.getStockImage() == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/jpeg")
+                .header("Cache-Control", "public, max-age=86400") // cache for 1 day
+                .body(stock.getStockImage());
     }
 
     @GetMapping("/getStockById/{id}")

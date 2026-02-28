@@ -357,8 +357,8 @@
                         <div class="profile-avatar"
                             th:style="${user?.clientImage != null and user?.clientImage != '' ? 'background-image: url(' + user.clientImage + ')' : ''}"
                             th:text="${(user?.clientImage == null or user?.clientImage == '') ? 
-                                       (user?.fullName != null and user?.fullName != '' ? #strings.substring(user.fullName, 0, 1).toUpperCase() : 
-                                       (user?.username != null and user?.username != '' ? #strings.substring(user.username, 0, 1).toUpperCase() : 'U')) : ''}">
+                                       (user?.fullName != null and #strings.length(user.fullName) > 0 ? #strings.substring(user.fullName, 0, 1).toUpperCase() : 
+                                       (user?.username != null and #strings.length(user.username) > 0 ? #strings.substring(user.username, 0, 1).toUpperCase() : 'U')) : ''}">
                         </div>
                         <label class="edit-image-btn" for="profileImageInput">
                             <i class="fa-solid fa-camera"></i>
@@ -444,12 +444,15 @@
                                 onclick="openVerifyModal()">View</button>
                         </div>
                     </div>
-                    <div class="detail-card" th:if="${user?.role == 'CLIENT'}">
-                        <label>Monthly Revenue Target</label>
-                        <div class="value">
-                            <i class="fa-solid fa-bullseye"></i>
-                            <span
-                                th:text="${'₹' + #numbers.formatDecimal(user?.monthlyTarget ?: 100000, 1, 'COMMA', 2, 'POINT')}">₹1,00,000.00</span>
+                    <div style="grid-column: 1 / -1; display: flex; justify-content: center;">
+                        <div class="detail-card" th:if="${user?.role == 'CLIENT'}"
+                            style="width: calc(50% - 12px); text-align: center;">
+                            <label>Monthly Revenue Target</label>
+                            <div class="value" style="justify-content: center;">
+                                <i class="fa-solid fa-bullseye"></i>
+                                <span
+                                    th:text="${'₹' + #numbers.formatDecimal(user?.monthlyTarget ?: 100000, 1, 'COMMA', 2, 'POINT')}">₹1,00,000.00</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -501,26 +504,26 @@
                 <label>Company Type</label>
                 <select id="editCompanyType">
                     <option value="Product Based (D2C / Brand)"
-                        th:selected="${user.companyType == 'Product' or user.companyType == 'Product Based (D2C / Brand)'}">
+                        th:selected="${user?.companyType == 'Product' or user?.companyType == 'Product Based (D2C / Brand)'}">
                         Product Based (D2C / Brand)
                     </option>
                     <option value="Service Based (Agency / Consulting)"
-                        th:selected="${user.companyType == 'Service' or user.companyType == 'Service Based (Agency / Consulting)'}">
+                        th:selected="${user?.companyType == 'Service' or user?.companyType == 'Service Based (Agency / Consulting)'}">
                         Service Based (Agency / Consulting)</option>
                     <option value="Retail / Shop (B2C)"
-                        th:selected="${user.companyType == 'Retail' or user.companyType == 'Retail / Shop (B2C)'}">
+                        th:selected="${user?.companyType == 'Retail' or user?.companyType == 'Retail / Shop (B2C)'}">
                         Retail /
                         Shop (B2C)</option>
                     <option value="Wholesale / Trading (B2B)"
-                        th:selected="${user.companyType == 'Wholesale' or user.companyType == 'Wholesale / Trading (B2B)'}">
+                        th:selected="${user?.companyType == 'Wholesale' or user?.companyType == 'Wholesale / Trading (B2B)'}">
                         Wholesale / Trading (B2B)
                     </option>
                     <option value="Manufacturing / Industrial"
-                        th:selected="${user.companyType == 'Manufacturing' or user.companyType == 'Manufacturing / Industrial'}">
+                        th:selected="${user?.companyType == 'Manufacturing' or user?.companyType == 'Manufacturing / Industrial'}">
                         Manufacturing /
                         Industrial</option>
                     <option value="Hybrid (Combination of Both)"
-                        th:selected="${user.companyType == 'Hybrid' or user.companyType == 'Hybrid (Combination of Both)'}">
+                        th:selected="${user?.companyType == 'Hybrid' or user?.companyType == 'Hybrid (Combination of Both)'}">
                         Hybrid (Combination of Both)
                     </option>
                 </select>
@@ -529,7 +532,7 @@
                 <label>Mobile Number</label>
                 <input type="text" id="editMobile" th:value="${user?.mobileNumber}">
             </div>
-            <div class="form-group" th:if="${user?.role == 'CLIENT'}">
+            <div class="form-group" th:if="${userRole == 'CLIENT'}">
                 <label>Monthly Sales Target (₹)</label>
                 <input type="number" id="editMonthlyTarget" th:value="${user?.monthlyTarget ?: 100000}">
             </div>
@@ -586,7 +589,26 @@
 
     <script th:inline="javascript">
         const userEmail = /*[[${user?.email}]]*/ '';
-        let base64Image = /*[[${user?.clientImage}]]*/ null;
+        let base64Image = null; // Loaded async via /api/profile-image
+
+        // Load profile image asynchronously to prevent massive Base64 being embedded in HTML
+        window.addEventListener('DOMContentLoaded', function () {
+            fetch('/billing-app/api/profile-image')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.clientImage) {
+                        base64Image = data.clientImage;
+                        const avatar = document.querySelector('.profile-avatar');
+                        if (avatar) {
+                            avatar.style.backgroundImage = `url(${data.clientImage})`;
+                            avatar.style.backgroundSize = 'cover';
+                            avatar.style.backgroundPosition = 'center';
+                            avatar.innerText = '';
+                        }
+                    }
+                })
+                .catch(() => { /* silently ignore */ });
+        });
 
         function confirmLogout() {
             if (confirm("Are you sure you want to logout from SFP Billing?")) {

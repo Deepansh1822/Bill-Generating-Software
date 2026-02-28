@@ -411,9 +411,8 @@
                     day: 'numeric'
                 }) : 'Not available';
 
-                const avatar = client.clientImage
-                    ? `<div class="client-initials" style="background-image: url(${client.clientImage}); background-size: cover; background-position: center;"></div>`
-                    : `<div class="client-initials">${client.fullName.charAt(0)}</div>`;
+                // Always render initials first; image lazy-loads via IntersectionObserver
+                const avatar = `<div class="client-initials lazy-client-avatar" data-client-id="${client.id}">${client.fullName.charAt(0)}</div>`;
 
                 return `
                     <div class="client-card" style="animation-delay: ${index * 0.05}s">
@@ -453,6 +452,7 @@
                     </div>
                 `;
             }).join('');
+            observeLazyClientImages();
         };
 
         searchInput.addEventListener('input', (e) => {
@@ -465,6 +465,34 @@
             );
             renderClients(filtered);
         });
+
+        // ---- Lazy client avatar loading ----
+        const clientAvatarObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const id = el.dataset.clientId;
+                    if (id) {
+                        fetch(`/billing-app/api/getClientImage/${id}`)
+                            .then(r => r.ok ? r.json() : null)
+                            .then(data => {
+                                if (data && data.clientImage) {
+                                    el.style.backgroundImage = `url(${data.clientImage})`;
+                                    el.style.backgroundSize = 'cover';
+                                    el.style.backgroundPosition = 'center';
+                                    el.textContent = ''; // hide initials
+                                }
+                            })
+                            .catch(() => { }); // keep initials on error
+                        clientAvatarObserver.unobserve(el);
+                    }
+                }
+            });
+        }, { rootMargin: '100px' });
+
+        function observeLazyClientImages() {
+            document.querySelectorAll('.lazy-client-avatar').forEach(el => clientAvatarObserver.observe(el));
+        }
 
         init();
     </script>

@@ -120,7 +120,19 @@ public class UserAccessController {
 
     @GetMapping("/getAllClients")
     public ResponseEntity<List<UserAccessInfo>> getAllClients() {
-        return ResponseEntity.ok(usersAccessRepoService.getAllClients());
+        List<UserAccessInfo> clients = usersAccessRepoService.getAllClients();
+        // Strip clientImage from list response — served separately via
+        // /getClientImage/{id}
+        clients.forEach(c -> c.setClientImage(null));
+        return ResponseEntity.ok(clients);
+    }
+
+    // Get client image by user ID (for lazy loading in ManageClients)
+    @GetMapping("/getClientImage/{id}")
+    public ResponseEntity<?> getClientImage(@PathVariable Long id) {
+        UserAccessInfo user = usersAccessRepoService.findById(id);
+        String image = (user != null && user.getClientImage() != null) ? user.getClientImage() : "";
+        return ResponseEntity.ok(Map.of("clientImage", image));
     }
 
     // 8. Update Profile Details
@@ -152,7 +164,22 @@ public class UserAccessController {
         return ResponseEntity.ok(updated);
     }
 
-    // 9. Verify Password to reveal sensitive data
+    // 9. Get profile image for current user (avoids embedding large Base64 in HTML)
+    @GetMapping("/profile-image")
+    public ResponseEntity<?> getProfileImage(
+            org.springframework.security.core.Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        UserAccessInfo user = usersAccessRepoService.findByUsername(auth.getName());
+        if (user == null) {
+            user = usersAccessRepoService.findByEmail(auth.getName());
+        }
+        String image = (user != null && user.getClientImage() != null) ? user.getClientImage() : "";
+        return ResponseEntity.ok(Map.of("clientImage", image));
+    }
+
+    // 10. Verify Password to reveal sensitive data
     @PostMapping("/verify-password")
     public ResponseEntity<?> verifyPassword(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");

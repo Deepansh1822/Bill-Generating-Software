@@ -193,6 +193,20 @@
             margin-right: 10px;
         }
 
+        .signup-link {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .signup-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
         @keyframes spin {
             to {
                 transform: rotate(360deg);
@@ -330,6 +344,10 @@
                         <span>Register My Business</span>
                     </button>
                 </form>
+
+                <div class="signup-link" style="text-align: center;">
+                    Already have access? <a href="/billing-app/api/Login">Login</a>
+                </div>
 
                 <p class="footer-text">Our team will verify your details and activate your account within 24 hours.</p>
             </div>
