@@ -254,7 +254,7 @@
 
         .billing-types {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 24px;
             margin-bottom: 40px;
         }
@@ -262,23 +262,133 @@
         .bill-type-card {
             background: white;
             padding: 32px;
-            border-radius: 24px;
+            border-radius: 28px;
             border: 1px solid var(--border);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             overflow: hidden;
             text-decoration: none;
             color: inherit;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .bill-type-card:hover {
-            border-color: var(--primary-light);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            transform: scale(1.02);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: var(--primary);
+        }
+
+        .bill-type-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.05;
+            z-index: 0;
+            transition: all 0.5s ease;
+        }
+
+        .bill-card-product::before {
+            background: #0ea5e9;
+        }
+
+        .bill-card-service::before {
+            background: #8b5cf6;
+        }
+
+        .bill-card-eway::before {
+            background: #6366f1;
+        }
+
+        .bill-type-card:hover::before {
+            opacity: 0.15;
+            transform: scale(1.5);
+        }
+
+        .bill-type-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .bill-type-card:hover .bill-type-icon-wrapper {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .bill-card-product .bill-type-icon-wrapper {
+            background: #f0f9ff;
+            box-shadow: 0 8px 16px -4px rgba(14, 165, 233, 0.2);
+        }
+
+        .bill-card-service .bill-type-icon-wrapper {
+            background: #f5f3ff;
+            box-shadow: 0 8px 16px -4px rgba(139, 92, 246, 0.2);
+        }
+
+        .bill-card-eway .bill-type-icon-wrapper {
+            background: #eef2ff;
+            box-shadow: 0 8px 16px -4px rgba(99, 102, 241, 0.2);
+        }
+
+        .bill-type-info {
+            position: relative;
+            z-index: 1;
+        }
+
+        .bill-type-info h3 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .bill-type-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .bill-type-footer {
+            margin-top: auto;
+            padding-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .bill-type-action-text {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bill-type-action-text i {
+            transition: transform 0.3s ease;
+        }
+
+        .bill-type-card:hover .bill-type-action-text i {
+            transform: translateX(5px);
         }
 
         @media (max-width: 1024px) {
@@ -781,7 +891,6 @@
                     <canvas id="distributionChart"></canvas>
                 </div>
             </div>
-
             <!-- Business Health / Bill Stats (Admin Only: Final vs Quotation) -->
             <div class="card" th:if="${userRole == 'ADMIN'}" style="padding: 24px;">
                 <div style="margin-bottom: 20px;">
@@ -941,7 +1050,7 @@
                                 <h4>💡 Quick Tip</h4>
                                 <p>Hey! These are your works-in-progress. Instead of starting from scratch, use
                                     <strong>'Finalize'</strong> to jump back into any draft. We've saved all your items
-                                    and client info so you can finish the bill in seconds!
+                                    and client info so you can finish the invoice in seconds!
                                 </p>
                                 <button onclick="toggleDraftPopover(event)" class="popover-btn">Understood</button>
                             </div>
@@ -956,25 +1065,42 @@
         </div>
 
         <div th:if="${userRole == 'CLIENT'}">
-            <h2 class="section-title">🚀 Create New Bill</h2>
+            <h2 class="section-title">🚀 Create New Invoice</h2>
             <div class="billing-types">
-                <!-- Product Bill -->
-                <a href="/billing-app/api/GenerateBill" class="bill-type-card">
+                <!-- Product Invoice -->
+                <a href="/billing-app/api/GenerateProductBill" class="bill-type-card bill-card-product">
+                    <div class="bill-type-icon-wrapper">📦</div>
                     <div class="bill-type-info">
-                        <div style="font-size: 2rem; margin-bottom: 12px;">📦</div>
-                        <h3>Product Bill</h3>
-                        <p>Dynamic billing for Pharma, Electronics & General products with inventory tracking.</p>
+                        <h3>Product Invoice</h3>
+                        <p>Dynamic billing for Pharma, Electronics & General trading with automated inventory tracking.
+                        </p>
                     </div>
-                    <div class="bill-type-btn" style="background: #0ea5e9;">Create Product Bill</div>
+                    <div class="bill-type-footer">
+                        <span class="bill-type-action-text">Create Now <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
                 </a>
-                <!-- Service Bill -->
-                <a href="/billing-app/api/GenerateBill" class="bill-type-card">
+                <!-- Service Invoice -->
+                <a href="/billing-app/api/GenerateServiceBill" class="bill-type-card bill-card-service">
+                    <div class="bill-type-icon-wrapper">💼</div>
                     <div class="bill-type-info">
-                        <div style="font-size: 2rem; margin-bottom: 12px;">💼</div>
-                        <h3>Service Bill</h3>
-                        <p>Milestone, Hourly, and Unit-based service billing for agencies and freelancers.</p>
+                        <h3>Service Invoice</h3>
+                        <p>Milestone, Hourly, and Unit-based billing perfect for agencies, freelancers and experts.</p>
                     </div>
-                    <div class="bill-type-btn" style="background: #0ea5e9;">Create Service Bill</div>
+                    <div class="bill-type-footer">
+                        <span class="bill-type-action-text">Generate Now <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                <!-- E-Way Bill -->
+                <a href="/billing-app/api/GenerateEWayBill" class="bill-type-card bill-card-eway">
+                    <div class="bill-type-icon-wrapper">🚚</div>
+                    <div class="bill-type-info">
+                        <h3>E-Way Bill</h3>
+                        <p>Generate compliant electronic way bills for inter-state and intra-state movement of goods.
+                        </p>
+                    </div>
+                    <div class="bill-type-footer">
+                        <span class="bill-type-action-text">Setup Bill <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
                 </a>
             </div>
         </div>

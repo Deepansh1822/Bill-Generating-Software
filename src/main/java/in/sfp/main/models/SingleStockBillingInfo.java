@@ -21,6 +21,7 @@ public class SingleStockBillingInfo {
     private String itemDescription;
     private String hsnCode;
     private int quantity;
+    private String unit;
     private double unitPrice;
     private double cgstRate;
     private double sgstRate;

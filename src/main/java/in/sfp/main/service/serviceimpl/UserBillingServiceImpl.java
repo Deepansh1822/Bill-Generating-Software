@@ -34,13 +34,8 @@ public class UserBillingServiceImpl implements UserBillingService {
 
         existing.setBusinessLogo(usersBilling.getBusinessLogo());
         existing.setBusinessName(usersBilling.getBusinessName());
-        existing.setContactPerson(usersBilling.getContactPerson());
-        existing.setBusinessStreetAddress(usersBilling.getBusinessStreetAddress());
         existing.setBusinessNumber(usersBilling.getBusinessNumber());
-        existing.setContactPersonNumber(usersBilling.getContactPersonNumber());
         existing.setBusinessEmail(usersBilling.getBusinessEmail());
-        existing.setContactPersonEmail(usersBilling.getContactPersonEmail());
-        existing.setBusinessCity(usersBilling.getBusinessCity());
         existing.setBusinessState(usersBilling.getBusinessState());
         existing.setBusinessCountry(usersBilling.getBusinessCountry());
         existing.setPinCode(usersBilling.getPinCode());

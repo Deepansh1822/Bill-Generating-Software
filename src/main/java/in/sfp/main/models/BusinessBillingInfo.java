@@ -43,12 +43,9 @@ public class BusinessBillingInfo {
     @Lob
     private byte[] businessLogo;
     private String businessName;
-    private String contactPerson;
     private String businessStreetAddress;
     private String businessNumber;
-    private String contactPersonNumber;
     private String businessEmail;
-    private String contactPersonEmail;
     private String businessCity;
     private String businessState;
     private String businessCountry;

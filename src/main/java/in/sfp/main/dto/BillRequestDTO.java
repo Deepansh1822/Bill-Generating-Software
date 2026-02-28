@@ -15,9 +15,6 @@ public class BillRequestDTO {
     private String businessState;
     private String businessCountry;
     private String businessPinCode;
-    private String contactPerson;
-    private String contactPersonNumber;
-    private String contactPersonEmail;
     private String businessGstNumber;
     private String businessNumber;
     private String businessEmail;
@@ -48,6 +45,7 @@ public class BillRequestDTO {
     private String businessLogoBase64;
     private String invoiceDate;
     private String dueDate;
+    private String billType;
     private String status;
     private List<BillItemDTO> items;
 
@@ -68,6 +66,7 @@ public class BillRequestDTO {
         private String itemDescription;
         private String hsnCode;
         private int quantity;
+        private String unit;
         private double unitPrice;
         private double cgstRate;
         private double sgstRate;

@@ -35,6 +35,7 @@
                 min-height: 100vh;
             }
 
+            /* Main Sidebar Container */
             aside {
                 width: 280px;
                 background: var(--sidebar);
@@ -48,10 +49,36 @@
                 z-index: 1000 !important;
                 pointer-events: auto !important;
                 transition: var(--transition);
-                overflow-y: auto;
                 box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+                overflow: visible;
+                /* Important for the toggle button to peek out */
             }
 
+            aside.collapsed {
+                width: 80px;
+            }
+
+            /* Scrollable Inner Wrapper */
+            .sidebar-content-wrapper {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+                overflow-x: hidden;
+                width: 100%;
+                height: 100%;
+            }
+
+            .sidebar-content-wrapper::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            .sidebar-content-wrapper::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+            }
+
+            /* Main Content Adjustment */
             .main-content {
                 margin-left: 280px;
                 padding: 40px;
@@ -60,8 +87,15 @@
                 width: calc(100% - 280px);
             }
 
+            .main-content.collapsed {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+
+            /* Header and Brand */
             .sidebar-header {
                 padding: 32px 24px;
+                transition: var(--transition);
             }
 
             .sidebar-brand {
@@ -70,6 +104,18 @@
                 gap: 12px;
                 text-decoration: none;
                 color: white;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
+            aside.collapsed .sidebar-brand span {
+                display: none;
+            }
+
+            aside.collapsed .sidebar-header {
+                padding: 32px 12px;
+                display: flex;
+                justify-content: center;
             }
 
             .sidebar-logo {
@@ -83,8 +129,10 @@
                 font-weight: 800;
                 font-size: 1.25rem;
                 box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+                flex-shrink: 0;
             }
 
+            /* Navigation Menu */
             .nav-menu {
                 list-style: none;
                 padding: 0 16px;
@@ -109,13 +157,24 @@
                 overflow: hidden;
                 width: 100%;
                 cursor: pointer;
-                pointer-events: auto;
             }
 
             .nav-link:hover {
                 background: var(--sidebar-hover);
                 color: white;
                 transform: translateX(4px);
+            }
+
+            aside.collapsed .nav-link {
+                justify-content: center;
+                padding: 14px;
+            }
+
+            aside.collapsed .nav-link span,
+            aside.collapsed .nav-badge,
+            aside.collapsed .nav-dropdown-arrow,
+            aside.collapsed .nav-dropdown-toggle span {
+                display: none !important;
             }
 
             .nav-link.active {
@@ -128,6 +187,7 @@
                 font-size: 1.2rem;
                 width: 24px;
                 text-align: center;
+                flex-shrink: 0;
             }
 
             .nav-badge {
@@ -155,21 +215,14 @@
                 }
             }
 
+            /* Footer */
             .sidebar-footer {
                 margin-top: auto;
                 padding: 24px 16px;
                 border-top: 1px solid rgba(255, 255, 255, 0.05);
             }
 
-            .logout-link {
-                color: #f87171 !important;
-            }
-
-            .logout-link:hover {
-                background: rgba(248, 113, 113, 0.1) !important;
-            }
-
-            /* Dropdown nav styles */
+            /* Dropdowns */
             .nav-dropdown-toggle {
                 display: flex;
                 align-items: center;
@@ -187,13 +240,17 @@
                 font-family: inherit;
                 font-size: inherit;
                 text-align: left;
-                pointer-events: auto;
             }
 
             .nav-dropdown-toggle:hover {
                 background: var(--sidebar-hover);
                 color: white;
                 transform: translateX(4px);
+            }
+
+            aside.collapsed .nav-dropdown-toggle {
+                justify-content: center;
+                padding: 14px;
             }
 
             .nav-dropdown-toggle.open {
@@ -221,6 +278,10 @@
 
             .nav-submenu.open {
                 max-height: 200px;
+            }
+
+            aside.collapsed .nav-submenu {
+                display: none !important;
             }
 
             .nav-sublink {
@@ -256,6 +317,40 @@
                 flex-shrink: 0;
             }
 
+            /* Professional Toggle Button */
+            .sidebar-toggle {
+                position: absolute;
+                top: 36px;
+                right: -14px;
+                width: 28px;
+                height: 28px;
+                background: var(--primary);
+                border: 1px solid var(--sidebar);
+                border-radius: 50%;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 1001;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                transition: var(--transition);
+            }
+
+            .sidebar-toggle:hover {
+                background: var(--primary-light);
+                transform: scale(1.1);
+            }
+
+            aside.collapsed .sidebar-toggle {
+                transform: rotate(180deg);
+            }
+
+            aside.collapsed .sidebar-toggle:hover {
+                transform: rotate(180deg) scale(1.1);
+            }
+
+            /* Responsive */
             @media (max-width: 1024px) {
                 aside {
                     width: 80px;
@@ -269,8 +364,9 @@
 
                 .sidebar-brand span,
                 .nav-link span,
-                .nav-badge {
-                    display: none;
+                .nav-badge,
+                .nav-dropdown-arrow {
+                    display: none !important;
                 }
 
                 .sidebar-header {
@@ -279,112 +375,129 @@
                     justify-content: center;
                 }
 
-                .nav-link {
+                .nav-link,
+                .nav-dropdown-toggle {
                     justify-content: center;
                     padding: 14px;
                 }
-
-                .nav-icon {
-                    margin: 0;
-                }
-            }
-
-            /* Custom scrollbar for sidebar */
-            aside::-webkit-scrollbar {
-                width: 4px;
-            }
-
-            aside::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: 10px;
             }
         </style>
     </div>
 </head>
 
 <body>
-    <aside th:fragment="sidebar(activePage)">
+    <aside th:fragment="sidebar(activePage)" id="appSidebar">
         <!-- Debug Marker -->
         <div style="display:none" id="sidebar-loaded-marker"></div>
-        <div class="sidebar-header">
-            <!-- Points to Profile for easy back-navigation -->
-            <a href="/billing-app/api/Dashboard" class="sidebar-brand">
-                <div class="sidebar-logo">B</div>
-                <span style="font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px;">SFP Billing</span>
-            </a>
+        <div class="sidebar-toggle" id="sidebar-toggle-btn">
+            <i class="fa-solid fa-chevron-left"></i>
         </div>
-        <ul class="nav-menu">
-            <li class="nav-item">
-                <a href="/billing-app/api/Dashboard" class="nav-link"
-                    th:classappend="${activePage == 'dashboard' ? 'active' : ''}">
-                    <i class="fa-solid fa-house nav-icon"></i>
-                    <span>Dashboard</span>
+
+        <div class="sidebar-content-wrapper">
+            <div class="sidebar-header">
+                <!-- Points to Profile for easy back-navigation -->
+                <a href="/billing-app/api/Dashboard" class="sidebar-brand">
+                    <div class="sidebar-logo">B</div>
+                    <span style="font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px;">SFP Billing</span>
                 </a>
-            </li>
-            <!-- Inventory Dropdown -->
-            <li class="nav-item">
-                <button class="nav-dropdown-toggle" id="inv-toggle"
-                    th:classappend="${activePage == 'stocks' or activePage == 'categories' ? 'open' : ''}">
-                    <i class="fa-solid fa-boxes-stacked nav-icon"></i>
-                    <span>Inventory</span>
-                    <i class="fa-solid fa-chevron-down nav-dropdown-arrow"></i>
-                </button>
-                <ul class="nav-submenu" id="inv-submenu"
-                    th:classappend="${activePage == 'stocks' or activePage == 'categories' ? 'open' : ''}">
-                    <li>
-                        <a href="/billing-app/api/ManageCategories" class="nav-sublink"
-                            th:classappend="${activePage == 'categories' ? 'active' : ''}">
-                            Item Groups
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/billing-app/api/ManageStocks" class="nav-sublink"
-                            th:classappend="${activePage == 'stocks' ? 'active' : ''}">
-                            Products & Services
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item" th:if="${userRole == 'CLIENT'}">
-                <a href="/billing-app/api/GenerateBill" class="nav-link"
-                    th:classappend="${activePage == 'generate-bill' ? 'active' : ''}">
-                    <i class="fa-solid fa-file-invoice nav-icon"></i>
-                    <span>Generate Invoice</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/billing-app/api/Dashboard" class="nav-link"
+                        th:classappend="${activePage == 'dashboard' ? 'active' : ''}">
+                        <i class="fa-solid fa-house nav-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <!-- Inventory Dropdown -->
+                <li class="nav-item">
+                    <button class="nav-dropdown-toggle" id="inv-toggle"
+                        th:classappend="${activePage == 'stocks' or activePage == 'categories' ? 'open' : ''}">
+                        <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                        <span>Inventory</span>
+                        <i class="fa-solid fa-chevron-down nav-dropdown-arrow"></i>
+                    </button>
+                    <ul class="nav-submenu" id="inv-submenu"
+                        th:classappend="${activePage == 'stocks' or activePage == 'categories' ? 'open' : ''}">
+                        <li>
+                            <a href="/billing-app/api/ManageCategories" class="nav-sublink"
+                                th:classappend="${activePage == 'categories' ? 'active' : ''}">
+                                Categories
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/billing-app/api/ManageStocks" class="nav-sublink"
+                                th:classappend="${activePage == 'stocks' ? 'active' : ''}">
+                                Products & Services
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- Invoice Dropdown -->
+                <li class="nav-item" th:if="${userRole == 'CLIENT'}">
+                    <button class="nav-dropdown-toggle" id="invoice-toggle"
+                        th:classappend="${activePage == 'generate-bill' or activePage == 'generate-service-bill' or activePage == 'eway-bill' ? 'open' : ''}">
+                        <i class="fa-solid fa-file-invoice nav-icon"></i>
+                        <span>Generate Invoice</span>
+                        <i class="fa-solid fa-chevron-down nav-dropdown-arrow"></i>
+                    </button>
+                    <ul class="nav-submenu" id="invoice-submenu"
+                        th:classappend="${activePage == 'generate-bill' or activePage == 'generate-service-bill' or activePage == 'eway-bill' ? 'open' : ''}">
+                        <li>
+                            <a href="/billing-app/api/GenerateProductBill" class="nav-sublink"
+                                th:classappend="${activePage == 'generate-bill' ? 'active' : ''}">
+                                Product-Based Invoice
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/billing-app/api/GenerateServiceBill" class="nav-sublink"
+                                th:classappend="${activePage == 'generate-service-bill' ? 'active' : ''}">
+                                Service-Based Invoice
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/billing-app/api/GenerateEWayBill" class="nav-sublink"
+                                th:classappend="${activePage == 'eway-bill' ? 'active' : ''}">
+                                E-Way Bill
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item" th:if="${userRole == 'ADMIN'}">
+                    <a href="/billing-app/api/ManageAccessRequests" class="nav-link"
+                        th:classappend="${activePage == 'access-requests' ? 'active' : ''}">
+                        <i class="fa-solid fa-user-check nav-icon"></i>
+                        <span>Requests</span>
+                        <span class="nav-badge" id="sidebar-pending-badge" style="display: none;">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/billing-app/api/Reports" class="nav-link"
+                        th:classappend="${activePage == 'reports' ? 'active' : ''}">
+                        <i class="fa-solid fa-chart-column nav-icon"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item" th:if="${userRole == 'ADMIN'}">
+                    <a href="/billing-app/api/ManageClients" class="nav-link"
+                        th:classappend="${activePage == 'clients' ? 'active' : ''}">
+                        <i class="fa-solid fa-users nav-icon"></i>
+                        <span>Clients</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="/billing-app/api/Profile" class="nav-link"
+                    th:classappend="${activePage == 'profile' ? 'active' : ''}">
+                    <i class="fa-solid fa-user-gear nav-icon"></i>
+                    <span>My Profile</span>
                 </a>
-            </li>
-            <li class="nav-item" th:if="${userRole == 'ADMIN'}">
-                <a href="/billing-app/api/ManageAccessRequests" class="nav-link"
-                    th:classappend="${activePage == 'access-requests' ? 'active' : ''}">
-                    <i class="fa-solid fa-user-check nav-icon"></i>
-                    <span>Requests</span>
-                    <span class="nav-badge" id="sidebar-pending-badge" style="display: none;">0</span>
+                <a href="/billing-app/api/HelpSupport" class="nav-link"
+                    th:classappend="${activePage == 'help' ? 'active' : ''}">
+                    <i class="fa-solid fa-circle-question nav-icon"></i>
+                    <span>Help Support</span>
                 </a>
-            </li>
-            <li class="nav-item">
-                <a href="/billing-app/api/Reports" class="nav-link"
-                    th:classappend="${activePage == 'reports' ? 'active' : ''}">
-                    <i class="fa-solid fa-chart-column nav-icon"></i>
-                    <span>Reports</span>
-                </a>
-            </li>
-            <li class="nav-item" th:if="${userRole == 'ADMIN'}">
-                <a href="/billing-app/api/ManageClients" class="nav-link"
-                    th:classappend="${activePage == 'clients' ? 'active' : ''}">
-                    <i class="fa-solid fa-users nav-icon"></i>
-                    <span>Clients</span>
-                </a>
-            </li>
-        </ul>
-        <div class="sidebar-footer">
-            <a href="/billing-app/api/Profile" class="nav-link"
-                th:classappend="${activePage == 'profile' ? 'active' : ''}">
-                <i class="fa-solid fa-user-gear nav-icon"></i>
-                <span>My Profile</span>
-            </a>
-            <a href="#" class="nav-link">
-                <i class="fa-solid fa-circle-question nav-icon"></i>
-                <span>Help Support</span>
-            </a>
+            </div>
         </div>
         <script th:inline="javascript">
             // Toggle the Inventory dropdown
@@ -392,9 +505,54 @@
             const invSubmenu = document.getElementById('inv-submenu');
             if (invToggle && invSubmenu) {
                 invToggle.addEventListener('click', function () {
+                    if (document.getElementById('appSidebar').classList.contains('collapsed')) {
+                        toggleSidebar();
+                    }
                     invToggle.classList.toggle('open');
                     invSubmenu.classList.toggle('open');
                 });
+            }
+
+            // Toggle the Invoice dropdown
+            const invoiceToggle = document.getElementById('invoice-toggle');
+            const invoiceSubmenu = document.getElementById('invoice-submenu');
+            if (invoiceToggle && invoiceSubmenu) {
+                invoiceToggle.addEventListener('click', function () {
+                    if (document.getElementById('appSidebar').classList.contains('collapsed')) {
+                        toggleSidebar();
+                    }
+                    invoiceToggle.classList.toggle('open');
+                    invoiceSubmenu.classList.toggle('open');
+                });
+            }
+
+            // Sidebar Toggle Functionality
+            const sidebar = document.getElementById('appSidebar');
+            const toggleBtn = document.getElementById('sidebar-toggle-btn');
+            const mainContents = document.querySelectorAll('.main-content');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('collapsed');
+                mainContents.forEach(content => content.classList.toggle('collapsed'));
+
+                // Persist state
+                const isCollapsed = sidebar.classList.contains('collapsed');
+                localStorage.setItem('sidebarCollapsed', isCollapsed);
+            }
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleSidebar();
+                });
+            }
+
+            // Initialize position by localStorage
+            const savedState = localStorage.getItem('sidebarCollapsed');
+            if (savedState === 'true') {
+                sidebar.classList.add('collapsed');
+                mainContents.forEach(content => content.classList.add('collapsed'));
             }
 
             // Ensure ALL sidebar nav links always navigate correctly,

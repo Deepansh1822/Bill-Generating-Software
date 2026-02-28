@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate E-Way Bill | SFP Billing</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <style>
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header-section h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .bill-container {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .submit-section {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .info-card {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 32px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .info-card i {
+            color: #0284c7;
+            font-size: 1.25rem;
+            margin-top: 2px;
+        }
+
+        .info-card p {
+            font-size: 14px;
+            color: #0369a1;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='eway-bill')}"></div>
+
+    <div class="main-content">
+        <div class="header-section">
+            <div>
+                <h1>Generate E-Way Bill</h1>
+                <p style="color: var(--text-muted); margin-top: 4px;">Compliance for movement of goods</p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <i class="fa-solid fa-circle-info"></i>
+            <div>
+                <p>An E-Way Bill is required for any movement of goods with a consignment value exceeding
+                    <strong>₹50,000</strong>. Ensure all GSTINs and HSN codes are accurate before generation.</p>
+            </div>
+        </div>
+
+        <div class="bill-container">
+            <form id="ewayBillForm">
+                <!-- Transaction Details -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-exchange-alt"></i> Transaction Details
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Supply Type</label>
+                            <select id="supplyType">
+                                <option value="OUTWARD">Outward</option>
+                                <option value="INWARD">Inward</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Sub Type</label>
+                            <select id="subType">
+                                <option value="SUPPLY">Supply</option>
+                                <option value="IMPORT">Import</option>
+                                <option value="EXPORT">Export</option>
+                                <option value="JOB_WORK">Job Work</option>
+                                <option value="SKD_CKD">SKD / CKD</option>
+                                <option value="RECIPIENT_NOT_KNOWN">Recipient Not Known</option>
+                                <option value="FOR_OWN_USE">For Own Use</option>
+                                <option value="OTHERS">Others</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Document Type</label>
+                            <select id="docType">
+                                <option value="INVOICE">Tax Invoice</option>
+                                <option value="BILL_OF_SUPPLY">Bill of Supply</option>
+                                <option value="CHALLAN">Delivery Challan</option>
+                                <option value="OTHERS">Others</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Document Date</label>
+                            <input type="date" id="docDate"
+                                th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consignor Details (From) -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-building"></i> Consignor (From)
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Company Name</label>
+                            <input type="text" id="fromCompanyName" th:value="${businessInfo?.businessName}"
+                                placeholder="Name of dispatching company">
+                        </div>
+                        <div class="form-group">
+                            <label>GSTIN</label>
+                            <input type="text" id="fromGSTIN" th:value="${businessInfo?.businessGstNumber}"
+                                placeholder="Sender's GSTIN">
+                        </div>
+                        <div class="form-group">
+                            <label>Dispatch State</label>
+                            <input type="text" id="fromState" th:value="${businessInfo?.businessState}"
+                                placeholder="State of origin">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consignee Details (To) -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-truck-ramp-box"></i> Consignee (To)
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Recipient Name</label>
+                            <input type="text" id="toCompanyName" placeholder="Name of receiving company">
+                        </div>
+                        <div class="form-group">
+                            <label>GSTIN</label>
+                            <input type="text" id="toGSTIN" placeholder="Recipient GSTIN">
+                        </div>
+                        <div class="form-group">
+                            <label>Delivery State</label>
+                            <input type="text" id="toState" placeholder="Destination state">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transportation Details -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-truck-fast"></i> Transportation Details
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Transporter Name</label>
+                            <input type="text" id="transporterName" placeholder="Name of transport agency">
+                        </div>
+                        <div class="form-group">
+                            <label>Transporter ID</label>
+                            <input type="text" id="transporterId" placeholder="Transporter's ID">
+                        </div>
+                        <div class="form-group">
+                            <label>Approx Distance (km)</label>
+                            <input type="number" id="distance" placeholder="Distance in kms">
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Number</label>
+                            <input type="text" id="vehicleNum" placeholder="e.g. MH-12-AB-1234">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submit-section">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">Back</button>
+                    <button type="submit" class="btn btn-primary" onclick="generateEWayMock(event)">
+                        <i class="fa-solid fa-file-circle-check" style="margin-right: 8px;"></i> Generate E-Way Bill
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast"
+        style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-weight: 600; display: none; z-index: 10000;">
+    </div>
+
+    <script th:inline="javascript">
+        function generateEWayMock(e) {
+            e.preventDefault();
+            const toast = document.getElementById('toast');
+            toast.innerText = "🚀 E-Way Bill generation in progress...";
+            toast.style.display = "block";
+
+            setTimeout(() => {
+                toast.innerText = "✅ E-Way Bill generated successfully!";
+                setTimeout(() => {
+                    toast.style.display = "none";
+                }, 3000);
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>

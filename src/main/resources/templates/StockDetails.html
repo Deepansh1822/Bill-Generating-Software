@@ -58,19 +58,26 @@
             object-fit: cover;
             border: 4px solid white;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .item-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 22px;
-            background: linear-gradient(135deg, var(--primary), #a78bfa);
-            color: white;
+            width: 100px;
+            height: 100px;
+            border-radius: 24px;
+            background: #f1f5f9;
+            color: #94a3b8;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-align: center;
+            border: 2px solid white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            padding: 10px;
         }
 
         .item-titles h1 {
@@ -370,7 +377,7 @@
             <div class="detail-card">
                 <div class="detail-header">
                     <div class="item-identity">
-                        <img id="itemHeroImg" src="" class="item-hero-img" style="display: none;">
+                        <img id="itemHeroImg" src="" class="item-hero-img" style="opacity: 0;">
                         <div class="item-icon" id="itemIcon">
                             <i class="fa-solid fa-box"></i>
                         </div>
@@ -386,10 +393,10 @@
                         </div>
                     </div>
                     <div class="actions" th:if="${userRole != 'ADMIN'}">
-                        <button class="add-btn" id="editBtn"
-                            style="padding: 10px 24px; border-radius: 12px; font-weight: 700; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <a th:href="@{/billing-app/api/EditStock/{id}(id=${param.id})}" class="add-btn" id="editBtn"
+                            style="padding: 10px 24px; border-radius: 12px; font-weight: 700; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; text-decoration: none;">
                             <i class="fa-solid fa-pen"></i> Edit Details
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -473,114 +480,8 @@
             </div>
         </div>
     </div>
-    </div>
 
-    <!-- Edit Stock Modal -->
-    <div class="sfp-modal-overlay" id="editModal">
-        <div class="modal-card">
-            <h2><i class="fa-solid fa-pen" style="color: var(--primary); margin-right: 10px;"></i>Edit Item Details</h2>
 
-            <div class="type-selector">
-                <div class="type-opt active" id="opt-product" onclick="setEditType('PRODUCT')">
-                    <i class="fa-solid fa-box"></i> Product
-                </div>
-                <div class="type-opt" id="opt-service" onclick="setEditType('SERVICE')">
-                    <i class="fa-solid fa-handshake"></i> Service
-                </div>
-            </div>
-
-            <form id="editStockForm">
-                <input type="hidden" id="e_stockId">
-                <input type="hidden" id="e_stockType" value="PRODUCT">
-                <input type="hidden" id="e_createdBy">
-                <input type="hidden" id="e_createdAt">
-
-                <div class="form-grid">
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Item Name</label>
-                        <input type="text" id="e_itemName" required placeholder="e.g. Dell Monitor">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Item Group / Category</label>
-                        <select id="e_categoryId" required></select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Sale Price (₹)</label>
-                        <input type="number" step="0.01" id="e_unitPrice" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Unit of Measure</label>
-                        <select id="e_itemUnit">
-                            <option value="Pcs">Pcs (Pieces)</option>
-                            <option value="Box">Box</option>
-                            <option value="Kg">Kg (Kilogram)</option>
-                            <option value="Ltr">Ltr (Liter)</option>
-                            <option value="Mtr">Mtr (Meter)</option>
-                            <option value="Nos">Nos (Numbers)</option>
-                            <option value="Hr">Hr (Hour)</option>
-                            <option value="Service">Service</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Tax Preference</label>
-                        <select id="e_taxPreference">
-                            <option value="true">Taxable</option>
-                            <option value="false">Tax Exempt</option>
-                        </select>
-                    </div>
-
-                    <!-- Quantity & Code Fields -->
-                    <div class="form-group conditional-field field-product show">
-                        <label>HSN Code</label>
-                        <input type="text" id="e_hsnCode" placeholder="Enter HSN Code">
-                    </div>
-                    <div class="form-group conditional-field field-service" style="grid-column: span 2;">
-                        <label>SAC Code</label>
-                        <input type="text" id="e_sacCode" placeholder="Enter SAC Code">
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label id="e_qtyLabel">Current Stock / Base Quantity</label>
-                        <input type="number" id="e_availableQuantity" value="1">
-                    </div>
-
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Description</label>
-                        <textarea id="e_itemDescription" rows="2"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>CGST (%)</label>
-                        <input type="number" step="0.01" id="e_cgstRate" value="0">
-                    </div>
-                    <div class="form-group">
-                        <label>SGST (%)</label>
-                        <input type="number" step="0.01" id="e_sgstRate" value="0">
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>IGST (%)</label>
-                        <input type="number" step="0.01" id="e_igstRate" value="0">
-                    </div>
-                </div>
-
-                <div class="form-group" style="margin-top: 8px;">
-                    <label>Image (Optional — leave blank to keep existing)</label>
-                    <input type="file" id="e_stockImage" accept="image/*">
-                </div>
-
-                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px;">
-                    <button type="button" class="secondary-btn" onclick="closeEditModal()">Cancel</button>
-                    <button type="submit" class="add-btn" style="padding: 12px 28px;">
-                        <i class="fa-solid fa-floppy-disk"></i> Save Changes
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <script th:inline="javascript">
         const urlParams = new URLSearchParams(window.location.search);
@@ -606,113 +507,7 @@
             return '-';
         };
 
-        /* ===== Edit Modal Logic ===== */
-        const setEditType = (type) => {
-            document.getElementById('e_stockType').value = type;
-            document.querySelectorAll('.type-opt').forEach(el => el.classList.remove('active'));
-            const opt = document.getElementById(`opt-${type.toLowerCase()}`);
-            if (opt) opt.classList.add('active');
 
-            document.querySelectorAll('.conditional-field').forEach(el => el.classList.remove('show'));
-            document.querySelectorAll(`.field-${type.toLowerCase()}`).forEach(el => el.classList.add('show'));
-
-            // Dynamic Label
-            const label = document.getElementById('e_qtyLabel');
-            if (label) {
-                label.innerText = type === 'PRODUCT' ? 'Current Stock Level' : 'Base Billing Unit (Qty)';
-            }
-        };
-
-        const openEditModal = (stock) => {
-            // Load categories into dropdown
-            fetch(`${apiBase}/getAllCategories`).then(r => r.json()).then(cats => {
-                const sel = document.getElementById('e_categoryId');
-                sel.innerHTML = cats.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
-                if (stock.stockCategories) sel.value = stock.stockCategories.id;
-            });
-
-            document.getElementById('e_stockId').value = stock.id;
-            document.getElementById('e_createdBy').value = stock.createdBy || '';
-            document.getElementById('e_createdAt').value = stock.createdAt || '';
-            document.getElementById('e_itemName').value = stock.itemName || '';
-            document.getElementById('e_unitPrice').value = stock.unitPrice || 0;
-            document.getElementById('e_itemDescription').value = stock.itemDescription || '';
-            document.getElementById('e_cgstRate').value = stock.cgstRate || 0;
-            document.getElementById('e_sgstRate').value = stock.sgstRate || 0;
-            document.getElementById('e_igstRate').value = stock.igstRate || 0;
-            document.getElementById('e_itemUnit').value = stock.unit || 'Pcs';
-            document.getElementById('e_taxPreference').value = stock.taxable !== undefined ? stock.taxable.toString() : 'true';
-
-            if (stock.stockType === 'SERVICE') {
-                setEditType('SERVICE');
-                document.getElementById('e_sacCode').value = stock.sacCode || '';
-            } else {
-                setEditType('PRODUCT');
-                document.getElementById('e_hsnCode').value = stock.hsnCode || '';
-                document.getElementById('e_availableQuantity').value = stock.availableQuantity || 0;
-            }
-
-            document.getElementById('editModal').classList.add('active');
-        };
-
-        const closeEditModal = () => document.getElementById('editModal').classList.remove('active');
-
-        document.getElementById('editStockForm').onsubmit = (e) => {
-            e.preventDefault();
-            const id = document.getElementById('e_stockId').value;
-            const type = document.getElementById('e_stockType').value;
-
-            const data = {
-                itemName: document.getElementById('e_itemName').value,
-                stockType: type,
-                unitPrice: parseFloat(document.getElementById('e_unitPrice').value),
-                itemDescription: document.getElementById('e_itemDescription').value,
-                cgstRate: parseFloat(document.getElementById('e_cgstRate').value || 0),
-                sgstRate: parseFloat(document.getElementById('e_sgstRate').value || 0),
-                igstRate: parseFloat(document.getElementById('e_igstRate').value || 0),
-                unit: document.getElementById('e_itemUnit').value,
-                taxable: document.getElementById('e_taxPreference').value === 'true',
-                stockCategories: { id: parseInt(document.getElementById('e_categoryId').value) },
-                createdBy: document.getElementById('e_createdBy').value || null,
-                createdAt: document.getElementById('e_createdAt').value || null
-            };
-
-            if (type === 'PRODUCT') {
-                data.hsnCode = document.getElementById('e_hsnCode').value;
-                data.availableQuantity = parseInt(document.getElementById('e_availableQuantity').value) || 0;
-                data.sacCode = null;
-            } else {
-                data.sacCode = document.getElementById('e_sacCode').value;
-                data.hsnCode = null;
-                data.availableQuantity = parseInt(document.getElementById('e_availableQuantity').value) || 1;
-            }
-
-            const doSave = (payload) => {
-                fetch(`${apiBase}/updateStock/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                }).then(res => {
-                    if (res.ok) {
-                        closeEditModal();
-                        fetchStockDetails(); // Refresh page data
-                    } else {
-                        alert('Error saving changes. Please try again.');
-                    }
-                });
-            };
-
-            const imageFile = document.getElementById('e_stockImage').files[0];
-            if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = () => { data.stockImage = reader.result.split(',')[1]; doSave(data); };
-                reader.readAsDataURL(imageFile);
-            } else {
-                doSave(data);
-            }
-        };
-
-        window.onclick = (ev) => { if (ev.target === document.getElementById('editModal')) closeEditModal(); };
 
         /* ===== Stock Details Logic ===== */
         const fetchStockDetails = () => {
@@ -747,15 +542,19 @@
                     // Handle Item Image
                     const heroImg = document.getElementById('itemHeroImg');
                     const iconBox = document.getElementById('itemIcon');
-                    if (stock.stockImage) {
-                        heroImg.src = `data:image/png;base64,${stock.stockImage}`;
-                        heroImg.style.display = 'block';
-                        iconBox.style.display = 'none';
-                    } else {
-                        heroImg.style.display = 'none';
-                        iconBox.style.display = 'flex';
-                        iconBox.innerHTML = stock.stockType === 'PRODUCT' ? '<i class="fa-solid fa-box"></i>' : '<i class="fa-solid fa-handshake"></i>';
-                    }
+
+                    heroImg.onload = () => {
+                        heroImg.style.opacity = '1';
+                        if (iconBox) iconBox.style.display = 'none';
+                    };
+                    heroImg.onerror = () => {
+                        heroImg.style.opacity = '0';
+                        if (iconBox) {
+                            iconBox.style.display = 'flex';
+                            iconBox.innerHTML = '<span class="placeholder-text" style="font-size: 14px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">No Image</span>';
+                        }
+                    };
+                    heroImg.src = `/billing-app/api/getStockImage/${stockId}`;
 
                     // Handle Description
                     if (stock.itemDescription) {
@@ -815,7 +614,7 @@
                         document.getElementById('updatedAt').innerText = formatDate(stock.updatedAt);
                     }
 
-                    document.getElementById('editBtn').onclick = () => openEditModal(stock);
+
                 })
                 .catch(err => {
                     console.error('Error fetching stock:', err);

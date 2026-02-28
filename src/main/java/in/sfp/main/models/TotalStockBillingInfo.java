@@ -60,6 +60,7 @@ public class TotalStockBillingInfo {
     // Snapshot of company info at time of billing
     private String companyName;
     private String companyType;
+    private String billType; // PRODUCT or SERVICE
 
     private String status; // DRAFT or FINAL
     private LocalDate invoiceDate;

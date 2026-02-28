@@ -7,12 +7,39 @@
     <title>Products & Services | SFP Billing</title>
     <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
     <style>
-        .category-img {
+        .img-wrapper {
             width: 48px;
             height: 48px;
-            object-fit: cover;
             border-radius: 12px;
+            background: #f1f5f9;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border: 1px solid var(--border);
+        }
+
+        .img-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .img-wrapper .placeholder-text {
+            font-size: 8px;
+            color: #94a3b8;
+            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            z-index: 1;
+            padding: 2px;
         }
 
         .stock-qty {
@@ -127,6 +154,7 @@
 
         .add-btn {
             background: var(--primary);
+            text-decoration: none;
             color: white;
             padding: 12px 24px;
             border-radius: 12px;
@@ -358,9 +386,9 @@
     <div class="main-content">
         <div class="header-section">
             <h1>Products & Services</h1>
-            <button th:if="${userRole != 'ADMIN'}" class="add-btn" onclick="openModal()">
-                <i class="fa-solid fa-plus"></i> Add Product / Service
-            </button>
+            <a href="/billing-app/api/AddStock" class="add-btn" th:if="${userRole != 'ADMIN'}">
+                <i class="fa-solid fa-plus"></i> Add Product or Service
+            </a>
         </div>
 
         <div class="table-toolbar">
@@ -383,7 +411,7 @@
                     <tr>
                         <th>Details</th>
                         <th>Type</th>
-                        <th>Item Group</th>
+                        <th>Category</th>
                         <th>Code (HSN/SAC)</th>
                         <th>Unit</th>
                         <th>Tax</th>
@@ -403,126 +431,6 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <!-- Modal -->
-    <div class="sfp-modal-overlay" id="stockModal">
-        <div class="modal-card">
-            <h2 id="modalTitle" style="margin-bottom: 20px;">Add Product / Service</h2>
-
-            <div class="type-selector">
-                <div class="type-opt active" id="opt-product" onclick="setType('PRODUCT')">
-                    <i class="fa-solid fa-box"></i> Product
-                </div>
-                <div class="type-opt" id="opt-service" onclick="setType('SERVICE')">
-                    <i class="fa-solid fa-handshake"></i> Service
-                </div>
-            </div>
-
-            <form id="stockForm">
-                <input type="hidden" id="stockId">
-                <input type="hidden" id="stockType" value="PRODUCT">
-                <input type="hidden" id="createdBy">
-                <input type="hidden" id="createdAt">
-
-                <div class="form-grid">
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label for="itemName">Name</label>
-                        <input type="text" id="itemName" required placeholder="e.g. Dell Monitor or Website Dev">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="categoryId">Category</label>
-                        <select id="categoryId" required></select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="unitPrice">Unit Price (₹)</label>
-                        <input type="number" step="0.01" id="unitPrice" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="itemUnit">Unit of Measure</label>
-                        <select id="itemUnit">
-                            <option value="Pcs">Pcs (Pieces)</option>
-                            <option value="Box">Box</option>
-                            <option value="Kg">Kg (Kilogram)</option>
-                            <option value="Ltr">Ltr (Liter)</option>
-                            <option value="Mtr">Mtr (Meter)</option>
-                            <option value="Nos">Nos (Numbers)</option>
-                            <option value="Hr">Hr (Hour)</option>
-                            <option value="Service">Service</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="taxPreference">Tax Preference</label>
-                        <select id="taxPreference">
-                            <option value="true">Taxable</option>
-                            <option value="false">Tax Exempt</option>
-                        </select>
-                    </div>
-
-                    <!-- Quantity & Code Fields -->
-                    <div class="form-group conditional-field field-product show">
-                        <label for="hsnCode">HSN Code</label>
-                        <input type="text" id="hsnCode" placeholder="Enter HSN Code">
-                    </div>
-                    <div class="form-group conditional-field field-service" style="grid-column: span 2;">
-                        <label for="sacCode">SAC Code</label>
-                        <input type="text" id="sacCode" placeholder="Enter SAC Code (Service Accounting Code)">
-                    </div>
-
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label for="availableQuantity" id="qtyLabel">Current Stock / Base Unit</label>
-                        <input type="number" id="availableQuantity" value="1">
-                    </div>
-
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label for="itemDescription">Description</label>
-                        <textarea id="itemDescription" rows="2"></textarea>
-                    </div>
-
-                    <div class="form-group" id="cgstGroup">
-                        <label for="cgstRate">CGST (%)</label>
-                        <input type="number" step="0.01" id="cgstRate" value="0">
-                    </div>
-                    <div class="form-group" id="sgstGroup">
-                        <label for="sgstRate">SGST (%)</label>
-                        <input type="number" step="0.01" id="sgstRate" value="0">
-                    </div>
-                    <div class="form-group" id="igstGroup" style="grid-column: span 2;">
-                        <label for="igstRate">IGST (%)</label>
-                        <input type="number" step="0.01" id="igstRate" value="0">
-                    </div>
-                </div>
-
-                <div class="form-group" style="grid-column: span 2;">
-                    <label>Image (Optional)</label>
-                    <div style="display: flex; align-items: center; gap: 15px; margin-top: 8px;">
-                        <label for="stockImage"
-                            style="cursor: pointer; padding: 10px 20px; background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 10px; font-size: 0.85rem; color: #475569; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                            <span>Choose Image</span>
-                        </label>
-                        <input type="file" id="stockImage" accept="image/*" style="display: none;"
-                            onchange="previewStockImage(this)">
-                        <div id="stockImagePreview" style="display: none; align-items: center;">
-                            <img id="stockImageThumb"
-                                style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border);">
-                            <span id="stockImageName"
-                                style="font-size: 12px; color: var(--text-muted); margin-left: 10px; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
-                    <button type="button" class="secondary-btn" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="add-btn" id="submitBtn">Save Product</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <script th:inline="javascript">
         const apiBase = '/billing-app/api';
@@ -530,10 +438,6 @@
 
         const els = {
             tbody: document.getElementById('stockTableBody'),
-            modal: document.getElementById('stockModal'),
-            form: document.getElementById('stockForm'),
-            typeInput: document.getElementById('stockType'),
-            idInput: document.getElementById('stockId')
         };
 
         const formatDate = (dateArr) => {
@@ -551,60 +455,6 @@
             return '-';
         };
 
-        const setType = (type) => {
-            els.typeInput.value = type;
-            document.querySelectorAll('.type-opt').forEach(el => el.classList.remove('active'));
-            document.getElementById(`opt-${type.toLowerCase()}`).classList.add('active');
-
-            document.querySelectorAll('.conditional-field').forEach(el => el.classList.remove('show'));
-            document.querySelectorAll(`.field-${type.toLowerCase()}`).forEach(el => el.classList.add('show'));
-
-            // Dynamic Label
-            const label = document.getElementById('qtyLabel');
-            if (label) {
-                label.innerText = type === 'PRODUCT' ? 'Current Stock Level' : 'Base Billing Unit (Qty)';
-            }
-
-            // Dynamic Submit Button
-            const submitBtn = document.getElementById('submitBtn');
-            if (submitBtn) {
-                submitBtn.innerText = type === 'PRODUCT' ? 'Save Product' : 'Save Service';
-            }
-        };
-
-        // Show/hide GST fields based on tax preference
-        function toggleTaxFields() {
-            const isTaxable = document.getElementById('taxPreference').value === 'true';
-            ['cgstGroup', 'sgstGroup', 'igstGroup'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = isTaxable ? '' : 'none';
-            });
-            if (!isTaxable) {
-                document.getElementById('cgstRate').value = 0;
-                document.getElementById('sgstRate').value = 0;
-                document.getElementById('igstRate').value = 0;
-            }
-        }
-        document.getElementById('taxPreference').addEventListener('change', toggleTaxFields);
-
-        // Preview stock image on file select
-        function previewStockImage(input) {
-            const preview = document.getElementById('stockImagePreview');
-            const thumb = document.getElementById('stockImageThumb');
-            const name = document.getElementById('stockImageName');
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    thumb.src = e.target.result;
-                    name.textContent = input.files[0].name;
-                    preview.style.display = 'flex';
-                    preview.style.alignItems = 'center';
-                };
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                preview.style.display = 'none';
-            }
-        }
 
         const userRole = /*[[${userRole}]]*/ 'CLIENT';
 
@@ -637,7 +487,9 @@
                             <div class="actions">
                                 <button class="action-btn view-btn" onclick="viewStock(${stk.id})" title="View Details"><i class="fa-solid fa-eye"></i></button>
                                 ${userRole !== 'ADMIN' ? `
-                                    <button class="action-btn edit-btn" onclick="editStock(${stk.id})" title="Edit Item"><i class="fa-solid fa-pen"></i></button>
+                                    <a href="/billing-app/api/EditStock/${stk.id}" class="action-btn edit-btn" title="Edit Item">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
                                     <button class="action-btn delete-btn" onclick="deleteStock(${stk.id})" title="Delete Item"><i class="fa-solid fa-trash"></i></button>
                                 ` : ''}
                             </div>
@@ -648,7 +500,10 @@
                         <tr>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 12px;">
-                                    <img src="${imgPlaceholder}" data-stock-id="${stk.id}" class="category-img lazy-stock-img">
+                                    <div class="img-wrapper">
+                                        <span class="placeholder-text">No Image</span>
+                                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Crect width='48' height='48' fill='transparent'/%3E%3C/svg%3E" data-stock-id="${stk.id}" class="lazy-stock-img">
+                                    </div>
                                     <span style="font-weight: 600;">${stk.itemName}</span>
                                 </div>
                             </td>
@@ -670,23 +525,35 @@
             observeLazyStockImages();
         };
 
-        // ---- Lazy image loading via IntersectionObserver ----
+        // ---- Lazy stock image loading by observing the wrapper ----
         const stockImgObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const img = entry.target;
+                    const wrapper = entry.target;
+                    const img = wrapper.querySelector('.lazy-stock-img');
+                    if (!img) return;
+
                     const id = img.dataset.stockId;
                     if (id) {
+                        img.onload = () => {
+                            img.style.opacity = '1';
+                            const placeholder = wrapper.querySelector('.placeholder-text');
+                            if (placeholder) placeholder.style.display = 'none';
+                        };
+                        img.onerror = () => {
+                            img.style.opacity = '0';
+                            const placeholder = wrapper.querySelector('.placeholder-text');
+                            if (placeholder) placeholder.style.display = 'block';
+                        };
                         img.src = `${apiBase}/getStockImage/${id}`;
-                        img.onerror = () => { img.removeAttribute('src'); img.style.background = '#f1f5f9'; };
-                        stockImgObserver.unobserve(img);
+                        stockImgObserver.unobserve(wrapper);
                     }
                 }
             });
         }, { rootMargin: '100px' });
 
         function observeLazyStockImages() {
-            document.querySelectorAll('.lazy-stock-img').forEach(img => stockImgObserver.observe(img));
+            document.querySelectorAll('.img-wrapper').forEach(wrapper => stockImgObserver.observe(wrapper));
         }
 
         const applyFilters = () => {
@@ -705,7 +572,13 @@
 
         const loadData = () => {
             fetch(`${apiBase}/getAllCategories`).then(res => res.json()).then(cats => {
-                document.getElementById('categoryId').innerHTML = cats.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
+                // This select is no longer in the page, but the fetch remains.
+                // It's good practice to remove this if the element is truly gone.
+                // For now, keeping it as per "no unrelated edits" but noting it.
+                const categorySelect = document.getElementById('categoryId');
+                if (categorySelect) {
+                    categorySelect.innerHTML = cats.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
+                }
             });
 
             fetch(`${apiBase}/getAllStocks`).then(res => res.json()).then(stocks => {
@@ -718,170 +591,23 @@
             window.location.href = `/billing-app/api/StockDetails?id=${id}`;
         };
 
-        const openModal = () => {
-            els.form.reset();
-            els.idInput.value = '';
-            setType('PRODUCT');
-            els.modal.classList.add('active');
-            // Reset image preview
-            document.getElementById('stockImagePreview').style.display = 'none';
-            document.getElementById('stockImage').value = '';
-            toggleTaxFields();
-        };
-
-        const closeModal = () => els.modal.classList.remove('active');
-
-        const editStock = (id) => {
-            fetch(`${apiBase}/getStockById/${id}`).then(res => res.json()).then(stk => {
-                els.idInput.value = stk.id;
-                document.getElementById('itemName').value = stk.itemName;
-                document.getElementById('categoryId').value = stk.stockCategories?.id || '';
-                document.getElementById('unitPrice').value = stk.unitPrice;
-                document.getElementById('itemDescription').value = stk.itemDescription;
-                document.getElementById('cgstRate').value = stk.cgstRate || 0;
-                document.getElementById('sgstRate').value = stk.sgstRate || 0;
-                document.getElementById('igstRate').value = stk.igstRate || 0;
-                document.getElementById('itemUnit').value = stk.unit || 'Pcs';
-                document.getElementById('taxPreference').value = stk.taxable !== undefined ? stk.taxable.toString() : 'true';
-                document.getElementById('createdBy').value = stk.createdBy || '';
-                document.getElementById('createdAt').value = stk.createdAt || '';
-
-                if (stk.stockType === 'SERVICE') {
-                    setType('SERVICE');
-                    document.getElementById('sacCode').value = stk.sacCode || '';
-                } else {
-                    setType('PRODUCT');
-                    document.getElementById('hsnCode').value = stk.hsnCode || '';
-                    document.getElementById('availableQuantity').value = stk.availableQuantity || 0;
-                }
-                els.modal.classList.add('active');
-
-                // Show existing image preview if one exists
-                const preview = document.getElementById('stockImagePreview');
-                const thumb = document.getElementById('stockImageThumb');
-                const nameSpan = document.getElementById('stockImageName');
-
-                thumb.src = `/billing-app/api/getStockImage/${id}`;
-                nameSpan.textContent = 'Existing Image';
-                preview.style.display = 'flex';
-                preview.style.alignItems = 'center';
-
-                // If the backend returned 404 for existing image, hide the preview
-                thumb.onerror = () => {
-                    preview.style.display = 'none';
-                };
-
-                // Sync GST visibility with loaded taxPreference value
-                toggleTaxFields();
-            });
-        };
-
         const deleteStock = (id) => {
             if (confirm('Delete this entry?')) {
                 fetch(`${apiBase}/deleteStock/${id}`, { method: 'DELETE' }).then(() => loadData());
             }
         };
 
-        els.form.onsubmit = async (e) => {
-            e.preventDefault();
-            const id = els.idInput.value;
-            const type = els.typeInput.value;
 
-            const categoryIdValue = document.getElementById('categoryId').value;
-            if (!categoryIdValue) {
-                alert("Please select a valid category");
-                return;
-            }
 
-            const data = {
-                itemName: document.getElementById('itemName').value,
-                stockType: type,
-                unitPrice: parseFloat(document.getElementById('unitPrice').value || 0),
-                itemDescription: document.getElementById('itemDescription').value,
-                cgstRate: parseFloat(document.getElementById('cgstRate').value || 0),
-                sgstRate: parseFloat(document.getElementById('sgstRate').value || 0),
-                igstRate: parseFloat(document.getElementById('igstRate').value || 0),
-                unit: document.getElementById('itemUnit').value,
-                taxable: document.getElementById('taxPreference').value === 'true',
-                stockCategories: { id: parseInt(categoryIdValue) },
-                createdBy: document.getElementById('createdBy').value || null,
-                createdAt: document.getElementById('createdAt').value || null
-            };
 
-            if (type === 'PRODUCT') {
-                data.hsnCode = document.getElementById('hsnCode').value;
-                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value || 0);
-                data.sacCode = null;
-            } else {
-                data.sacCode = document.getElementById('sacCode').value;
-                data.hsnCode = null;
-                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value || 1);
-            }
 
-            const imageFile = document.getElementById('stockImage').files[0];
-            if (imageFile) {
-                try {
-                    const base64 = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result.split(',')[1]);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(imageFile);
-                    });
-                    data.stockImage = base64;
-                } catch (err) {
-                    console.error("Image read error:", err);
-                }
-            }
-            await saveToServer(id, data);
-        };
 
-        async function saveToServer(id, data) {
-            const url = id ? `${apiBase}/updateStock/${id}` : `${apiBase}/saveStock`;
-            const method = id ? 'PUT' : 'POST';
-
-            const res = await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            if (res.ok) {
-                closeModal();
-                loadData();
-            } else {
-                alert('Error saving data');
-            }
-        }
-
-        window.onclick = (e) => (e.target == els.modal) && closeModal();
-
-        // Handle incoming redirect from Item Group Details
-        const handleRedirect = () => {
-            const params = new URLSearchParams(window.location.search);
-            const catId = params.get('category');
-            const action = params.get('action');
-            const id = params.get('id');
-
-            if (action === 'add' && catId) {
-                // Wait for categories to load first
-                const checkCats = setInterval(() => {
-                    const select = document.getElementById('categoryId');
-                    if (select && select.options.length > 0) {
-                        clearInterval(checkCats);
-                        openModal();
-                        select.value = catId;
-                    }
-                }, 100);
-            } else if (action === 'edit' && id) {
-                editStock(id);
-            }
-        };
 
         document.getElementById('itemSearch').addEventListener('input', applyFilters);
         document.getElementById('typeFilter').addEventListener('change', applyFilters);
 
         loadData();
-        handleRedirect();
+
     </script>
 </body>
 

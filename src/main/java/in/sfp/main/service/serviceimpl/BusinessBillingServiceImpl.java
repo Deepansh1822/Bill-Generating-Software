@@ -45,12 +45,9 @@ public class BusinessBillingServiceImpl implements BusinessBillingService {
 
         existing.setBusinessLogo(businessBillingInfo.getBusinessLogo());
         existing.setBusinessName(businessBillingInfo.getBusinessName());
-        existing.setContactPerson(businessBillingInfo.getContactPerson());
         existing.setBusinessStreetAddress(businessBillingInfo.getBusinessStreetAddress());
         existing.setBusinessNumber(businessBillingInfo.getBusinessNumber());
-        existing.setContactPersonNumber(businessBillingInfo.getContactPersonNumber());
         existing.setBusinessEmail(businessBillingInfo.getBusinessEmail());
-        existing.setContactPersonEmail(businessBillingInfo.getContactPersonEmail());
         existing.setBusinessCity(businessBillingInfo.getBusinessCity());
         existing.setBusinessState(businessBillingInfo.getBusinessState());
         existing.setBusinessCountry(businessBillingInfo.getBusinessCountry());

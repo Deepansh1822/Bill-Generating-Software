@@ -1,7 +1,6 @@
 package in.sfp.main.controllers;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,9 +79,6 @@ public class BillGenerationController {
                 business.setBusinessState(request.getBusinessState());
                 business.setBusinessCountry(request.getBusinessCountry());
                 business.setPinCode(request.getBusinessPinCode());
-                business.setContactPerson(request.getContactPerson());
-                business.setContactPersonNumber(request.getContactPersonNumber());
-                business.setContactPersonEmail(request.getContactPersonEmail());
                 business.setBusinessGstNumber(request.getBusinessGstNumber());
                 business.setBusinessNumber(request.getBusinessNumber());
                 business.setBusinessEmail(request.getBusinessEmail());
@@ -150,6 +146,7 @@ public class BillGenerationController {
             totalBilling.setBusinessBillingInfo(business);
             totalBilling.setRecipientBillingInfo(recipient);
             totalBilling.setStockCreatedBy(currentUser);
+            totalBilling.setBillType(request.getBillType() != null ? request.getBillType().toUpperCase() : "PRODUCT");
             totalBilling.setStatus(request.getStatus() != null ? request.getStatus().toUpperCase() : "DRAFT");
 
             if (request.getInvoiceDate() != null)
@@ -228,6 +225,7 @@ public class BillGenerationController {
                 item.setItemDescription(itemDto.getItemDescription());
                 item.setHsnCode(itemDto.getHsnCode());
                 item.setQuantity(itemDto.getQuantity());
+                item.setUnit(itemDto.getUnit());
                 item.setUnitPrice(itemDto.getUnitPrice());
                 item.setCgstRate(itemDto.getCgstRate());
                 item.setSgstRate(itemDto.getSgstRate());

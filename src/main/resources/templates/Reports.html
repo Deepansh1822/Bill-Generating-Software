@@ -421,10 +421,16 @@
                     placeholder="Search by recipient or invoice number..." onkeyup="filterReports()">
             </div>
             <select id="statusFilter" class="filter-input" onchange="filterReports()"
-                style="width: 180px; cursor: pointer;">
+                style="width: 160px; cursor: pointer;">
                 <option value="">All Status</option>
                 <option value="FINAL">Final/Paid</option>
                 <option value="DRAFT">Draft/Pending</option>
+            </select>
+            <select id="typeFilter" class="filter-input" onchange="filterReports()"
+                style="width: 160px; cursor: pointer;">
+                <option value="">All Types</option>
+                <option value="PRODUCT">Product Based</option>
+                <option value="SERVICE">Service Based</option>
             </select>
         </div>
 
@@ -435,6 +441,7 @@
                         <th>Invoice #</th>
                         <th th:if="${userRole == 'ADMIN'}">Created By</th>
                         <th>Recipient</th>
+                        <th>Type</th>
                         <th>Amount</th>
                         <th>Date</th>
                         <th>Status</th>
@@ -474,12 +481,14 @@
         function filterReports() {
             const searchText = document.getElementById('reportSearch').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value.toUpperCase();
+            const typeFilter = document.getElementById('typeFilter').value.toUpperCase();
 
             const filtered = allBills.filter(bill => {
                 const recipient = (bill.recipientBillingInfo?.recipientName || '').toLowerCase();
                 const invNum = (bill.invoiceNumber || '').toLowerCase();
                 const creator = (bill.stockCreatedBy || '').toLowerCase();
                 const status = (bill.status || 'DRAFT').toUpperCase();
+                const type = (bill.billType || 'PRODUCT').toUpperCase();
 
                 // Search logic (differs for admin)
                 let matchesSearch = recipient.includes(searchText) || invNum.includes(searchText);
@@ -488,8 +497,9 @@
                 }
 
                 const matchesStatus = statusFilter === "" || status === statusFilter;
+                const matchesType = typeFilter === "" || type === typeFilter;
 
-                return matchesSearch && matchesStatus;
+                return matchesSearch && matchesStatus && matchesType;
             });
 
             renderReports(filtered);
@@ -531,6 +541,11 @@
                         <div style="display: flex; flex-direction: column;">
                             <span style="font-weight: 600;">${bill.recipientBillingInfo?.recipientName || 'N/A'}</span>
                         </div>
+                    </td>
+                    <td>
+                        <span style="font-size: 12px; font-weight: 600; color: ${bill.billType === 'SERVICE' ? '#6366f1' : '#f59e0b'}; background: ${bill.billType === 'SERVICE' ? '#eef2ff' : '#fff7ed'}; padding: 4px 8px; border-radius: 6px; border: 1px solid ${bill.billType === 'SERVICE' ? '#e0e7ff' : '#ffedd5'};">
+                            ${bill.billType || 'PRODUCT'}
+                        </span>
                     </td>
                     <td class="amount">₹${Number(bill.stockTotalAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                     <td class="date">${formatDate(bill.invoiceDate || bill.stockCreatedAt)}</td>
@@ -670,13 +685,14 @@
 
             let csvContent = "Invoice #,";
             if (userRole === 'ADMIN') csvContent += "Created By,";
-            csvContent += "Recipient,Amount,Date,Status\n";
+            csvContent += "Recipient,Type,Amount,Date,Status\n";
 
             filtered.forEach(bill => {
                 let row = [
                     `#${bill.invoiceNumber}`,
                     userRole === 'ADMIN' ? bill.stockCreatedBy : null,
                     bill.recipientBillingInfo?.recipientName || 'N/A',
+                    bill.billType || 'PRODUCT',
                     bill.stockTotalAmount || 0,
                     formatDate(bill.invoiceDate || bill.stockCreatedAt),
                     bill.status || 'DRAFT'

@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -141,6 +142,28 @@ public class PagesController {
         return "ManageStocks";
     }
 
+    @GetMapping("/AddCategory")
+    public String getAddCategory() {
+        return "CategoryForm";
+    }
+
+    @GetMapping("/EditCategory/{id}")
+    public String getEditCategory(@PathVariable Long id, Model model) {
+        model.addAttribute("categoryId", id);
+        return "CategoryForm";
+    }
+
+    @GetMapping("/AddStock")
+    public String getAddStock() {
+        return "StockForm";
+    }
+
+    @GetMapping("/EditStock/{id}")
+    public String getEditStock(@PathVariable Long id, Model model) {
+        model.addAttribute("stockId", id);
+        return "StockForm";
+    }
+
     @GetMapping("/StockDetails")
     public String getStockDetails() {
         return "StockDetails";
@@ -154,8 +177,8 @@ public class PagesController {
     @Autowired
     private in.sfp.main.service.UserBillingService userBillingService;
 
-    @GetMapping("/GenerateBill")
-    public String getGenerateBill(Model model) {
+    @GetMapping("/GenerateProductBill")
+    public String getGenerateProductBill(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         // Check role and redirect if Admin
@@ -172,6 +195,53 @@ public class PagesController {
             in.sfp.main.models.BusinessBillingInfo business = userBillingService.findByCreatedBy(auth.getName());
             model.addAttribute("businessInfo", business);
         }
-        return "GenerateBill";
+        return "GenerateProductBill";
+    }
+
+    @GetMapping("/GenerateServiceBill")
+    public String getGenerateServiceBill(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        // Check role and redirect if Admin
+        String role = auth.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .findFirst()
+                .orElse("");
+
+        if (role.contains("ADMIN")) {
+            return "redirect:/billing-app/api/Reports";
+        }
+
+        if (auth != null && auth.isAuthenticated()) {
+            in.sfp.main.models.BusinessBillingInfo business = userBillingService.findByCreatedBy(auth.getName());
+            model.addAttribute("businessInfo", business);
+        }
+        return "GenerateServiceBill";
+    }
+
+    @GetMapping("/GenerateEWayBill")
+    public String getGenerateEWayBill(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        // Check role and redirect if Admin
+        String role = auth.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .findFirst()
+                .orElse("");
+
+        if (role.contains("ADMIN")) {
+            return "redirect:/billing-app/api/Reports";
+        }
+
+        if (auth != null && auth.isAuthenticated()) {
+            in.sfp.main.models.BusinessBillingInfo business = userBillingService.findByCreatedBy(auth.getName());
+            model.addAttribute("businessInfo", business);
+        }
+        return "EWayBill";
+    }
+
+    @GetMapping("/HelpSupport")
+    public String getHelpSupport() {
+        return "HelpSupport";
     }
 }

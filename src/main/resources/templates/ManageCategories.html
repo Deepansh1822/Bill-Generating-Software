@@ -4,15 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Item Groups | SFP Billing</title>
+    <title>Categories | SFP Billing</title>
     <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
     <style>
-        .category-img {
+        .img-wrapper {
             width: 56px;
             height: 56px;
-            object-fit: cover;
             border-radius: 14px;
+            background: #f1f5f9;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border: 1px solid var(--border);
+        }
+
+        .img-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .img-wrapper .placeholder-text {
+            font-size: 8px;
+            color: #94a3b8;
+            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            z-index: 1;
+            padding: 4px;
         }
 
         .actions {
@@ -218,6 +245,7 @@
 
         .add-btn {
             background: var(--primary);
+            text-decoration: none;
             color: white;
             padding: 12px 24px;
             border-radius: 12px;
@@ -375,12 +403,11 @@
     <div class="main-content">
         <div class="header-section">
             <div>
-                <h1>Item Groups</h1>
+                <h1>Categories</h1>
             </div>
-            <button th:if="${userRole != 'ADMIN'}" class="add-btn" onclick="openModal()">
-                <i class="fa-solid fa-plus"></i>
-                Add Item Group
-            </button>
+            <a href="/billing-app/api/AddCategory" class="add-btn" th:if="${userRole != 'ADMIN'}">
+                <i class="fa-solid fa-plus"></i> Add Category
+            </a>
         </div>
 
         <!-- Stat Cards -->
@@ -391,7 +418,7 @@
                 </div>
                 <div class="stat-info">
                     <div class="stat-number" id="categoryCounter">-</div>
-                    <div class="stat-label">Total Item Groups</div>
+                    <div class="stat-label">Total Categories</div>
                 </div>
             </div>
             <div class="stat-card">
@@ -409,7 +436,7 @@
         <!-- Search Bar -->
         <div class="search-bar-wrapper">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="categorySearch" placeholder="Search item groups by name or description...">
+            <input type="text" id="categorySearch" placeholder="Search categories by name or description...">
         </div>
 
         <div class="card-panel">
@@ -417,7 +444,7 @@
                 <thead>
                     <tr>
                         <th>Image</th>
-                        <th>Item Group Name</th>
+                        <th>Category Name</th>
                         <th>Description</th>
                         <th>Products</th>
                         <th>Actions</th>
@@ -436,57 +463,13 @@
 
     <!-- Modal -->
     <!-- Modal -->
-    <div class="sfp-modal-overlay" id="categoryModal">
-        <div class="modal-card">
-            <h2 id="modalTitle">Add New Item Group</h2>
-            <form id="categoryForm">
-                <input type="hidden" id="categoryId">
-                <div class="form-group">
-                    <label for="categoryName">Item Group Name</label>
-                    <input type="text" id="categoryName" required>
-                </div>
-                <div class="form-group">
-                    <label for="categoryDescription">Description</label>
-                    <textarea id="categoryDescription" rows="4" required
-                        placeholder="Describe the items in this group..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Group Image (Optional)</label>
-                    <div style="display: flex; align-items: center; gap: 15px; margin-top: 8px;">
-                        <label for="categoryImage"
-                            style="cursor: pointer; padding: 10px 20px; background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 10px; font-size: 0.85rem; color: #475569; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                            <span>Choose Image</span>
-                        </label>
-                        <input type="file" id="categoryImage" accept="image/*" style="display: none;"
-                            onchange="previewCatImage(this)">
-                        <div id="catImagePreview" style="display: none; align-items: center;">
-                            <img id="catImageThumb"
-                                style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border);">
-                            <span id="catImageName"
-                                style="font-size: 12px; color: var(--text-muted); margin-left: 10px; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="secondary-btn" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="add-btn">Save Group</button>
-                </div>
-            </form>
-        </div>
-    </div>
+
 
     <script th:inline="javascript">
         const apiBase = '/billing-app/api';
         const els = {
             tbody: document.getElementById('categoryTableBody'),
-            modal: document.getElementById('categoryModal'),
-            form: document.getElementById('categoryForm'),
-            title: document.getElementById('modalTitle'),
-            id: document.getElementById('categoryId'),
-            name: document.getElementById('categoryName'),
-            desc: document.getElementById('categoryDescription'),
-            image: document.getElementById('categoryImage')
+
         };
 
         const userRole = /*[[${userRole}]]*/ 'CLIENT';
@@ -515,8 +498,8 @@
                             <td colspan="5">
                                 <div class="premium-empty-state">
                                     <i class="fa-solid fa-folder-open"></i>
-                                    <h3>No Item Groups</h3>
-                                    <p>You haven't created any item groups yet. Groups help you organize your products and services for easier billing.</p>
+                                    <h3>No Categories</h3>
+                                    <p>You haven't created any categories yet. Categories help you organize your products and services for easier billing.</p>
                                 </div>
                             </td>
                         </tr>
@@ -533,7 +516,7 @@
                             <div class="actions">
                                 <button class="action-btn view-btn" title="View" onclick="viewCategory(${cat.id})"><i class="fa-solid fa-eye"></i></button>
                                 ${userRole !== 'ADMIN' ? `
-                                    <button class="action-btn edit-btn" title="Edit" onclick="editCategory(${cat.id})"><i class="fa-solid fa-pen"></i></button>
+                                    <a href="/billing-app/api/EditCategory/${cat.id}" class="action-btn edit-btn" title="Edit Group"><i class="fa-solid fa-pen-to-square"></i></a>
                                     <button class="action-btn delete-btn" title="Delete" onclick="deleteCategory(${cat.id})"><i class="fa-solid fa-trash"></i></button>
                                 ` : ''}
                             </div>
@@ -542,7 +525,12 @@
 
                     return `
                         <tr>
-                            <td><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%23f1f5f9' rx='14'/%3E%3C/svg%3E" data-cat-id="${cat.id}" class="category-img lazy-cat-img"></td>
+                            <td>
+                                    <div class="img-wrapper">
+                                        <span class="placeholder-text">No Image</span>
+                                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='transparent'/%3E%3C/svg%3E" data-cat-id="${cat.id}" class="lazy-cat-img">
+                                    </div>
+                            </td>
                             <td style="font-weight: 600;">${cat.categoryName}</td>
                             <td style="color: var(--text-muted); max-width: 300px;">${cat.categoryDescription}</td>
                             <td><span class="${pillClass}"><i class="fa-solid fa-box" style="font-size:10px;"></i> ${count}</span></td>
@@ -554,160 +542,51 @@
             });
         };
 
-        // ---- Lazy category image loading ----
+        // ---- Lazy category image loading by observing the wrapper ----
         const catImgObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const img = entry.target;
+                    const wrapper = entry.target;
+                    const img = wrapper.querySelector('.lazy-cat-img');
+                    if (!img) return;
+
                     const id = img.dataset.catId;
                     if (id) {
+                        img.onload = () => {
+                            img.style.opacity = '1';
+                            const placeholder = wrapper.querySelector('.placeholder-text');
+                            if (placeholder) placeholder.style.display = 'none';
+                        };
+                        img.onerror = () => {
+                            img.style.opacity = '0';
+                            const placeholder = wrapper.querySelector('.placeholder-text');
+                            if (placeholder) placeholder.style.display = 'block';
+                        };
                         img.src = `/billing-app/api/getCategoryImage/${id}`;
-                        img.onerror = () => { img.removeAttribute('src'); img.style.background = '#f1f5f9'; };
-                        catImgObserver.unobserve(img);
+                        catImgObserver.unobserve(wrapper);
                     }
                 }
             });
         }, { rootMargin: '100px' });
 
         function observeLazyCatImages() {
-            document.querySelectorAll('.lazy-cat-img').forEach(img => catImgObserver.observe(img));
+            document.querySelectorAll('.img-wrapper').forEach(wrapper => catImgObserver.observe(wrapper));
         }
 
-        const openModal = () => {
-            els.title.innerText = 'Add New Item Group';
-            els.form.reset();
-            els.id.value = '';
-            els.form.querySelectorAll('input, textarea').forEach(el => el.disabled = false);
-            els.form.querySelector('button[type="submit"]').style.display = 'block';
-            // Reset image preview
-            document.getElementById('catImagePreview').style.display = 'none';
-            document.getElementById('categoryImage').value = '';
-            els.modal.classList.add('active');
-        };
 
-        const closeModal = () => els.modal.classList.remove('active');
-
-        const editCategory = (id) => {
-            fetch(`${apiBase}/getCategoryById/${id}`)
-                .then(res => res.json())
-                .then(cat => {
-                    if (cat) {
-                        els.title.innerText = 'Edit Item Group'; // Fix: Changed from 'Add New Item Group' to 'Edit Item Group'
-                        els.id.value = cat.id;
-                        els.name.value = cat.categoryName;
-                        els.desc.value = cat.categoryDescription;
-                        els.form.querySelectorAll('input, textarea').forEach(el => el.disabled = false);
-                        els.form.querySelector('button[type="submit"]').style.display = 'block';
-
-                        // Show existing image preview if one exists
-                        const preview = document.getElementById('catImagePreview');
-                        const thumb = document.getElementById('catImageThumb');
-                        const nameSpan = document.getElementById('catImageName');
-
-                        thumb.src = `/billing-app/api/getCategoryImage/${id}`;
-                        nameSpan.textContent = 'Existing Image';
-                        preview.style.display = 'flex';
-                        preview.style.alignItems = 'center';
-
-                        // If the backend returned 404 for existing image, hide the preview
-                        thumb.onerror = () => {
-                            preview.style.display = 'none';
-                        };
-
-                        els.modal.classList.add('active');
-                    }
-                });
-        };
 
         const viewCategory = (id) => {
             window.location.href = `/billing-app/api/CategoryDetails?id=${id}`;
         };
 
         const deleteCategory = (id) => {
-            if (confirm('Are you sure you want to delete this group? All associated items will also be affected.')) {
+            if (confirm('Are you sure you want to delete this category? All associated items will also be affected.')) {
                 fetch(`${apiBase}/deleteCategory/${id}`, { method: 'DELETE' })
                     .then(res => res.ok && loadData());
             }
         };
 
-        els.form.onsubmit = async (e) => {
-            e.preventDefault();
-            const id = els.id.value;
-            const name = els.name.value;
 
-            let base64Image = null;
-            const imageFile = els.image.files[0];
-
-            if (imageFile) {
-                try {
-                    base64Image = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result.split(',')[1]);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(imageFile);
-                    });
-                } catch (err) {
-                    console.error("Image read error:", err);
-                }
-            }
-
-            const data = {
-                categoryName: name,
-                categoryDescription: els.desc.value,
-                categoryImage: base64Image
-            };
-
-            const url = id ? `${apiBase}/updateCategory/${id}` : `${apiBase}/saveCategory`;
-            const method = id ? 'PUT' : 'POST';
-
-            try {
-                const res = await fetch(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                if (res.ok) {
-                    closeModal();
-                    loadData();
-                } else {
-                    alert('Failed to save category. Please try again.');
-                }
-            } catch (err) {
-                console.error("Save error:", err);
-                alert("An error occurred while saving.");
-            }
-        };
-
-        // Real-time search/filter
-        document.getElementById('categorySearch').addEventListener('input', function () {
-            const query = this.value.toLowerCase().trim();
-            const rows = document.querySelectorAll('#categoryTableBody tr');
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(query) ? '' : 'none';
-            });
-        });
-
-        window.onclick = (e) => (e.target == els.modal) && closeModal();
-
-        // Image preview for category form
-        function previewCatImage(input) {
-            const preview = document.getElementById('catImagePreview');
-            const thumb = document.getElementById('catImageThumb');
-            const name = document.getElementById('catImageName');
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    thumb.src = e.target.result;
-                    name.textContent = input.files[0].name;
-                    preview.style.display = 'flex';
-                    preview.style.alignItems = 'center';
-                };
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                preview.style.display = 'none';
-            }
-        }
 
         loadData();
     </script>

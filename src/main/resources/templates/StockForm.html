@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${stockId != null ? 'Edit Item | SFP Billing' : 'Add New Item | SFP Billing'}">Add New Item | SFP
+        Billing</title>
+    <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .form-page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            transform: translateX(-4px);
+        }
+
+        .form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-header {
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .type-selector {
+            display: flex;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 14px;
+            gap: 8px;
+        }
+
+        .type-opt {
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .type-opt.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            outline: none;
+            font-size: 15px;
+            transition: var(--transition);
+            background: #f8fafc;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .section-title {
+            grid-column: span 2;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .image-upload-wrapper {
+            grid-column: span 2;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 24px;
+            background: #f8fafc;
+            border-radius: 20px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .preview-box {
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 4px solid white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .preview-box .placeholder-text {
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .form-footer {
+            margin-top: 48px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            border-top: 1px solid var(--border);
+            padding-top: 32px;
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            padding: 14px 40px;
+            border-radius: 14px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .hidden-field {
+            display: none !important;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            background: #4f46e5;
+        }
+
+        /* Premium Custom Popover (Exact Match with Dashboard) */
+        .custom-popover-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .custom-popover {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 280px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            z-index: 1000;
+            animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .custom-popover.active {
+            display: block !important;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .custom-popover h4 {
+            color: #d97706;
+            font-size: 0.9rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-popover p {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .popover-btn {
+            width: 100%;
+            padding: 10px;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .popover-btn:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+
+        .popover-arrow {
+            position: absolute;
+            top: -6px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            background: white;
+            transform: rotate(45deg);
+            border-left: 1px solid rgba(245, 158, 11, 0.2);
+            border-top: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .cancel-btn {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 14px 40px;
+            border-radius: 14px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .conditional-field {
+            display: none;
+        }
+
+        .conditional-field.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar(activePage='stocks')}"></div>
+
+    <div class="main-content">
+        <div class="form-page-container">
+            <a href="/billing-app/api/ManageStocks" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to Products & Services
+            </a>
+
+            <div class="form-card">
+                <div class="form-header">
+                    <h1 id="formHeading" th:text="${stockId != null ? 'Edit Item' : 'Add New Item'}">Add Item</h1>
+                    <div class="type-selector">
+                        <div class="type-opt active" id="opt-product" onclick="setType('PRODUCT')">
+                            <i class="fa-solid fa-box"></i> Product
+                        </div>
+                        <div class="type-opt" id="opt-service" onclick="setType('SERVICE')">
+                            <i class="fa-solid fa-handshake"></i> Service
+                        </div>
+                    </div>
+                </div>
+
+                <form id="stockForm">
+                    <input type="hidden" id="stockId" th:value="${stockId}">
+                    <input type="hidden" id="stockType" value="PRODUCT">
+                    <input type="hidden" id="createdAt">
+                    <input type="hidden" id="createdBy">
+
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Item Name</label>
+                            <input type="text" id="itemName" required
+                                placeholder="e.g. Dell Latitude 5420 or UI/UX Design Service">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="categoryId" required></select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Sale Price (₹)</label>
+                            <input type="number" step="0.01" id="unitPrice" required placeholder="0.00">
+                        </div>
+
+                        <div class="form-group">
+                            <div
+                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                                <label style="margin-bottom: 0;">Unit of Measure</label>
+                                <div class="custom-popover-wrapper" style="z-index: 1001;">
+                                    <i class="fa-solid fa-circle-info"
+                                        style="font-size: 0.85rem; color: #f59e0b; cursor: pointer; padding: 4px;"
+                                        onclick="toggleCustomPopover(event, 'unitPopover')"></i>
+                                    <div id="unitPopover" class="custom-popover">
+                                        <div class="popover-arrow"></div>
+                                        <h4>📦 Unit of Measure</h4>
+                                        <p>Select how you sell this item. For physical goods, use <strong>Pcs</strong>
+                                            ,<strong>Box</strong>, <strong>Kg</strong>,etc. For services, use
+                                            <strong>Hr</strong>,
+                                            <strong>Service</strong>,etc. to define your billing unit.
+                                        </p>
+                                        <button type="button" onclick="toggleCustomPopover(event, 'unitPopover')"
+                                            class="popover-btn">Got it</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <select id="itemUnit">
+                                <option value="Pcs">Pcs (Pieces)</option>
+                                <option value="Box">Box</option>
+                                <option value="Kg">Kg (Kilogram)</option>
+                                <option value="Ltr">Ltr (Liter)</option>
+                                <option value="Mtr">Mtr (Meter)</option>
+                                <option value="Nos">Nos (Numbers)</option>
+                                <option value="Hr">Hr (Hour)</option>
+                                <option value="Service">Service</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div
+                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                                <label style="margin-bottom: 0;">Tax Preference</label>
+                                <div class="custom-popover-wrapper" style="z-index: 1001;">
+                                    <i class="fa-solid fa-circle-info"
+                                        style="font-size: 0.85rem; color: #f59e0b; cursor: pointer; padding: 4px;"
+                                        onclick="toggleCustomPopover(event, 'taxPopover')"></i>
+                                    <div id="taxPopover" class="custom-popover">
+                                        <div class="popover-arrow"></div>
+                                        <h4>⚖️ Tax Settings</h4>
+                                        <p>Choose <strong>Taxable</strong> if GST applies to this item. Use <strong>Tax
+                                                Exempt</strong> for zero-rated goods or services that don't attract GST
+                                            under current regulations.</p>
+                                        <button type="button" onclick="toggleCustomPopover(event, 'taxPopover')"
+                                            class="popover-btn">Understood</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <select id="taxPreference">
+                                <option value="true">Taxable</option>
+                                <option value="false">Tax Exempt</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group conditional-field field-product show">
+                            <label>HSN Code</label>
+                            <input type="text" id="hsnCode" placeholder="Enter HSN Code">
+                        </div>
+
+                        <div class="form-group conditional-field field-service">
+                            <label>SAC Code</label>
+                            <input type="text" id="sacCode" placeholder="Enter SAC Code">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label id="qtyLabel">Current stock in hand</label>
+                            <input type="number" id="availableQuantity" value="0">
+                        </div>
+
+                        <div class="section-title">
+                            Tax Settings
+                        </div>
+
+                        <div class="form-group" id="cgstGroup">
+                            <label>CGST (%)</label>
+                            <input type="number" step="0.01" id="cgstRate" value="0">
+                        </div>
+
+                        <div class="form-group" id="sgstGroup">
+                            <label>SGST (%)</label>
+                            <input type="number" step="0.01" id="sgstRate" value="0">
+                        </div>
+
+                        <div class="form-group full-width" id="igstGroup">
+                            <label>IGST (%) - For Inter-State Trade</label>
+                            <input type="number" step="0.01" id="igstRate" value="0">
+                        </div>
+
+                        <div class="section-title">
+                            Additional Info
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Item Description</label>
+                            <textarea id="itemDescription" rows="3"
+                                placeholder="Additional details about the product or service..."></textarea>
+                        </div>
+
+                        <div class="image-upload-wrapper">
+                            <div class="preview-box">
+                                <span class="placeholder-text" id="stockImagePlaceholder">No Image</span>
+                                <img id="stockImageThumb" src="" alt="Preview">
+                            </div>
+                            <div style="flex: 1;">
+                                <label>Item Image (Optional)</label>
+                                <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Add a visual reference
+                                    for your stock items.</p>
+                                <label class="submit-btn"
+                                    style="padding: 10px 20px; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <span>Choose Image</span>
+                                    <input type="file" id="stockImage" accept="image/*" style="display: none;">
+                                </label>
+                                <span id="stockImageName" style="margin-left: 12px; font-size: 12px; color: #64748b;">No
+                                    file selected</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancel</button>
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <i class="fa-solid fa-save" style="margin-right: 8px;"></i>
+                            <span id="submitBtnText" th:text="${stockId != null ? 'Update Item' : 'Create Item'}">Save
+                                Item</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // Popover Logic (Moved to top for reliability)
+        function toggleCustomPopover(e, id) {
+            if (e) e.stopPropagation();
+            const popover = document.getElementById(id);
+            if (!popover) return;
+
+            document.querySelectorAll('.custom-popover').forEach(p => {
+                if (p.id !== id) p.classList.remove('active');
+            });
+            popover.classList.toggle('active');
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.custom-popover-wrapper')) {
+                document.querySelectorAll('.custom-popover').forEach(p => {
+                    p.classList.remove('active');
+                });
+            }
+        });
+
+        const stockId = /*[[${stockId}]]*/ null;
+        const apiBase = '/billing-app/api';
+        let stockBase64Image = null;
+
+        // Init Data
+        async function init() {
+            // Load Categories
+            const catsRes = await fetch(`${apiBase}/getAllCategories`);
+            const cats = await catsRes.json();
+            const catSelect = document.getElementById('categoryId');
+            catSelect.innerHTML = cats.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
+
+            // If editing, load stock
+            if (stockId) {
+                const stockRes = await fetch(`${apiBase}/getStockById/${stockId}`);
+                const stock = await stockRes.json();
+
+                document.getElementById('itemName').value = stock.itemName;
+                document.getElementById('unitPrice').value = stock.unitPrice;
+                document.getElementById('itemUnit').value = stock.unit || 'Pcs';
+                document.getElementById('taxPreference').value = stock.taxable ? 'true' : 'false';
+                document.getElementById('itemDescription').value = stock.itemDescription || '';
+                document.getElementById('cgstRate').value = stock.cgstRate || 0;
+                document.getElementById('sgstRate').value = stock.sgstRate || 0;
+                document.getElementById('igstRate').value = stock.igstRate || 0;
+                document.getElementById('availableQuantity').value = stock.availableQuantity || 0;
+                document.getElementById('createdAt').value = stock.createdAt || '';
+                document.getElementById('createdBy').value = stock.createdBy || '';
+
+                if (stock.stockCategories) {
+                    catSelect.value = stock.stockCategories.id;
+                }
+
+                setType(stock.stockType || 'PRODUCT');
+                document.getElementById('itemUnit').value = stock.unit || (stock.stockType === 'SERVICE' ? 'Service' : 'Pcs');
+
+                if (stock.stockType === 'PRODUCT') {
+                    document.getElementById('hsnCode').value = stock.hsnCode || '';
+                } else {
+                    document.getElementById('sacCode').value = stock.sacCode || '';
+                }
+
+                // Image Preview
+                const thumb = document.getElementById('stockImageThumb');
+                const placeholder = document.getElementById('stockImagePlaceholder');
+                thumb.onload = () => {
+                    thumb.style.display = 'block';
+                    placeholder.style.display = 'none';
+                };
+                thumb.onerror = () => {
+                    thumb.style.display = 'none';
+                    placeholder.style.display = 'block';
+                };
+                thumb.src = `/billing-app/api/getStockImage/${stockId}`;
+
+                toggleTaxFields();
+            } else {
+                // Check if category ID is in URL (redirect from CategoryDetails)
+                const params = new URLSearchParams(window.location.search);
+                const queryCat = params.get('category');
+                if (queryCat) catSelect.value = queryCat;
+
+                // Set initial type for new entries
+                setType('PRODUCT');
+            }
+        }
+
+        const UNIT_OPTIONS = {
+            PRODUCT: [
+                { val: 'Pcs', lbl: 'Pcs (Pieces)' },
+                { val: 'Box', lbl: 'Box' },
+                { val: 'Kg', lbl: 'Kg (Kilogram)' },
+                { val: 'Ltr', lbl: 'Ltr (Liter)' },
+                { val: 'Mtr', lbl: 'Mtr (Meter)' },
+                { val: 'Nos', lbl: 'Nos (Numbers)' },
+                { val: 'Other', lbl: 'Other' }
+            ],
+            SERVICE: [
+                { val: 'Hr', lbl: 'Hr (Hour)' },
+                { val: 'Day', lbl: 'Day' },
+                { val: 'Service', lbl: 'Service' },
+                { val: 'Visit', lbl: 'Visit' },
+                { val: 'Session', lbl: 'Session' },
+                { val: 'Sq. Ft', lbl: 'Sq. Ft' },
+                { val: 'Other', lbl: 'Other' }
+            ]
+        };
+
+        function setType(type) {
+            const stockId = document.getElementById('stockId').value;
+            const heading = document.getElementById('formHeading');
+            const btnText = document.getElementById('submitBtnText');
+            const priceLabel = document.querySelector('label[for="unitPrice"]') || document.getElementById('unitPrice').previousElementSibling;
+            const qtyGroup = document.getElementById('availableQuantity').parentElement;
+
+            document.getElementById('stockType').value = type;
+            document.querySelectorAll('.type-opt').forEach(el => el.classList.remove('active'));
+            document.getElementById(`opt-${type.toLowerCase()}`).classList.add('active');
+
+            document.querySelectorAll('.conditional-field').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll(`.field-${type.toLowerCase()}`).forEach(el => el.classList.add('show'));
+
+            // Price Label & Qty Visibility
+            if (type === 'PRODUCT') {
+                heading.innerText = stockId ? 'Update Product' : 'Add New Product';
+                btnText.innerText = stockId ? 'Update Product' : 'Create Product';
+                if (priceLabel) priceLabel.innerText = 'Sale Price (₹)';
+                if (qtyGroup) qtyGroup.classList.remove('hidden-field');
+            } else {
+                heading.innerText = stockId ? 'Update Service' : 'Add New Service';
+                btnText.innerText = stockId ? 'Update Service' : 'Create Service';
+                if (priceLabel) priceLabel.innerText = 'Service Rate (₹)';
+                if (qtyGroup) qtyGroup.classList.add('hidden-field');
+            }
+
+            // Update Unit Dropdown
+            const unitSelect = document.getElementById('itemUnit');
+            const currentVal = unitSelect.value;
+            const options = UNIT_OPTIONS[type] || [];
+            unitSelect.innerHTML = options.map(o => `<option value="${o.val}">${o.lbl}</option>`).join('');
+
+            // Try to restore previous value if it exists in the new list, else default
+            if (options.some(o => o.val === currentVal)) {
+                unitSelect.value = currentVal;
+            } else if (type === 'SERVICE') {
+                unitSelect.value = 'Service';
+            } else {
+                unitSelect.value = 'Pcs';
+            }
+        }
+
+        function toggleTaxFields() {
+            const isTaxable = document.getElementById('taxPreference').value === 'true';
+            document.getElementById('cgstGroup').style.display = isTaxable ? 'block' : 'none';
+            document.getElementById('sgstGroup').style.display = isTaxable ? 'block' : 'none';
+            document.getElementById('igstGroup').style.display = isTaxable ? 'block' : 'none';
+        }
+
+        document.getElementById('taxPreference').addEventListener('change', toggleTaxFields);
+
+        // Image Handling
+        document.getElementById('stockImage').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const thumb = document.getElementById('stockImageThumb');
+            const nameSpan = document.getElementById('stockImageName');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    stockBase64Image = event.target.result;
+                    thumb.src = stockBase64Image;
+                    thumb.style.display = 'block';
+                    document.getElementById('stockImagePlaceholder').style.display = 'none';
+                    nameSpan.textContent = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Form Submit
+        document.getElementById('stockForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const type = document.getElementById('stockType').value;
+            const data = {
+                itemName: document.getElementById('itemName').value,
+                stockType: type,
+                unitPrice: parseFloat(document.getElementById('unitPrice').value || 0),
+                itemDescription: document.getElementById('itemDescription').value,
+                cgstRate: parseFloat(document.getElementById('cgstRate').value || 0),
+                sgstRate: parseFloat(document.getElementById('sgstRate').value || 0),
+                igstRate: parseFloat(document.getElementById('igstRate').value || 0),
+                unit: document.getElementById('itemUnit').value,
+                taxable: document.getElementById('taxPreference').value === 'true',
+                stockCategories: { id: parseInt(document.getElementById('categoryId').value) },
+                createdBy: document.getElementById('createdBy').value || null,
+                createdAt: document.getElementById('createdAt').value || null
+            };
+
+            if (type === 'PRODUCT') {
+                data.hsnCode = document.getElementById('hsnCode').value;
+                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value || 0);
+            } else {
+                data.sacCode = document.getElementById('sacCode').value;
+                data.availableQuantity = parseInt(document.getElementById('availableQuantity').value || 1);
+            }
+
+            if (stockBase64Image) {
+                data.stockImage = stockBase64Image.split(',')[1];
+            }
+
+            const url = stockId ? `${apiBase}/updateStock/${stockId}` : `${apiBase}/saveStock`;
+            const method = stockId ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    window.location.href = '/billing-app/api/ManageStocks';
+                } else {
+                    alert('Error saving item details.');
+                }
+            } catch (err) {
+                alert('Network error while saving.');
+            }
+        });
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.className = 'toast ' + type;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        init();
+        toggleTaxFields();
+    </script>
+</body>
+
+</html>

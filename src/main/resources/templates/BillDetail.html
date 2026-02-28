@@ -256,7 +256,7 @@
             margin-bottom: 4px;
         }
 
-        /* Right-align contact person block when marked */
+        /* Recipient and Sender layout */
         .party-box.contact-right {
             text-align: right;
         }
@@ -488,15 +488,6 @@
                     <div class="party-detail" id="recipientIec">IEC Code: </div>
                     <div class="party-detail" id="recipientPan">PAN No.: </div>
                 </div>
-                <div class="party-box contact-right">
-                    <h3><i class="fa-solid fa-user-tie" style="margin-right: 6px; color: var(--primary);"></i> Contact
-                        Person</h3>
-                    <div class="party-name" id="contactName">Contact Name</div>
-                    <div class="party-detail" id="contactPhone"><i class="fa-solid fa-phone"
-                            style="margin-right: 6px; color: var(--primary);"></i> Phone</div>
-                    <div class="party-detail" id="contactEmail"><i class="fa-solid fa-envelope"
-                            style="margin-right: 6px; color: var(--primary);"></i> Email</div>
-                </div>
             </div>
 
             <table class="items-table">
@@ -714,11 +705,7 @@
                 const recipientIecEl = document.getElementById('recipientIec'); if (recipientIecEl) recipientIecEl.innerHTML = recp?.recipientIecCode ? `<i class="fa-solid fa-earth-americas" style="margin-right: 6px; color: var(--primary);"></i> IEC Code: ${recp.recipientIecCode}` : '';
                 const recipientPanEl = document.getElementById('recipientPan'); if (recipientPanEl) recipientPanEl.innerHTML = recp?.recipientPanNumber ? `<i class="fa-solid fa-id-card-clip" style="margin-right: 6px; color: var(--primary);"></i> PAN No.: ${recp.recipientPanNumber.toUpperCase()}` : '';
 
-                // Contact person (show at right side)
-                const sender = bill.businessBillingInfo;
-                const contactNameEl = document.getElementById('contactName'); if (contactNameEl) contactNameEl.innerText = sender?.contactPersonName || sender?.businessName || 'N/A';
-                const contactPhoneEl = document.getElementById('contactPhone'); if (contactPhoneEl) contactPhoneEl.innerHTML = (sender?.contactPersonPhone || sender?.businessNumber) ? `<i class="fa-solid fa-phone" style="margin-right: 6px; color: var(--primary);"></i> ${sender?.contactPersonPhone || sender?.businessNumber}` : '';
-                const contactEmailEl = document.getElementById('contactEmail'); if (contactEmailEl) contactEmailEl.innerHTML = (sender?.contactPersonEmail || sender?.businessEmail) ? `<i class="fa-solid fa-envelope" style="margin-right: 6px; color: var(--primary);"></i> ${sender?.contactPersonEmail || sender?.businessEmail}` : '';
+                // Contact person details removed as requested
 
                 // Items
                 const tableBody = document.getElementById('itemsBody');
@@ -739,7 +726,7 @@
                                 <div style="font-size: 12px; color: #64748b;">${item.itemDescription || ''}</div>
                             </td>
                             <td>${item.hsnCode || '-'}</td>
-                            <td>${item.quantity}</td>
+                            <td>${item.quantity} ${item.unit || ''}</td>
                             <td>₹${Number(item.unitPrice).toLocaleString('en-IN')}</td>
                             <td class="amount-col">₹${lineTotal.toLocaleString('en-IN')}</td>
                         </tr>
