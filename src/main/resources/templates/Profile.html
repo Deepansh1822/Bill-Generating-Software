@@ -335,6 +335,29 @@
             color: #6366f1;
             transform: translateX(-4px);
         }
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-container input {
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.3s;
+            z-index: 10;
+        }
+
+        .toggle-password:hover {
+            color: #6366f1;
+        }
     </style>
 </head>
 
@@ -416,7 +439,7 @@
                         </div>
                     </div>
                     <div class="detail-card">
-                        <label>Account Security</label>
+                        <label>Account Password</label>
                         <div class="value">
                             <i class="fa-solid fa-lock"></i>
                             <span>********</span>
@@ -551,15 +574,27 @@
             </div>
             <div class="form-group">
                 <label>Secret Security Key</label>
-                <input type="password" id="secretKey" placeholder="Enter your secret key">
+                <div class="password-container">
+                    <input type="password" id="secretKey" placeholder="Enter your secret key">
+                    <i class="fa-solid fa-eye toggle-password" id="toggleSecretKey"
+                        onclick="togglePassword('secretKey', 'toggleSecretKey')"></i>
+                </div>
             </div>
             <div class="form-group">
                 <label>New Password</label>
-                <input type="password" id="newPass" placeholder="Enter new password">
+                <div class="password-container">
+                    <input type="password" id="newPass" placeholder="Enter new password">
+                    <i class="fa-solid fa-eye toggle-password" id="toggleNewPass"
+                        onclick="togglePassword('newPass', 'toggleNewPass')"></i>
+                </div>
             </div>
             <div class="form-group">
                 <label>Confirm New Password</label>
-                <input type="password" id="confirmPass" placeholder="Re-enter new password">
+                <div class="password-container">
+                    <input type="password" id="confirmPass" placeholder="Re-enter new password">
+                    <i class="fa-solid fa-eye toggle-password" id="toggleConfirmPass"
+                        onclick="togglePassword('confirmPass', 'toggleConfirmPass')"></i>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeModals()">Cancel</button>
@@ -578,7 +613,11 @@
             </div>
             <div class="form-group">
                 <label>Account Password</label>
-                <input type="password" id="verifyPassInput" placeholder="Enter password">
+                <div class="password-container">
+                    <input type="password" id="verifyPassInput" placeholder="Enter password">
+                    <i class="fa-solid fa-eye toggle-password" id="toggleVerifyPass"
+                        onclick="togglePassword('verifyPassInput', 'toggleVerifyPass')"></i>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeModals()">Cancel</button>
@@ -588,6 +627,20 @@
     </div>
 
     <script th:inline="javascript">
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(iconId);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
         const userEmail = /*[[${user?.email}]]*/ '';
         let base64Image = null; // Loaded async via /api/profile-image
 

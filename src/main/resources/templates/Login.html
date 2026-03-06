@@ -247,6 +247,29 @@
             color: var(--primary);
         }
 
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-container input {
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.3s;
+            z-index: 10;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary);
+        }
+
         @media (max-width: 900px) {
             .login-card {
                 flex-direction: column;
@@ -297,7 +320,11 @@
 
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                        <div class="password-container">
+                            <input type="password" id="password" name="password" placeholder="••••••••" required>
+                            <i class="fa-solid fa-eye toggle-password" id="toggleLoginPass"
+                                onclick="togglePassword('password', 'toggleLoginPass')"></i>
+                        </div>
                     </div>
 
                     <button type="submit" class="login-btn">Sign In</button>
@@ -327,11 +354,19 @@
                     </div>
                     <div class="form-group">
                         <label for="resetSecretKey">Secret Key</label>
-                        <input type="password" id="resetSecretKey" placeholder="Enter your secret key" required>
+                        <div class="password-container">
+                            <input type="password" id="resetSecretKey" placeholder="Enter your secret key" required>
+                            <i class="fa-solid fa-eye toggle-password" id="toggleSecretKey"
+                                onclick="togglePassword('resetSecretKey', 'toggleSecretKey')"></i>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="newPassword">New Password</label>
-                        <input type="password" id="newPassword" placeholder="••••••••" required>
+                        <div class="password-container">
+                            <input type="password" id="newPassword" placeholder="••••••••" required>
+                            <i class="fa-solid fa-eye toggle-password" id="toggleNewPass"
+                                onclick="togglePassword('newPassword', 'toggleNewPass')"></i>
+                        </div>
                     </div>
                     <button type="submit" class="login-btn">Reset Password</button>
                 </form>
@@ -339,6 +374,20 @@
         </div>
 
         <script>
+            function togglePassword(inputId, iconId) {
+                const passwordInput = document.getElementById(inputId);
+                const toggleIcon = document.getElementById(iconId);
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleIcon.classList.remove('fa-eye');
+                    toggleIcon.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    toggleIcon.classList.remove('fa-eye-slash');
+                    toggleIcon.classList.add('fa-eye');
+                }
+            }
+
             const form = document.querySelector('form');
 
             form.addEventListener('submit', function (e) {

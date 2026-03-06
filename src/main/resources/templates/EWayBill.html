@@ -6,156 +6,248 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generate E-Way Bill | SFP Billing</title>
     <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .header-section {
+        .main-content {
+            background-color: #f8fafc;
+            min-height: 100vh;
+            padding: 2rem 2.5rem;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* ---- Page Header ---- */
+        .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 32px;
         }
 
-        .header-section h1 {
-            font-size: 28px;
+        .page-header-left h1 {
+            font-size: 1.85rem;
             font-weight: 800;
-            color: var(--text-main);
+            letter-spacing: -0.025em;
+            color: #1e293b;
         }
 
-        .bill-container {
+        .page-header-left p {
+            color: #64748b;
+            margin-top: 4px;
+            font-size: 0.95rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-outline {
+            padding: 10px 20px;
             background: white;
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            padding: 40px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .form-section {
-            margin-bottom: 40px;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #f1f5f9;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
             gap: 8px;
-        }
-
-        .form-group label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            font-size: 14px;
-            outline: none;
+            color: #475569;
             transition: all 0.2s;
+            text-decoration: none;
         }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        .btn-outline:hover {
+            border-color: #6366f1;
+            color: #6366f1;
+            transform: translateY(-1px);
         }
 
-        .full-width {
-            grid-column: span 2;
-        }
-
-        .submit-section {
-            display: flex;
-            justify-content: flex-end;
-            gap: 16px;
-            margin-top: 40px;
-            padding-top: 32px;
-            border-top: 1px solid var(--border);
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border-radius: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            font-size: 14px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
+        .btn-primary-action {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
             color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
-        .btn-primary:hover {
+        .btn-primary-action:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
         }
 
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
+        /* ---- Bill Layout ---- */
+        .bill-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 28px;
+            align-items: flex-start;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 10px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .btn-secondary:hover {
+        .bill-paper {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #e2e8f0;
+            padding: 60px 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            min-height: 800px;
+            max-width: 1200px;
+            /* Keep the actual bill from getting too wide */
+            width: 100%;
+            margin-right: auto;
+        }
+
+        .bill-sidebar-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .sidebar-card h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ---- Form Fields ---- */
+        .form-field {
+            margin-bottom: 14px;
+        }
+
+        .form-field label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fcfcfd;
+            color: #1e293b;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), 0 4px 12px rgba(99, 102, 241, 0.05);
+        }
+
+        /* Template Preview Styling (Paper Style) */
+        .eway-bill-template {
+            font-family: 'Inter', sans-serif;
+            color: #000;
+            line-height: 1.4;
+        }
+
+        .paper-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 20px;
+        }
+
+        .paper-section {
+            border-bottom: 1px solid #f1f5f9;
+            padding: 24px 0;
+        }
+
+        .paper-section:last-child {
+            border-bottom: none;
+        }
+
+        .paper-title {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #1e293b;
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .paper-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
             background: #e2e8f0;
         }
 
-        .info-card {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 32px;
-            display: flex;
-            gap: 16px;
-            align-items: flex-start;
+        .paper-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 12px;
+            font-size: 13px;
         }
 
-        .info-card i {
-            color: #0284c7;
-            font-size: 1.25rem;
-            margin-top: 2px;
+        .paper-label {
+            font-weight: 500;
+            color: #64748b;
         }
 
-        .info-card p {
-            font-size: 14px;
-            color: #0369a1;
-            line-height: 1.5;
-            margin: 0;
+        .paper-value {
+            font-weight: 700;
+            color: #1e293b;
+            text-align: right;
         }
 
-        @media (max-width: 768px) {
-            .form-grid {
+        .party-box {
+            border: 1px dashed #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            background: #f8fafc;
+        }
+
+        .party-box-title {
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 10px;
+            color: #6366f1;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 1200px) {
+            .bill-layout {
                 grid-template-columns: 1fr;
-            }
-
-            .full-width {
-                grid-column: span 1;
             }
         }
     </style>
@@ -165,143 +257,243 @@
     <div th:replace="~{fragments/sidebar :: sidebar(activePage='eway-bill')}"></div>
 
     <div class="main-content">
-        <div class="header-section">
-            <div>
+        <div class="page-header">
+            <div class="page-header-left">
                 <h1>Generate E-Way Bill</h1>
-                <p style="color: var(--text-muted); margin-top: 4px;">Compliance for movement of goods</p>
+                <p>Official compliance for inter-state movement of goods</p>
+            </div>
+            <div class="header-actions">
+                <a href="/billing-app/api/EWayBillLogs" class="btn-outline">
+                    <i class="fa-solid fa-list"></i> View Logs
+                </a>
+                <button class="btn-primary-action" onclick="generateEWayMock(event)">
+                    <i class="fa-solid fa-file-circle-check"></i> Generate & Save
+                </button>
             </div>
         </div>
 
-        <div class="info-card">
-            <i class="fa-solid fa-circle-info"></i>
-            <div>
-                <p>An E-Way Bill is required for any movement of goods with a consignment value exceeding
-                    <strong>₹50,000</strong>. Ensure all GSTINs and HSN codes are accurate before generation.</p>
-            </div>
-        </div>
-
-        <div class="bill-container">
-            <form id="ewayBillForm">
-                <!-- Transaction Details -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fa-solid fa-exchange-alt"></i> Transaction Details
+        <div class="bill-layout">
+            <!-- Left Side: Live Preview (Paper Template) -->
+            <div class="bill-paper">
+                <div class="eway-bill-template">
+                    <div class="paper-header">
+                        <div style="font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 8px;">FORM GST
+                            EWB-01</div>
+                        <h2
+                            style="font-size: 24px; font-weight: 900; letter-spacing: 4px; color: #1e293b; text-transform: uppercase;">
+                            e-Way Bill</h2>
+                        <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Government of India</div>
                     </div>
-                    <div class="form-grid">
-                        <div class="form-group">
+
+                    <div class="paper-section">
+                        <div class="paper-title">Part A: E-Way Bill Details</div>
+                        <div class="paper-row">
+                            <span class="paper-label">Supply Type</span>
+                            <span class="paper-value" id="preview-supplyType">OUTWARD</span>
+                        </div>
+                        <div class="paper-row">
+                            <span class="paper-label">Document Number</span>
+                            <span class="paper-value" id="preview-docDetails">Invoice - #PREVIEW</span>
+                        </div>
+                        <div class="paper-row">
+                            <span class="paper-label">Transaction Type</span>
+                            <span class="paper-value" id="preview-transType">REGULAR</span>
+                        </div>
+                    </div>
+
+                    <div class="paper-section">
+                        <div class="paper-title">Address & GST Details</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                            <div class="party-box">
+                                <div class="party-box-title">Consignor (From)</div>
+                                <div id="preview-fromName"
+                                    style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">--</div>
+                                <div style="font-size: 11px; font-weight: 600; color: #6366f1;"
+                                    id="preview-fromGstInfo">GSTIN: --</div>
+                                <div style="font-size: 11px; color: #64748b; margin-top: 8px; line-height: 1.5;"
+                                    id="preview-fromAddress">--</div>
+                            </div>
+                            <div class="party-box">
+                                <div class="party-box-title">Consignee (To)</div>
+                                <div id="preview-toName" style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">
+                                    --</div>
+                                <div style="font-size: 11px; font-weight: 600; color: #6366f1;" id="preview-toGstInfo">
+                                    GSTIN: --</div>
+                                <div style="font-size: 11px; color: #64748b; margin-top: 8px; line-height: 1.5;"
+                                    id="preview-toAddress">--</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="paper-section">
+                        <div class="paper-title">Part B: Transportation Details</div>
+                        <div class="paper-row">
+                            <span class="paper-label">Mode / Vehicle Number</span>
+                            <span class="paper-value" id="preview-modeVehicle">ROAD / --</span>
+                        </div>
+                        <div class="paper-row">
+                            <span class="paper-label">Transporter Name</span>
+                            <span class="paper-value" id="preview-transporter">Self</span>
+                        </div>
+                        <div class="paper-row">
+                            <span class="paper-label">Approximate Distance</span>
+                            <span class="paper-value" id="preview-dist">0 Km</span>
+                        </div>
+                        <div class="paper-row">
+                            <span class="paper-label">Calculated Validity</span>
+                            <span class="paper-value" id="preview-validity" style="color: #6366f1;">--</span>
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-top: 60px; display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div style="text-align: center;">
+                            <i class="fa-solid fa-qrcode" style="font-size: 80px; color: #1e293b;"></i>
+                            <div style="font-size: 9px; font-weight: 700; color: #94a3b8; margin-top: 8px;">DIGITAL
+                                VERIFICATION</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <i class="fa-solid fa-barcode" style="font-size: 40px; color: #1e293b;"></i>
+                            <div style="font-size: 10px; font-weight: 700; color: #1e293b; margin-top: 4px;">E-WAY BILL
+                                PREVIEW</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Sidebar Panel -->
+            <!-- Right Side: Sidebar Panel -->
+            <div class="bill-sidebar-panel">
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-file-invoice" style="color: #6366f1;"></i> Document Config</h3>
+                    <div class="form-field">
+                        <label>Invoice Number</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="docNum" placeholder="e.g. INV-001" style="flex: 1;">
+                            <button type="button" onclick="verifyInvoice()"
+                                style="padding: 0 16px; background: #6366f1; color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 0.8rem; font-weight: 700; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); white-space: nowrap;">
+                                Verify
+                            </button>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-field">
                             <label>Supply Type</label>
                             <select id="supplyType">
                                 <option value="OUTWARD">Outward</option>
                                 <option value="INWARD">Inward</option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-field">
                             <label>Sub Type</label>
                             <select id="subType">
                                 <option value="SUPPLY">Supply</option>
                                 <option value="IMPORT">Import</option>
                                 <option value="EXPORT">Export</option>
                                 <option value="JOB_WORK">Job Work</option>
-                                <option value="SKD_CKD">SKD / CKD</option>
-                                <option value="RECIPIENT_NOT_KNOWN">Recipient Not Known</option>
                                 <option value="FOR_OWN_USE">For Own Use</option>
-                                <option value="OTHERS">Others</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Document Type</label>
-                            <select id="docType">
-                                <option value="INVOICE">Tax Invoice</option>
-                                <option value="BILL_OF_SUPPLY">Bill of Supply</option>
-                                <option value="CHALLAN">Delivery Challan</option>
-                                <option value="OTHERS">Others</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Document Date</label>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-field">
+                            <label>Doc Date</label>
                             <input type="date" id="docDate"
                                 th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
                         </div>
-                    </div>
-                </div>
-
-                <!-- Consignor Details (From) -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fa-solid fa-building"></i> Consignor (From)
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label>Company Name</label>
-                            <input type="text" id="fromCompanyName" th:value="${businessInfo?.businessName}"
-                                placeholder="Name of dispatching company">
-                        </div>
-                        <div class="form-group">
-                            <label>GSTIN</label>
-                            <input type="text" id="fromGSTIN" th:value="${businessInfo?.businessGstNumber}"
-                                placeholder="Sender's GSTIN">
-                        </div>
-                        <div class="form-group">
-                            <label>Dispatch State</label>
-                            <input type="text" id="fromState" th:value="${businessInfo?.businessState}"
-                                placeholder="State of origin">
+                        <div class="form-field">
+                            <label>Txn Type</label>
+                            <select id="transactionType">
+                                <option value="REGULAR">Regular</option>
+                                <option value="BILL_TO_SHIP_TO">Bill To-Ship To</option>
+                                <option value="BILL_FROM_DISPATCH">Bill From-Dispatch</option>
+                            </select>
                         </div>
                     </div>
                 </div>
 
-                <!-- Consignee Details (To) -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fa-solid fa-truck-ramp-box"></i> Consignee (To)
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-truck-moving" style="color: #6366f1;"></i> Transport Section</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-field">
+                            <label>Distance (km)</label>
+                            <input type="number" id="distance" placeholder="Distance" oninput="calcValidity()">
+                        </div>
+                        <div class="form-field">
+                            <label>Vehicle No</label>
+                            <input type="text" id="vehicleNum" placeholder="MH-12-AB...">
+                        </div>
                     </div>
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label>Recipient Name</label>
-                            <input type="text" id="toCompanyName" placeholder="Name of receiving company">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-field">
+                            <label>Transport Mode</label>
+                            <select id="transportMode">
+                                <option value="ROAD">Road</option>
+                                <option value="RAIL">Rail</option>
+                                <option value="AIR">Air</option>
+                                <option value="SHIP">Ship</option>
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label>GSTIN</label>
-                            <input type="text" id="toGSTIN" placeholder="Recipient GSTIN">
-                        </div>
-                        <div class="form-group">
-                            <label>Delivery State</label>
-                            <input type="text" id="toState" placeholder="Destination state">
+                        <div class="form-field">
+                            <label>Validity (Auto)</label>
+                            <input type="text" id="validity" readonly style="background: #f1f5f9; color: #475569;">
                         </div>
                     </div>
                 </div>
 
-                <!-- Transportation Details -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fa-solid fa-truck-fast"></i> Transportation Details
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-building-user" style="color: #6366f1;"></i> Parties Info</h3>
+                    <div class="form-field">
+                        <label>Consignor (From)</label>
+                        <input type="text" id="fromCompanyName" th:value="${businessInfo?.businessName}">
                     </div>
-                    <div class="form-grid">
-                        <div class="form-group">
+                    <div class="form-field">
+                        <label>Consignee (To)</label>
+                        <input type="text" id="toCompanyName" placeholder="Receiver Name">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-field">
                             <label>Transporter Name</label>
-                            <input type="text" id="transporterName" placeholder="Name of transport agency">
+                            <input type="text" id="transporterName" placeholder="Agency Name">
                         </div>
-                        <div class="form-group">
+                        <div class="form-field">
                             <label>Transporter ID</label>
-                            <input type="text" id="transporterId" placeholder="Transporter's ID">
-                        </div>
-                        <div class="form-group">
-                            <label>Approx Distance (km)</label>
-                            <input type="number" id="distance" placeholder="Distance in kms">
-                        </div>
-                        <div class="form-group">
-                            <label>Vehicle Number</label>
-                            <input type="text" id="vehicleNum" placeholder="e.g. MH-12-AB-1234">
+                            <input type="text" id="transporterId" placeholder="GSTIN/ID">
                         </div>
                     </div>
+
+                    <!-- Hidden reference fields -->
+                    <input type="hidden" id="docType" value="INVOICE">
+                    <input type="hidden" id="fromGSTIN" th:value="${businessInfo?.businessGstNumber}">
+                    <input type="hidden" id="fromPincode" th:value="${businessInfo?.pinCode}">
+                    <input type="hidden" id="fromAddress" th:value="${businessInfo?.businessStreetAddress}">
+                    <input type="hidden" id="fromState" th:value="${businessInfo?.businessState}">
+
+                    <input type="hidden" id="toGSTIN">
+                    <input type="hidden" id="toPincode">
+                    <input type="hidden" id="toAddress">
+                    <input type="hidden" id="toState">
                 </div>
 
-                <div class="submit-section">
-                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">Back</button>
-                    <button type="submit" class="btn btn-primary" onclick="generateEWayMock(event)">
-                        <i class="fa-solid fa-file-circle-check" style="margin-right: 8px;"></i> Generate E-Way Bill
-                    </button>
+                <div class="sidebar-card">
+                    <h3><i class="fa-solid fa-plus-circle" style="color: #6366f1;"></i> Advanced Info</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-field">
+                            <label>Trans Doc No</label>
+                            <input type="text" id="transDocNo" placeholder="Doc No">
+                        </div>
+                        <div class="form-field">
+                            <label>Trans Doc Date</label>
+                            <input type="date" id="transDocDate">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label>Multi-Vehicle Details</label>
+                        <input type="text" id="multiVehicle" placeholder="Optional info">
+                    </div>
+                    <input type="hidden" id="cewbNo">
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -311,18 +503,197 @@
     </div>
 
     <script th:inline="javascript">
-        function generateEWayMock(e) {
+        // Sync Preview Function
+        function updatePreview() {
+            // Document Details Sync
+            const supplyType = document.getElementById('supplyType').value;
+            const docNum = document.getElementById('docNum').value;
+            const docDate = document.getElementById('docDate').value;
+
+            document.getElementById('preview-supplyType').innerText = supplyType;
+            document.getElementById('preview-docDetails').innerText = "Invoice - " + (docNum || '#PREVIEW') + " - " + (docDate || '--');
+            document.getElementById('preview-transType').innerText = document.getElementById('transactionType').value;
+
+            // Address Sync
+            document.getElementById('preview-fromName').innerText = document.getElementById('fromCompanyName').value || '--';
+            document.getElementById('preview-fromGstInfo').innerText = "GSTIN: " + (document.getElementById('fromGSTIN').value || '--') + " / " + (document.getElementById('fromPincode').value || '');
+            document.getElementById('preview-fromAddress').innerText = document.getElementById('fromAddress').value || '--';
+
+            document.getElementById('preview-toName').innerText = document.getElementById('toCompanyName').value || '--';
+            document.getElementById('preview-toGstInfo').innerText = "GSTIN: " + (document.getElementById('toGSTIN').value || '--') + " / " + (document.getElementById('toPincode').value || '');
+            document.getElementById('preview-toAddress').innerText = document.getElementById('toAddress').value || '--';
+
+            // Transport Sync
+            const mode = document.getElementById('transportMode').value;
+            const vehicle = document.getElementById('vehicleNum').value;
+            const transName = document.getElementById('transporterName').value;
+            const dist = document.getElementById('distance').value || '0';
+
+            document.getElementById('preview-modeVehicle').innerText = `${mode} / ${vehicle || '--'}`;
+            document.getElementById('preview-transporter').innerText = transName || 'Self';
+            document.getElementById('preview-dist').innerText = `${dist} Km`;
+            document.getElementById('preview-validity').innerText = document.getElementById('validity').value || '--';
+        }
+
+        // Add Listeners for real-time sync
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = ['supplyType', 'subType', 'docNum', 'docDate', 'transactionType', 'fromCompanyName', 'toCompanyName', 'vehicleNum', 'distance', 'transportMode', 'transporterName', 'transDocNo', 'transDocDate'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', updatePreview);
+            });
+            updatePreview();
+        });
+
+        function showToastStatus(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.display = "block";
+            setTimeout(() => toast.style.display = "none", 4000);
+        }
+
+        // Auto-fill logic (Original logic maintained)
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const billId = params.get('billId');
+
+            if (billId) {
+                const toast = document.getElementById('toast');
+                toast.innerText = "📥 Loading invoice details...";
+                toast.style.display = "block";
+
+                try {
+                    const response = await fetch(`/billing-app/api/reports/bill/${billId}`);
+                    if (!response.ok) throw new Error('Invoice not found');
+                    const bill = await response.json();
+
+                    if (bill.recipientBillingInfo) {
+                        document.getElementById('toCompanyName').value = bill.recipientBillingInfo.recipientBusinessName || bill.recipientBillingInfo.recipientName || '';
+                        document.getElementById('toGSTIN').value = bill.recipientBillingInfo.recipientGstNumber || '';
+                    }
+                    if (bill.invoiceNumber) {
+                        document.getElementById('docNum').value = bill.invoiceNumber;
+                    }
+
+                    toast.innerText = "✅ Details pre-filled successfully!";
+                    updatePreview();
+                    setTimeout(() => toast.style.display = "none", 2000);
+                } catch (err) {
+                    console.error(err);
+                    toast.innerText = "❌ Error fetching invoice details";
+                    setTimeout(() => toast.style.display = "none", 3000);
+                }
+            }
+        });
+
+        function calcValidity() {
+            const dist = parseInt(document.getElementById('distance').value);
+            if (!isNaN(dist)) {
+                // Official GST Rule: 1 day (24h) for every 200km
+                const hours = Math.ceil(dist / 200) * 24;
+                document.getElementById('validity').value = hours + " Hours";
+            }
+        }
+
+        async function verifyInvoice() {
+            const invNum = document.getElementById('docNum').value;
+            if (!invNum) {
+                showToastStatus('Please enter an Invoice Number');
+                return;
+            }
+
+            showToastStatus("🔍 Verifying Invoice...");
+
+            try {
+                const response = await fetch(`/billing-app/api/EWayBill/fetchInvoice/${invNum}`);
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Populate To Details
+                    document.getElementById('toCompanyName').value = data.toName || '';
+                    document.getElementById('toGSTIN').value = data.toGSTIN || '';
+                    document.getElementById('toAddress').value = data.toAddress || '';
+                    document.getElementById('toPincode').value = data.toPincode || '';
+                    document.getElementById('toState').value = data.toState || '';
+
+                    // Populate From Details
+                    document.getElementById('fromAddress').value = data.fromAddress || '';
+                    document.getElementById('fromPincode').value = data.fromPincode || '';
+                    document.getElementById('fromState').value = data.fromState || '';
+
+                    document.getElementById('docDate').value = data.docDate || '';
+
+                    updatePreview();
+                    showToastStatus('✅ Invoice verified & all addresses pre-filled!');
+                } else {
+                    const msg = await response.text();
+                    showToastStatus('❌ ' + msg);
+                }
+            } catch (err) {
+                showToastStatus('❌ Connection error during verification');
+            }
+        }
+
+        async function generateEWayMock(e) {
             e.preventDefault();
             const toast = document.getElementById('toast');
-            toast.innerText = "🚀 E-Way Bill generation in progress...";
+            toast.innerText = "🚀 Saving E-Way Bill to database...";
             toast.style.display = "block";
 
-            setTimeout(() => {
-                toast.innerText = "✅ E-Way Bill generated successfully!";
-                setTimeout(() => {
-                    toast.style.display = "none";
-                }, 3000);
-            }, 2000);
+            // Collect all form data
+            const ewayData = {
+                supplyType: document.getElementById('supplyType').value,
+                subType: document.getElementById('subType').value,
+                docType: document.getElementById('docType').value,
+                documentNumber: document.getElementById('docNum').value,
+                docDate: document.getElementById('docDate').value,
+                transactionType: document.getElementById('transactionType').value,
+
+                fromName: document.getElementById('fromCompanyName').value,
+                fromGSTIN: document.getElementById('fromGSTIN').value,
+                fromAddress: document.getElementById('fromAddress').value,
+                fromPincode: document.getElementById('fromPincode').value,
+
+                toName: document.getElementById('toCompanyName').value,
+                toGSTIN: document.getElementById('toGSTIN').value,
+                toAddress: document.getElementById('toAddress').value,
+                toPincode: document.getElementById('toPincode').value,
+
+                transporterName: document.getElementById('transporterName').value,
+                transporterId: document.getElementById('transporterId').value,
+                vehicleNumber: document.getElementById('vehicleNum').value,
+                distance: document.getElementById('distance').value,
+                transportMode: document.getElementById('transportMode').value,
+                validity: document.getElementById('validity').value,
+                transDocNo: document.getElementById('transDocNo').value,
+                transDocDate: document.getElementById('transDocDate').value,
+                cewbNo: document.getElementById('cewbNo').value,
+                multiVehicleInfo: document.getElementById('multiVehicle').value
+            };
+
+            try {
+                const response = await fetch('/billing-app/api/EWayBill/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(ewayData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    toast.innerText = `✅ Success! EWB #${result.ewayBillNumber} saved.`;
+                    setTimeout(() => {
+                        window.location.href = "/billing-app/api/EWayBillLogs";
+                    }, 2000);
+                } else {
+                    const errorMsg = await response.text();
+                    toast.innerText = "❌ " + errorMsg;
+                    setTimeout(() => toast.style.display = "none", 5000);
+                }
+            } catch (err) {
+                console.error(err);
+                toast.innerText = "❌ Error connecting to server";
+                setTimeout(() => toast.style.display = "none", 3000);
+            }
         }
     </script>
 </body>

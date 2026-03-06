@@ -244,4 +244,15 @@ public class PagesController {
     public String getHelpSupport() {
         return "HelpSupport";
     }
+
+    @GetMapping("/EWayBillLogs")
+    public String getEWayBillLogs() {
+        return "EWayBillLogs";
+    }
+
+    @GetMapping("/EWayBill/Detail/{id}")
+    public String getEWayBillDetail(@PathVariable Long id, Model model) {
+        model.addAttribute("ewayId", id);
+        return "EWayBillDetail";
+    }
 }

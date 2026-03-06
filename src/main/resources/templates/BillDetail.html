@@ -441,6 +441,10 @@
                     style="background: #f1f5f9; color: #475569; box-shadow: none; border: 1px solid #e2e8f0;">
                     <i class="fa-solid fa-print"></i> Print
                 </button>
+                <a th:href="@{'/billing-app/api/GenerateEWayBill?billId=' + ${billId}}" class="print-btn"
+                    style="background: #1e293b; color: white; box-shadow: none; text-decoration: none;">
+                    <i class="fa-solid fa-truck-fast"></i> E-Way Bill
+                </a>
             </div>
         </div>
 

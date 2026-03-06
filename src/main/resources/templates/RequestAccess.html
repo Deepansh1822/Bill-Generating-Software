@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #4361ee;
@@ -252,6 +253,29 @@
                 padding: 30px;
             }
         }
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-container input {
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.3s;
+            z-index: 10;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary);
+        }
     </style>
 </head>
 
@@ -333,8 +357,12 @@
 
                     <div class="form-group">
                         <label for="secretKey">Recovery Secret Key</label>
-                        <input type="password" id="secretKey" name="secretKey"
-                            placeholder="A word or code to recover password" required>
+                        <div class="password-container">
+                            <input type="password" id="secretKey" name="secretKey"
+                                placeholder="A word or code to recover password" required>
+                            <i class="fa-solid fa-eye toggle-password" id="toggleSecretKey"
+                                onclick="togglePassword('secretKey', 'toggleSecretKey')"></i>
+                        </div>
                         <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 5px;">Remember this! You'll
                             need it if you forget your password.</p>
                     </div>
@@ -355,6 +383,20 @@
     </div>
 
     <script>
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(iconId);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
         const form = document.querySelector('form');
         const submitBtn = document.getElementById('submitBtn');
         const btnText = submitBtn.querySelector('span');

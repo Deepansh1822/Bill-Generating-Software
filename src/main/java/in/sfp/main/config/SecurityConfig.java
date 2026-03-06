@@ -46,7 +46,8 @@ public class SecurityConfig {
                                                                 "/api-diag/**")
                                                 .permitAll()
 
-                                                // ---- Public pages: Login, MainDashboard, Dashboard and RequestAccess ----
+                                                // ---- Public pages: Login, MainDashboard, Dashboard and RequestAccess
+                                                // ----
                                                 .requestMatchers(
                                                                 "/billing-app/api/Login",
                                                                 "/billing-app/api/MainDashboard",
@@ -67,8 +68,16 @@ public class SecurityConfig {
 
                                                 .requestMatchers(
                                                                 "/billing-app/api/generateBill",
-                                                                "/billing-app/api/GenerateBill")
+                                                                "/billing-app/api/GenerateBill",
+                                                                "/billing-app/api/GenerateEWayBill",
+                                                                "/billing-app/api/EWayBill/save")
                                                 .hasRole("CLIENT")
+
+                                                .requestMatchers(
+                                                                "/billing-app/api/EWayBillLogs",
+                                                                "/billing-app/api/EWayBill/Detail/**",
+                                                                "/billing-app/api/EWayBill/logs")
+                                                .hasAnyRole("ADMIN", "CLIENT")
 
                                                 // ---- Error page ----
                                                 .requestMatchers("/error").permitAll()
