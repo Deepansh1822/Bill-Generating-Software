@@ -10,7 +10,22 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <script src="/js/utils.js"></script>
         <style>
+            /* ===== Shared App-Wide Variables (used by all pages) ===== */
             :root {
+                --primary: #6366f1;
+                --primary-light: #eef2ff;
+                --primary-dark: #4338ca;
+                --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+                --text-main: #1e293b;
+                --text-muted: #64748b;
+                --border: #e2e8f0;
+                --white: #ffffff;
+                --bg-body: #f8fafc;
+                --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            /* ===== Sidebar-Only Variables (scoped to aside so they don't leak) ===== */
+            aside {
                 --sb-primary: #6366f1;
                 --sb-primary-light: #a5b4fc;
                 --sb-primary-dark: #4338ca;
@@ -304,13 +319,18 @@
                 list-style: none;
                 overflow: hidden;
                 max-height: 0;
-                transition: max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+                opacity: 0;
+                padding: 0;
+                transition: max-height 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                    opacity 0.3s ease,
+                    padding 0.4s cubic-bezier(0.23, 1, 0.32, 1);
                 margin-left: 32px;
                 border-left: 1px solid rgba(255, 255, 255, 0.05);
             }
 
             .nav-submenu.open {
-                max-height: 400px;
+                max-height: 180px;
+                opacity: 1;
                 padding: 6px 0 12px;
             }
 

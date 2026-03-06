@@ -185,7 +185,7 @@
             padding: 60px;
             border-radius: 24px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border);
+            border: none;
             position: relative;
         }
 
@@ -383,7 +383,7 @@
 
             .invoice-card {
                 box-shadow: none !important;
-                border: 1px solid var(--border) !important;
+                border: none !important;
                 padding: 15mm !important;
                 border-radius: 0 !important;
             }
@@ -494,15 +494,21 @@
                 </div>
             </div>
 
+            <h3 id="billItemsHeading"
+                style="font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 14px; -webkit-print-color-adjust: exact; print-color-adjust: exact; page-break-after: avoid;">
+                <i class="fa-solid fa-list-check"
+                    style="color: #6366f1; margin-right: 8px; -webkit-print-color-adjust: exact;"></i>
+                <span id="billItemsHeadingText">Invoice Items</span>
+            </h3>
             <table class="items-table">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th style="text-align: center;">S.No.</th>
                         <th>Item Description</th>
-                        <th>HSN</th>
-                        <th>Qty</th>
-                        <th>Price</th>
-                        <th class="amount-col">Total</th>
+                        <th id="hsnSacHeader" style="text-align: center;">HSN Code</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th style="text-align: center;">Price</th>
+                        <th class="amount-col" style="text-align: center;">Total</th>
                     </tr>
                 </thead>
                 <tbody id="itemsBody">
@@ -662,6 +668,15 @@
                 }
                 document.getElementById('invoiceNumber').innerText = `#${bill.invoiceNumber}`;
                 document.title = `Invoice ${bill.invoiceNumber} | SFP Billing`;
+
+                // Update Heading and Table Headers based on Bill Type
+                const isService = bill.billType === 'SERVICE';
+                const headingText = isService ? 'Invoice Services' : 'Invoice Products';
+                const hsnSacLabel = isService ? 'SAC Code' : 'HSN Code';
+
+                document.getElementById('billItemsHeadingText').innerText = headingText;
+                document.getElementById('hsnSacHeader').innerText = hsnSacLabel;
+
                 const sigBusEl = document.getElementById('signatureBusinessName');
                 if (sigBusEl) sigBusEl.innerText = 'For ' + businessName;
 
@@ -724,7 +739,7 @@
 
                     return `
                         <tr>
-                            <td>${index + 1}</td>
+                            <td style="text-align: center;">${index + 1}</td>
                             <td>
                                 <div style="font-weight: 600;">${item.itemName}</div>
                                 <div style="font-size: 12px; color: #64748b;">${item.itemDescription || ''}</div>

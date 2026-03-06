@@ -450,7 +450,8 @@
                 </thead>
                 <tbody id="reportsTable">
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <td th:colspan="${userRole == 'ADMIN' ? 8 : 7}"
+                            style="text-align: center; padding: 40px; color: var(--text-muted);">
                             <i class="fa-solid fa-circle-notch fa-spin"></i> Loading data...
                         </td>
                     </tr>
@@ -474,7 +475,7 @@
                 renderReports(allBills);
             } catch (error) {
                 console.error('Error fetching reports:', error);
-                document.getElementById('reportsTable').innerHTML = `<tr><td colspan="${userRole === 'ADMIN' ? 7 : 6}" style="text-align: center; color: var(--danger);">Failed to load data.</td></tr>`;
+                document.getElementById('reportsTable').innerHTML = `<tr><td colspan="${userRole === 'ADMIN' ? 8 : 7}" style="text-align: center; color: var(--danger);">Failed to load data.</td></tr>`;
             }
         }
 
@@ -521,7 +522,7 @@
             if (bills.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="${userRole === 'ADMIN' ? 7 : 6}">
+                        <td colspan="${userRole === 'ADMIN' ? 8 : 7}">
                             <div class="premium-empty-state">
                                 <i class="fa-solid fa-file-invoice"></i>
                                 <h3>No reports found</h3>
