@@ -21,6 +21,10 @@ public class BillingReportServiceImpl implements BillingReportService {
                 .orElseThrow(() -> new RuntimeException("Bill not found with ID: " + id));
 
         validateOwnership(bill);
+        // Null-safe fallback for old records saved before billType column existed
+        if (bill.getBillType() == null || bill.getBillType().isBlank()) {
+            bill.setBillType("PRODUCT");
+        }
         return bill;
     }
 
@@ -31,6 +35,10 @@ public class BillingReportServiceImpl implements BillingReportService {
                 .orElseThrow(() -> new RuntimeException("Bill not found with Invoice: " + invoiceNumber));
 
         validateOwnership(bill);
+        // Null-safe fallback for old records
+        if (bill.getBillType() == null || bill.getBillType().isBlank()) {
+            bill.setBillType("PRODUCT");
+        }
         return bill;
     }
 

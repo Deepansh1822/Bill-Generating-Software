@@ -497,7 +497,7 @@
             <h3 id="billItemsHeading"
                 style="font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 14px; -webkit-print-color-adjust: exact; print-color-adjust: exact; page-break-after: avoid;">
                 <i class="fa-solid fa-list-check"
-                    style="color: #6366f1; margin-right: 8px; -webkit-print-color-adjust: exact;"></i>
+                    style="color: #6366f1; margin-right: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact;"></i>
                 <span id="billItemsHeadingText">Invoice Items</span>
             </h3>
             <table class="items-table">
@@ -506,7 +506,7 @@
                         <th style="text-align: center;">S.No.</th>
                         <th>Item Description</th>
                         <th id="hsnSacHeader" style="text-align: center;">HSN Code</th>
-                        <th style="text-align: center;">Qty</th>
+                        <th id="qtyHeader" style="text-align: center;">Qty</th>
                         <th style="text-align: center;">Price</th>
                         <th class="amount-col" style="text-align: center;">Total</th>
                     </tr>
@@ -670,12 +670,20 @@
                 document.title = `Invoice ${bill.invoiceNumber} | SFP Billing`;
 
                 // Update Heading and Table Headers based on Bill Type
-                const isService = bill.billType === 'SERVICE';
+                console.log('[BillDetail] bill.billType =', bill.billType);
+                const isService = bill.billType && bill.billType.toUpperCase() === 'SERVICE';
                 const headingText = isService ? 'Invoice Services' : 'Invoice Products';
                 const hsnSacLabel = isService ? 'SAC Code' : 'HSN Code';
 
                 document.getElementById('billItemsHeadingText').innerText = headingText;
                 document.getElementById('hsnSacHeader').innerText = hsnSacLabel;
+
+                // Hide Qty column header if it's a service bill
+                if (isService) {
+                    document.getElementById('qtyHeader').style.display = 'none';
+                } else {
+                    document.getElementById('qtyHeader').style.display = '';
+                }
 
                 const sigBusEl = document.getElementById('signatureBusinessName');
                 if (sigBusEl) sigBusEl.innerText = 'For ' + businessName;
@@ -737,6 +745,8 @@
                     subtotalSum += basePrice;
                     taxSum += (lineTotal - basePrice);
 
+                    const qtyCell = isService ? '' : `<td style="text-align: center;">${item.quantity} ${item.unit || ''}</td>`;
+
                     return `
                         <tr>
                             <td style="text-align: center;">${index + 1}</td>
@@ -744,10 +754,10 @@
                                 <div style="font-weight: 600;">${item.itemName}</div>
                                 <div style="font-size: 12px; color: #64748b;">${item.itemDescription || ''}</div>
                             </td>
-                            <td>${item.hsnCode || '-'}</td>
-                            <td>${item.quantity} ${item.unit || ''}</td>
-                            <td>₹${Number(item.unitPrice).toLocaleString('en-IN')}</td>
-                            <td class="amount-col">₹${lineTotal.toLocaleString('en-IN')}</td>
+                            <td style="text-align: center;">${item.hsnCode || '-'}</td>
+                            ${qtyCell}
+                            <td style="text-align: center;">₹${Number(item.unitPrice).toLocaleString('en-IN')}</td>
+                            <td class="amount-col" style="text-align: center;">₹${lineTotal.toLocaleString('en-IN')}</td>
                         </tr>
                     `;
                 }).join('');

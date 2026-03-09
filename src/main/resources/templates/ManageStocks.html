@@ -516,7 +516,7 @@
                             <td>
                                 ${isProduct
                         ? `<span class="stock-qty ${stk.availableQuantity < 10 ? 'qty-low' : 'qty-ok'}">${stk.availableQuantity} ${stk.unit || 'Pcs'}</span>`
-                        : `<span class="stock-qty" style="background: #f5f3ff; color: #7c3aed;">${stk.availableQuantity || 1} ${stk.unit || 'Service'}</span>`}
+                        : `<span class="stock-qty" style="background: #f5f3ff; color: #7c3aed; padding: 4px 10px;"><i class="fa-solid fa-infinity" style="font-size: 0.7rem; margin-right: 4px;"></i> Active / Service</span>`}
                             </td>
                             ${actionsHtml}
                         </tr>

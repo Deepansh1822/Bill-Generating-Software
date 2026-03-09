@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
 
 @Controller
 @RequestMapping("/billing-app/api")
@@ -254,5 +259,22 @@ public class PagesController {
     public String getEWayBillDetail(@PathVariable Long id, Model model) {
         model.addAttribute("ewayId", id);
         return "EWayBillDetail";
+    }
+
+    @GetMapping("/pdfs/{fileName:.+}")
+    public ResponseEntity<Resource> servePdf(@PathVariable String fileName) {
+        try {
+            Resource resource = new ClassPathResource("static/pdfs/" + fileName);
+            if (resource.exists()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

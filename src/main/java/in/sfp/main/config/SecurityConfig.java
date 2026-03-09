@@ -51,11 +51,13 @@ public class SecurityConfig {
                                                 .requestMatchers(
                                                                 "/billing-app/api/Login",
                                                                 "/billing-app/api/MainDashboard",
-                                                                "/billing-app/api/RequestAccess")
+                                                                "/billing-app/api/RequestAccess",
+                                                                "/billing-app/api/pdfs/**")
                                                 .permitAll()
 
                                                 // ---- Static resources ----
-                                                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**")
+                                                .requestMatchers("/css/**", "/js/**", "/images/**", "/pdfs/**",
+                                                                "/webjars/**")
                                                 .permitAll()
 
                                                 // ---- Admin-only endpoints ----

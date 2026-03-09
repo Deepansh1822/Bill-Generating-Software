@@ -435,6 +435,16 @@
         </div>
 
         <div class="card-panel">
+            <div
+                style="margin-bottom: 20px; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+                <h2 id="reportTableHeading"
+                    style="font-size: 1.3rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-file-invoice" style="color: #6366f1;"></i>
+                    Invoice Reports
+                </h2>
+                <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;" id="tableResultCount">Showing all
+                    invoices</div>
+            </div>
             <table>
                 <thead>
                     <tr>
@@ -502,6 +512,17 @@
 
                 return matchesSearch && matchesStatus && matchesType;
             });
+
+            // Update heading text based on type filter
+            const headingEl = document.getElementById('reportTableHeading');
+            const countEl = document.getElementById('tableResultCount');
+
+            let headingText = "Invoice Reports";
+            if (typeFilter === "PRODUCT") headingText = "Product Invoice Reports";
+            if (typeFilter === "SERVICE") headingText = "Service Invoice Reports";
+
+            headingEl.innerHTML = `<i class="fa-solid fa-file-invoice" style="color: #6366f1;"></i> ${headingText}`;
+            countEl.innerText = `Showing ${filtered.length} matching invoices`;
 
             renderReports(filtered);
         }

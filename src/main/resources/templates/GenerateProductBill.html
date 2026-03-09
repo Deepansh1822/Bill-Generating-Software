@@ -870,40 +870,57 @@
         /* ---- Stock Search Dropdown ---- */
         .stock-search-wrapper {
             position: relative;
-            width: 280px;
+            width: 350px;
+        }
+
+        .stock-search-wrapper .item-input {
+            width: 100% !important;
+            padding-left: 38px !important;
+            height: 42px;
+            font-size: 0.85rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stock-search-wrapper .item-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            width: 380px !important;
         }
 
         .stock-search-wrapper i.search-icon {
             position: absolute;
-            left: 12px;
+            left: 14px;
             top: 50%;
             transform: translateY(-50%);
             color: #94a3b8;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             pointer-events: none;
             z-index: 10;
+            transition: color 0.3s;
         }
 
-        .stock-search-wrapper .item-input {
-            padding-left: 35px !important;
+        .stock-search-wrapper .item-input:focus+.search-icon {
+            color: #6366f1;
         }
 
         .stock-dropdown {
             position: absolute;
-            top: calc(100% + 8px);
+            top: calc(100% + 10px);
             left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            width: 100%;
+            min-width: 300px;
+            background: white;
+            border: 1px solid #e2e8f0;
             border-radius: 16px;
-            max-height: 380px;
+            max-height: 400px;
             overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
-            z-index: 1000;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            z-index: 1100;
             display: none;
-            padding: 8px;
-            animation: dropdownSlide 0.2s ease-out;
+            padding: 6px;
+            animation: dropdownSlide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes dropdownSlide {
@@ -1176,6 +1193,128 @@
         .toast.error {
             background: #ef4444;
         }
+
+        /* ---- Item Edit Modal ---- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .edit-modal {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.show .edit-modal {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .edit-modal h3 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .edit-modal .form-field {
+            margin-bottom: 15px;
+        }
+
+        .edit-modal .form-field label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .edit-modal .modal-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        .edit-modal .modal-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .modal-actions button {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-save {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #4f46e5;
+        }
+
+        .item-row {
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .item-row:hover td {
+            background: #f8fafc;
+        }
     </style>
 </head>
 
@@ -1288,7 +1427,7 @@
                                 <div class="stock-search-wrapper">
                                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
                                     <input type="text" class="item-input" id="stockSearchInput"
-                                        placeholder="Search stock to add..." style="width: 240px;" autocomplete="off">
+                                        placeholder="Search stock to add..." autocomplete="off">
                                     <div class="stock-dropdown" id="stockDropdown"></div>
                                 </div>
                             </div>
@@ -1738,8 +1877,60 @@ Goods once sold will not be taken back.</textarea>
         </div> <!-- End .bill-layout -->
     </div> <!-- End .bill-container -->
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Item Edit Modal -->
+    <div class="modal-overlay" id="itemEditModal">
+        <div class="edit-modal">
+            <h3><i class="fa-solid fa-pen-to-square" style="color: #6366f1;"></i> Edit Invoice Item</h3>
+            <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 15px; margin-top: -15px;">
+                Changes made here only apply to this invoice quotation, not the actual inventory.
+            </div>
+            <input type="hidden" id="modalItemId">
+
+            <div class="form-field">
+                <label>Item Name / Description</label>
+                <input type="text" id="modalItemName" class="modal-input" autocomplete="off">
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <div class="form-field" style="flex: 1;">
+                    <label>HSN Code</label>
+                    <input type="text" id="modalHsnCode" class="modal-input" autocomplete="off">
+                </div>
+                <div class="form-field" style="flex: 1;">
+                    <label>Quantity</label>
+                    <input type="number" id="modalQty" class="modal-input" min="0" step="1">
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label>Unit Price (₹)</label>
+                <input type="number" id="modalPrice" class="modal-input" step="0.01">
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <div class="form-field" style="flex: 1;">
+                    <label>CGST (%)</label>
+                    <input type="number" id="modalCgst" class="modal-input" step="0.1">
+                </div>
+                <div class="form-field" style="flex: 1;">
+                    <label>SGST (%)</label>
+                    <input type="number" id="modalSgst" class="modal-input" step="0.1">
+                </div>
+                <div class="form-field" style="flex: 1;">
+                    <label>IGST (%)</label>
+                    <input type="number" id="modalIgst" class="modal-input" step="0.1">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                <button type="button" class="btn-save" onclick="saveItemEdit()">Update Item</button>
+            </div>
+        </div>
+    </div>
 
     <script th:inline="javascript">
         // ======================== DATA ========================
@@ -1999,23 +2190,7 @@ Goods once sold will not be taken back.</textarea>
             recalculate();
         }
 
-        // ======================== ADD MANUAL ROW ========================
-        function addEmptyRow() {
-            billItems.push({
-                id: nextItemId++,
-                itemName: '',
-                itemDescription: '',
-                hsnCode: '',
-                quantity: 1,
-                unit: 'Pcs',
-                unitPrice: 0,
-                cgstRate: 0,
-                sgstRate: 0,
-                igstRate: 0,
-                fromStock: false
-            });
-            renderItems();
-        }
+
 
         // ======================== REMOVE ITEM ========================
         function removeItem(itemId) {
@@ -2037,7 +2212,7 @@ Goods once sold will not be taken back.</textarea>
             emptyState.style.display = 'none';
 
             tbody.innerHTML = billItems.map((item, idx) => `
-                <tr data-idx="${idx}">
+                <tr class="item-row" data-idx="${idx}" onclick="openEditModal(${item.id})">
                     <td><span class="item-cell center">${idx + 1}</span></td>
                     <td><span class="item-cell">${escapeHtml(item.itemName) || '—'}</span></td>
                     <td><span class="item-cell muted">${escapeHtml(item.hsnCode) || '—'}</span></td>
@@ -2097,7 +2272,46 @@ Goods once sold will not be taken back.</textarea>
                 item[field] = value;
                 recalculate();
             }
+        }        // ======================== EDIT ITEM MODAL ========================
+        function openEditModal(itemId) {
+            const item = billItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            document.getElementById('modalItemId').value = item.id;
+            document.getElementById('modalItemName').value = item.itemName || '';
+            document.getElementById('modalHsnCode').value = item.hsnCode || '';
+            document.getElementById('modalQty').value = item.quantity || 1;
+            document.getElementById('modalPrice').value = item.unitPrice || 0;
+            document.getElementById('modalCgst').value = item.cgstRate || 0;
+            document.getElementById('modalSgst').value = item.sgstRate || 0;
+            document.getElementById('modalIgst').value = item.igstRate || 0;
+
+            document.getElementById('itemEditModal').classList.add('show');
         }
+
+        function closeEditModal() {
+            document.getElementById('itemEditModal').classList.remove('show');
+        }
+
+        function saveItemEdit() {
+            const itemId = parseInt(document.getElementById('modalItemId').value);
+            const item = billItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            item.itemName = document.getElementById('modalItemName').value;
+            item.hsnCode = document.getElementById('modalHsnCode').value;
+            item.quantity = parseFloat(document.getElementById('modalQty').value) || 1;
+            item.unitPrice = parseFloat(document.getElementById('modalPrice').value) || 0;
+            item.cgstRate = parseFloat(document.getElementById('modalCgst').value) || 0;
+            item.sgstRate = parseFloat(document.getElementById('modalSgst').value) || 0;
+            item.igstRate = parseFloat(document.getElementById('modalIgst').value) || 0;
+
+            closeEditModal();
+            renderItems();
+            recalculate();
+            showToast('Item updated for this quotation', 'success');
+        }
+
 
         // ======================== RECALCULATE ========================
         function recalculate() {
