@@ -15,4 +15,8 @@ public interface StockInfoRepository extends JpaRepository<StockInfo, Long> {
     java.util.List<StockInfo> findByStockCategoriesIdAndCreatedBy(Long categoryId, String createdBy);
 
     java.util.List<StockInfo> findByItemName(String itemName);
+
+    java.util.List<StockInfo> findByItemNameIn(java.util.Collection<String> itemNames);
+
+    long countByCreatedByAndStockTypeContainingIgnoreCase(String email, String type);
 }

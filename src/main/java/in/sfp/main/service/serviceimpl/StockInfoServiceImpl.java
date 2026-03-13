@@ -56,7 +56,8 @@ public class StockInfoServiceImpl implements StockInfoService {
 
     @Override
     public StockInfo getStockByName(String itemName) {
-        StockInfo stock = stockInfoRepository.findByItemName(itemName);
+        List<StockInfo> stocks = stockInfoRepository.findByItemName(itemName);
+        StockInfo stock = stocks.isEmpty() ? null : stocks.get(0);
         if (stock != null)
             validateOwnership(stock);
         return stock;

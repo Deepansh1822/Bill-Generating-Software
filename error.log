@@ -1,0 +1,630 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< in.sfp.main:sfp >---------------------------
+[INFO] Building Billing Application 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sfp ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 29 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ sfp ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 57 source files with javac [debug parameters release 21] to target\classes
+[INFO] Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/repository/StockInfoRepository.java:[23,10] method countByCreatedByAndStockTypeContainingIgnoreCase(java.lang.String,java.lang.String) is already defined in interface in.sfp.main.repository.StockInfoRepository
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[44,46] cannot find symbol
+  symbol:   method getRole()
+  location: variable existingAdmin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[45,30] cannot find symbol
+  symbol:   method setRole(java.lang.String)
+  location: variable existingAdmin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[48,49] cannot find symbol
+  symbol:   method getStatus()
+  location: variable existingAdmin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[49,30] cannot find symbol
+  symbol:   method setStatus(java.lang.String)
+  location: variable existingAdmin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[63,14] cannot find symbol
+  symbol:   method setEmail(java.lang.String)
+  location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[64,14] cannot find symbol
+  symbol:   method setPassword(java.lang.String)
+  location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[65,14] cannot find symbol
+  symbol:   method setFullName(java.lang.String)
+  location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[66,14] cannot find symbol
+  symbol:   method setUsername(java.lang.String)
+  location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[67,14] cannot find symbol
+  symbol:   method setRole(java.lang.String)
+  location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[68,14] cannot find symbol
+  symbol:   method setStatus(java.lang.String)
+  location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[69,14] cannot find symbol
+  symbol:   method setDesignation(java.lang.String)
+  location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[70,14] cannot find symbol
+  symbol:   method setCompanyName(java.lang.String)
+  location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[56,111] cannot find symbol
+  symbol:   method getInvoiceNumber()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[61,58] cannot find symbol
+  symbol:   method getStatus()
+  location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[62,81] cannot find symbol
+  symbol:   method getInvoiceNumber()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[69,54] cannot find symbol
+  symbol:   method getInvoiceNumber()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[73,56] cannot find symbol
+  symbol:   method getBusinessBillingInfo()
+  location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[76,25] cannot find symbol
+  symbol:   method setCreatedBy(java.lang.String)
+  location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[79,45] cannot find symbol
+  symbol:   method getBusinessName()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[80,54] cannot find symbol
+  symbol:   method getBusinessStreetAddress()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[81,45] cannot find symbol
+  symbol:   method getBusinessCity()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[82,46] cannot find symbol
+  symbol:   method getBusinessState()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[83,48] cannot find symbol
+  symbol:   method getBusinessCountry()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[84,40] cannot find symbol
+  symbol:   method getBusinessPinCode()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[85,50] cannot find symbol
+  symbol:   method getBusinessGstNumber()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[86,47] cannot find symbol
+  symbol:   method getBusinessNumber()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[87,46] cannot find symbol
+  symbol:   method getBusinessEmail()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[88,50] cannot find symbol
+  symbol:   method getTermsAndCondition()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[89,24] cannot find symbol
+  symbol:   method getPanNumber()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[90,46] cannot find symbol
+  symbol:   method getPanNumber()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[91,24] cannot find symbol
+  symbol:   method getAdCode()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[92,43] cannot find symbol
+  symbol:   method getAdCode()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[93,24] cannot find symbol
+  symbol:   method getIecCode()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[94,44] cannot find symbol
+  symbol:   method getIecCode()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[95,24] cannot find symbol
+  symbol:   method getBusinessType()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[96,49] cannot find symbol
+  symbol:   method getBusinessType()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[97,24] cannot find symbol
+  symbol:   method getBusinessLogoBase64()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[97,68] cannot find symbol
+  symbol:   method getBusinessLogoBase64()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[99,78] cannot find symbol
+  symbol:   method getBusinessLogoBase64()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[100,29] cannot find symbol
+  symbol:   method setBusinessLogo(byte[])
+  location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[106,24] cannot find symbol
+  symbol:   method getBankDetails()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[106,61] cannot find symbol
+  symbol:   method getBankDetails()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[108,78] cannot find symbol
+  symbol:   method getBankDetails()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[110,30] cannot find symbol
+  symbol:   method getAccountHolderName()
+  location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[110,70] cannot find symbol
+  symbol:   method getAccountHolderName()
+  location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[111,30] cannot find symbol
+  symbol:   method getBankName()
+  location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[111,61] cannot find symbol
+  symbol:   method getBankName()
+  location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[112,30] cannot find symbol
+  symbol:   method getAccountNumber()
+  location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[112,66] cannot find symbol
+  symbol:   method getAccountNumber()
+  location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[113,30] cannot find symbol
+  symbol:   method getIfscCode()
+  location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[113,61] cannot find symbol
+  symbol:   method getIfscCode()
+  location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[114,30] cannot find symbol
+  symbol:   method getBranchName()
+  location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[114,63] cannot find symbol
+  symbol:   method getBranchName()
+  location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[117,25] cannot find symbol
+  symbol:   method setBankDetails(java.util.List<java.lang.String>)
+  location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[122,58] cannot find symbol
+  symbol:   method getRecipientBillingInfo()
+  location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[126,47] cannot find symbol
+  symbol:   method getRecipientName()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[127,55] cannot find symbol
+  symbol:   method getRecipientBusinessName()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[128,64] cannot find symbol
+  symbol:   method getRecipientBusinessStreetAddress()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[129,55] cannot find symbol
+  symbol:   method getRecipientBusinessCity()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[130,56] cannot find symbol
+  symbol:   method getRecipientBusinessState()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[131,58] cannot find symbol
+  symbol:   method getRecipientBusinessCountry()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[132,58] cannot find symbol
+  symbol:   method getRecipientBusinessPinCode()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[133,52] cannot find symbol
+  symbol:   method getRecipientGstNumber()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[134,52] cannot find symbol
+  symbol:   method getRecipientPanNumber()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[135,49] cannot find symbol
+  symbol:   method getRecipientAdCode()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[136,50] cannot find symbol
+  symbol:   method getRecipientIecCode()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[137,48] cannot find symbol
+  symbol:   method getRecipientEmail()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[138,55] cannot find symbol
+  symbol:   method getRecipientMobileNumber()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[139,22] cannot find symbol
+  symbol:   method setRecipientCreatedBy(java.lang.String)
+  location: variable recipient of type in.sfp.main.models.RecipientBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[140,22] cannot find symbol
+  symbol:   method setBusinessBillingInfo(in.sfp.main.models.BusinessBillingInfo)
+  location: variable recipient of type in.sfp.main.models.RecipientBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[144,52] cannot find symbol
+  symbol:   method getAdvancedPayment()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[145,50] cannot find symbol
+  symbol:   method getAmountInWords()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[146,25] cannot find symbol
+  symbol:   method setBusinessBillingInfo(in.sfp.main.models.BusinessBillingInfo)
+  location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[147,25] cannot find symbol
+  symbol:   method setRecipientBillingInfo(in.sfp.main.models.RecipientBillingInfo)
+  location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[148,25] cannot find symbol
+  symbol:   method setStockCreatedBy(java.lang.String)
+  location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[149,25] cannot find symbol
+  symbol:   method setBillType(request.ge[...]DUCT")
+  location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[149,45] cannot find symbol
+  symbol:   method getBillType()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[149,77] cannot find symbol
+  symbol:   method getBillType()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[150,25] cannot find symbol
+  symbol:   method setInvoiceType(request.ge[...]oice")
+  location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[150,48] cannot find symbol
+  symbol:   method getInvoiceType()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[150,83] cannot find symbol
+  symbol:   method getInvoiceType()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[151,25] cannot find symbol
+  symbol:   method setStatus(request.ge[...]RAFT")
+  location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[151,43] cannot find symbol
+  symbol:   method getStatus()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[151,73] cannot find symbol
+  symbol:   method getStatus()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[152,42] cannot find symbol
+  symbol:   method getNotes()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[154,24] cannot find symbol
+  symbol:   method getInvoiceDate()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[155,68] cannot find symbol
+  symbol:   method getInvoiceDate()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[156,24] cannot find symbol
+  symbol:   method getDueDate()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[157,64] cannot find symbol
+  symbol:   method getDueDate()
+  location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[160,49] cannot find symbol
+  symbol:   method getBusinessName()
+  location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[161,49] cannot find symbol
+  symbol:   method getBusinessType()
+  location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[168,35] cannot find symbol
+  symbol:   method getCompanyName()
+  location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[168,72] cannot find symbol
+  symbol:   method getCompanyName()
+  location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[169,49] cannot find symbol
+  symbol:   method getCompanyName()
+  location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[170,29] cannot find symbol
+  symbol:   method setBusinessName(java.lang.String)
+  location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[174,35] cannot find symbol
+  symbol:   method getCompanyType()
+  location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[174,72] cannot find symbol
+  symbol:   method getCompanyType()
+  location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[175,49] cannot find symbol
+  symbol:   method getCompanyType()
+  location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[176,29] cannot find symbol
+  symbol:   method setBusinessType(java.lang.String)
+  location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.751 s
+[INFO] Finished at: 2026-03-13T18:02:48+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.1:compile (default-compile) on project sfp: Compilation failure: Compilation failure: 
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/repository/StockInfoRepository.java:[23,10] method countByCreatedByAndStockTypeContainingIgnoreCase(java.lang.String,java.lang.String) is already defined in interface in.sfp.main.repository.StockInfoRepository
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[44,46] cannot find symbol
+[ERROR]   symbol:   method getRole()
+[ERROR]   location: variable existingAdmin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[45,30] cannot find symbol
+[ERROR]   symbol:   method setRole(java.lang.String)
+[ERROR]   location: variable existingAdmin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[48,49] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable existingAdmin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[49,30] cannot find symbol
+[ERROR]   symbol:   method setStatus(java.lang.String)
+[ERROR]   location: variable existingAdmin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[63,14] cannot find symbol
+[ERROR]   symbol:   method setEmail(java.lang.String)
+[ERROR]   location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[64,14] cannot find symbol
+[ERROR]   symbol:   method setPassword(java.lang.String)
+[ERROR]   location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[65,14] cannot find symbol
+[ERROR]   symbol:   method setFullName(java.lang.String)
+[ERROR]   location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[66,14] cannot find symbol
+[ERROR]   symbol:   method setUsername(java.lang.String)
+[ERROR]   location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[67,14] cannot find symbol
+[ERROR]   symbol:   method setRole(java.lang.String)
+[ERROR]   location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[68,14] cannot find symbol
+[ERROR]   symbol:   method setStatus(java.lang.String)
+[ERROR]   location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[69,14] cannot find symbol
+[ERROR]   symbol:   method setDesignation(java.lang.String)
+[ERROR]   location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/config/AdminDataSeeder.java:[70,14] cannot find symbol
+[ERROR]   symbol:   method setCompanyName(java.lang.String)
+[ERROR]   location: variable admin of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[56,111] cannot find symbol
+[ERROR]   symbol:   method getInvoiceNumber()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[61,58] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[62,81] cannot find symbol
+[ERROR]   symbol:   method getInvoiceNumber()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[69,54] cannot find symbol
+[ERROR]   symbol:   method getInvoiceNumber()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[73,56] cannot find symbol
+[ERROR]   symbol:   method getBusinessBillingInfo()
+[ERROR]   location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[76,25] cannot find symbol
+[ERROR]   symbol:   method setCreatedBy(java.lang.String)
+[ERROR]   location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[79,45] cannot find symbol
+[ERROR]   symbol:   method getBusinessName()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[80,54] cannot find symbol
+[ERROR]   symbol:   method getBusinessStreetAddress()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[81,45] cannot find symbol
+[ERROR]   symbol:   method getBusinessCity()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[82,46] cannot find symbol
+[ERROR]   symbol:   method getBusinessState()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[83,48] cannot find symbol
+[ERROR]   symbol:   method getBusinessCountry()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[84,40] cannot find symbol
+[ERROR]   symbol:   method getBusinessPinCode()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[85,50] cannot find symbol
+[ERROR]   symbol:   method getBusinessGstNumber()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[86,47] cannot find symbol
+[ERROR]   symbol:   method getBusinessNumber()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[87,46] cannot find symbol
+[ERROR]   symbol:   method getBusinessEmail()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[88,50] cannot find symbol
+[ERROR]   symbol:   method getTermsAndCondition()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[89,24] cannot find symbol
+[ERROR]   symbol:   method getPanNumber()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[90,46] cannot find symbol
+[ERROR]   symbol:   method getPanNumber()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[91,24] cannot find symbol
+[ERROR]   symbol:   method getAdCode()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[92,43] cannot find symbol
+[ERROR]   symbol:   method getAdCode()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[93,24] cannot find symbol
+[ERROR]   symbol:   method getIecCode()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[94,44] cannot find symbol
+[ERROR]   symbol:   method getIecCode()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[95,24] cannot find symbol
+[ERROR]   symbol:   method getBusinessType()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[96,49] cannot find symbol
+[ERROR]   symbol:   method getBusinessType()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[97,24] cannot find symbol
+[ERROR]   symbol:   method getBusinessLogoBase64()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[97,68] cannot find symbol
+[ERROR]   symbol:   method getBusinessLogoBase64()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[99,78] cannot find symbol
+[ERROR]   symbol:   method getBusinessLogoBase64()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[100,29] cannot find symbol
+[ERROR]   symbol:   method setBusinessLogo(byte[])
+[ERROR]   location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[106,24] cannot find symbol
+[ERROR]   symbol:   method getBankDetails()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[106,61] cannot find symbol
+[ERROR]   symbol:   method getBankDetails()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[108,78] cannot find symbol
+[ERROR]   symbol:   method getBankDetails()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[110,30] cannot find symbol
+[ERROR]   symbol:   method getAccountHolderName()
+[ERROR]   location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[110,70] cannot find symbol
+[ERROR]   symbol:   method getAccountHolderName()
+[ERROR]   location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[111,30] cannot find symbol
+[ERROR]   symbol:   method getBankName()
+[ERROR]   location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[111,61] cannot find symbol
+[ERROR]   symbol:   method getBankName()
+[ERROR]   location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[112,30] cannot find symbol
+[ERROR]   symbol:   method getAccountNumber()
+[ERROR]   location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[112,66] cannot find symbol
+[ERROR]   symbol:   method getAccountNumber()
+[ERROR]   location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[113,30] cannot find symbol
+[ERROR]   symbol:   method getIfscCode()
+[ERROR]   location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[113,61] cannot find symbol
+[ERROR]   symbol:   method getIfscCode()
+[ERROR]   location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[114,30] cannot find symbol
+[ERROR]   symbol:   method getBranchName()
+[ERROR]   location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[114,63] cannot find symbol
+[ERROR]   symbol:   method getBranchName()
+[ERROR]   location: variable b of type in.sfp.main.dto.BillRequestDTO.BankDetailDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[117,25] cannot find symbol
+[ERROR]   symbol:   method setBankDetails(java.util.List<java.lang.String>)
+[ERROR]   location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[122,58] cannot find symbol
+[ERROR]   symbol:   method getRecipientBillingInfo()
+[ERROR]   location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[126,47] cannot find symbol
+[ERROR]   symbol:   method getRecipientName()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[127,55] cannot find symbol
+[ERROR]   symbol:   method getRecipientBusinessName()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[128,64] cannot find symbol
+[ERROR]   symbol:   method getRecipientBusinessStreetAddress()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[129,55] cannot find symbol
+[ERROR]   symbol:   method getRecipientBusinessCity()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[130,56] cannot find symbol
+[ERROR]   symbol:   method getRecipientBusinessState()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[131,58] cannot find symbol
+[ERROR]   symbol:   method getRecipientBusinessCountry()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[132,58] cannot find symbol
+[ERROR]   symbol:   method getRecipientBusinessPinCode()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[133,52] cannot find symbol
+[ERROR]   symbol:   method getRecipientGstNumber()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[134,52] cannot find symbol
+[ERROR]   symbol:   method getRecipientPanNumber()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[135,49] cannot find symbol
+[ERROR]   symbol:   method getRecipientAdCode()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[136,50] cannot find symbol
+[ERROR]   symbol:   method getRecipientIecCode()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[137,48] cannot find symbol
+[ERROR]   symbol:   method getRecipientEmail()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[138,55] cannot find symbol
+[ERROR]   symbol:   method getRecipientMobileNumber()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[139,22] cannot find symbol
+[ERROR]   symbol:   method setRecipientCreatedBy(java.lang.String)
+[ERROR]   location: variable recipient of type in.sfp.main.models.RecipientBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[140,22] cannot find symbol
+[ERROR]   symbol:   method setBusinessBillingInfo(in.sfp.main.models.BusinessBillingInfo)
+[ERROR]   location: variable recipient of type in.sfp.main.models.RecipientBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[144,52] cannot find symbol
+[ERROR]   symbol:   method getAdvancedPayment()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[145,50] cannot find symbol
+[ERROR]   symbol:   method getAmountInWords()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[146,25] cannot find symbol
+[ERROR]   symbol:   method setBusinessBillingInfo(in.sfp.main.models.BusinessBillingInfo)
+[ERROR]   location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[147,25] cannot find symbol
+[ERROR]   symbol:   method setRecipientBillingInfo(in.sfp.main.models.RecipientBillingInfo)
+[ERROR]   location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[148,25] cannot find symbol
+[ERROR]   symbol:   method setStockCreatedBy(java.lang.String)
+[ERROR]   location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[149,25] cannot find symbol
+[ERROR]   symbol:   method setBillType(request.ge[...]DUCT")
+[ERROR]   location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[149,45] cannot find symbol
+[ERROR]   symbol:   method getBillType()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[149,77] cannot find symbol
+[ERROR]   symbol:   method getBillType()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[150,25] cannot find symbol
+[ERROR]   symbol:   method setInvoiceType(request.ge[...]oice")
+[ERROR]   location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[150,48] cannot find symbol
+[ERROR]   symbol:   method getInvoiceType()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[150,83] cannot find symbol
+[ERROR]   symbol:   method getInvoiceType()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[151,25] cannot find symbol
+[ERROR]   symbol:   method setStatus(request.ge[...]RAFT")
+[ERROR]   location: variable totalBilling of type in.sfp.main.models.TotalStockBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[151,43] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[151,73] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[152,42] cannot find symbol
+[ERROR]   symbol:   method getNotes()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[154,24] cannot find symbol
+[ERROR]   symbol:   method getInvoiceDate()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[155,68] cannot find symbol
+[ERROR]   symbol:   method getInvoiceDate()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[156,24] cannot find symbol
+[ERROR]   symbol:   method getDueDate()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[157,64] cannot find symbol
+[ERROR]   symbol:   method getDueDate()
+[ERROR]   location: variable request of type in.sfp.main.dto.BillRequestDTO
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[160,49] cannot find symbol
+[ERROR]   symbol:   method getBusinessName()
+[ERROR]   location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[161,49] cannot find symbol
+[ERROR]   symbol:   method getBusinessType()
+[ERROR]   location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[168,35] cannot find symbol
+[ERROR]   symbol:   method getCompanyName()
+[ERROR]   location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[168,72] cannot find symbol
+[ERROR]   symbol:   method getCompanyName()
+[ERROR]   location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[169,49] cannot find symbol
+[ERROR]   symbol:   method getCompanyName()
+[ERROR]   location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[170,29] cannot find symbol
+[ERROR]   symbol:   method setBusinessName(java.lang.String)
+[ERROR]   location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[174,35] cannot find symbol
+[ERROR]   symbol:   method getCompanyType()
+[ERROR]   location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[174,72] cannot find symbol
+[ERROR]   symbol:   method getCompanyType()
+[ERROR]   location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[175,49] cannot find symbol
+[ERROR]   symbol:   method getCompanyType()
+[ERROR]   location: variable current of type in.sfp.main.models.UserAccessInfo
+[ERROR] /C:/Users/Deepansh/OneDrive/Desktop/Billing App/src/main/java/in/sfp/main/controllers/BillGenerationController.java:[176,29] cannot find symbol
+[ERROR]   symbol:   method setBusinessType(java.lang.String)
+[ERROR]   location: variable business of type in.sfp.main.models.BusinessBillingInfo
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

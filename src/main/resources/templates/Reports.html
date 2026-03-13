@@ -591,7 +591,7 @@
                         <a href="/billing-app/api/Reports/BillDetail/${bill.id}" class="btn-view" title="View Bill">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        ${bill.status !== 'FINAL' ? `
+                        ${userRole === 'CLIENT' && bill.status !== 'FINAL' ? `
                             <a href="/billing-app/api/GenerateBill?invoice=${bill.invoiceNumber}" class="btn-view edit-quotation" title="Edit Quotation">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
