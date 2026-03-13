@@ -90,12 +90,13 @@
 
         .section-header {
             border-top: 2px solid #000;
-            border-bottom: 1px solid #000;
-            padding: 5px 0;
-            font-weight: 700;
-            font-size: 14px;
-            margin-top: 20px;
-            margin-bottom: 10px;
+            border-bottom: 2px solid #000;
+            padding: 8px 0;
+            font-weight: 800;
+            font-size: 16px;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
         }
 
         .details-grid {
@@ -112,8 +113,8 @@
         }
 
         .label {
-            font-weight: 400;
-            color: #333;
+            font-weight: 700;
+            color: #000;
             min-width: 110px;
         }
 
@@ -145,6 +146,7 @@
             border-collapse: collapse;
             margin-top: 10px;
             font-size: 11px;
+            table-layout: fixed;
         }
 
         .items-table th,
@@ -177,6 +179,15 @@
         }
 
         @media print {
+            @page {
+                size: portrait;
+                margin: 20mm 10mm;
+            }
+
+            body {
+                padding: 0 !important;
+                background: white !important;
+            }
 
             aside,
             .action-bar {
@@ -205,10 +216,10 @@
             <div class="action-bar">
                 <a href="/billing-app/api/EWayBillLogs"
                     style="text-decoration: none; color: #64748b; font-weight: 600;">
-                    <i class="fa-solid fa-arrow-left"></i> Back to Logs
+                    Back to Logs
                 </a>
                 <button class="btn-print" onclick="window.print()">
-                    <i class="fa-solid fa-print"></i> Print e-Way Bill
+                    Print e-Way Bill
                 </button>
             </div>
 
@@ -216,7 +227,7 @@
                 <div class="gov-header">
                     <h1>e-Way Bill</h1>
                     <div class="qr-code-top">
-                        <i class="fa-solid fa-qrcode" style="font-size: 60px;"></i>
+                        <!-- QR PlaceHolder -->
                     </div>
                 </div>
 
@@ -281,11 +292,12 @@
                 <table class="items-table">
                     <thead>
                         <tr>
-                            <th>HSN Code</th>
-                            <th>Product Description</th>
-                            <th>Quantity UOM</th>
-                            <th>Taxable Amount Rs.</th>
-                            <th>Tax rate (C+S+I+Cess)</th>
+                            <th style="width: 12%;">HSN Code</th>
+                            <th style="width: 30%;">Product Description</th>
+                            <th style="width: 12%;">Quantity UOM</th>
+                            <th style="width: 15%;">Taxable Amount Rs.</th>
+                            <th style="width: 15%;">Tax rate (C+S+I+Cess)</th>
+                            <th style="width: 16%;">Amount</th>
                         </tr>
                     </thead>
                     <tbody id="itemsBody">
@@ -340,7 +352,6 @@
                 </table>
 
                 <div class="barcode-bottom">
-                    <i class="fa-solid fa-barcode" style="font-size: 50px;"></i>
                 </div>
             </div>
         </div>
@@ -397,6 +408,7 @@
                         <td align="center">${item.quantity} ${item.unit || ''}</td>
                         <td align="right">${(item.unitPrice * item.quantity).toFixed(2)}</td>
                         <td align="center">${item.cgstRate}+${item.sgstRate}+${item.igstRate}</td>
+                        <td align="right" style="font-weight: 700;">${Number(item.totalItemAmount || 0).toFixed(2)}</td>
                     </tr>`;
                     itemsBody.innerHTML += row;
                     taxableTotal += (item.unitPrice * item.quantity);

@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +31,7 @@ public class BillingEmailController {
     private EmailService emailService;
 
     @PostMapping("/sendInvoice/{billId}")
+    @Transactional
     public ResponseEntity<?> sendInvoiceEmail(@PathVariable Long billId, Authentication auth) {
         try {
             TotalStockBillingInfo bill = reportService.getBillDetailById(billId);
@@ -37,8 +40,15 @@ public class BillingEmailController {
             Map<String, Object> model = new HashMap<>();
             model.put("bill", bill);
 
-            // Calculate subtotal and tax for PDF (since it's not stored directly as a
-            // single sum)
+            // Helper to parse numbers safely from formatted strings
+            java.util.function.Function<String, Double> safeParse = (s) -> {
+                if (s == null || s.isBlank()) return 0.0;
+                try {
+                    return Double.parseDouble(s.replaceAll("[^\\d.]", ""));
+                } catch (Exception e) { return 0.0; }
+            };
+
+            // Calculate subtotal and tax for PDF
             double subtotal = 0;
             double totalTax = 0;
             for (SingleStockBillingInfo item : bill.getBillItems()) {
@@ -50,7 +60,9 @@ public class BillingEmailController {
             }
             model.put("subtotal", subtotal);
             model.put("totalTax", totalTax);
-            model.put("grandTotal", Double.parseDouble(bill.getStockTotalAmount()));
+            model.put("grandTotal", safeParse.apply(bill.getStockTotalAmount()));
+            model.put("advancePaid", safeParse.apply(bill.getAdvancedPayment()));
+            model.put("balanceDue", safeParse.apply(bill.getBalancePayment()));
 
             // Parse Bank Details (String joined by |)
             List<Map<String, String>> parsedBanks = new ArrayList<>();
@@ -107,6 +119,44 @@ public class BillingEmailController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Failed to send email: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/sendInvoiceWithFile/{billId}")
+    @Transactional
+    public ResponseEntity<?> sendInvoiceEmailWithFile(@PathVariable Long billId, 
+                                                    @RequestParam("file") MultipartFile file,
+                                                    Authentication auth) {
+        try {
+            TotalStockBillingInfo bill = reportService.getBillDetailById(billId);
+            
+            String businessName = bill.getBusinessBillingInfo() != null
+                    ? bill.getBusinessBillingInfo().getBusinessName()
+                    : "SFP Billing";
+            String recipientName = bill.getRecipientBillingInfo() != null
+                    ? bill.getRecipientBillingInfo().getRecipientName()
+                    : "Valued Customer";
+            String recipientEmail = (bill.getRecipientBillingInfo() != null
+                    && bill.getRecipientBillingInfo().getRecipientEmail() != null)
+                            ? bill.getRecipientBillingInfo().getRecipientEmail()
+                            : bill.getBillByEmail();
+
+            if (recipientEmail == null || recipientEmail.isBlank()) {
+                return ResponseEntity.badRequest().body("Recipient email not found.");
+            }
+
+            String subject = "Official Invoice #" + bill.getInvoiceNumber() + " from " + businessName;
+            String body = "Dear " + recipientName + ",\n\n" +
+                    "Please find attached the official PDF of your invoice #" + bill.getInvoiceNumber() + ".\n\n" +
+                    "Thank you for your business!\n\n" +
+                    "Best Regards,\n" +
+                    businessName;
+
+            emailService.sendEmailWithAttachment(recipientEmail, subject, body, file.getBytes(), file.getOriginalFilename());
+
+            return ResponseEntity.ok(Map.of("message", "Email sent successfully with attached PDF."));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed: " + e.getMessage());
         }
     }
 }

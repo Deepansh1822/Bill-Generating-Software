@@ -45,7 +45,9 @@ public class BillRequestDTO {
     private String businessLogoBase64;
     private String invoiceDate;
     private String dueDate;
+    private String notes;
     private String billType;
+    private String invoiceType;
     private String status;
     private List<BillItemDTO> items;
 

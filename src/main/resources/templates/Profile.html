@@ -448,34 +448,24 @@
                                 onclick="openPassModal()">Update</button>
                         </div>
                     </div>
-                    <div class="detail-card">
-                        <label>Account Created</label>
-                        <div class="value">
-                            <i class="fa-solid fa-calendar-check"></i>
-                            <span
-                                th:text="${user?.createdAt != null ? #temporals.format(user.createdAt, 'dd MMM yyyy') : 'Recently'}">21
-                                Feb 2026</span>
-                        </div>
-                    </div>
-                    <div class="detail-card">
-                        <label>Secret Recovery Key</label>
-                        <div class="value">
-                            <i class="fa-solid fa-key"></i>
-                            <span id="secretKeyDisplay">********</span>
-                            <button id="viewSecretBtn"
-                                style="margin-left: auto; background: none; border: none; color: #6366f1; font-weight: 700; cursor: pointer; font-size: 0.8rem;"
-                                onclick="openVerifyModal()">View</button>
-                        </div>
-                    </div>
-                    <div style="grid-column: 1 / -1; display: flex; justify-content: center;">
-                        <div class="detail-card" th:if="${user?.role == 'CLIENT'}"
-                            style="width: calc(50% - 12px); text-align: center;">
-                            <label>Monthly Revenue Target</label>
-                            <div class="value" style="justify-content: center;">
-                                <i class="fa-solid fa-bullseye"></i>
+                    <div th:style="${user?.role == 'ADMIN' ? 'grid-column: 1 / -1; display: flex; justify-content: center;' : ''}">
+                        <div class="detail-card"
+                            th:style="${user?.role == 'ADMIN' ? 'width: calc(50% - 12px); text-align: center;' : ''}">
+                            <label>Account Created</label>
+                            <div class="value" th:style="${user?.role == 'ADMIN' ? 'justify-content: center;' : ''}">
+                                <i class="fa-solid fa-calendar-check"></i>
                                 <span
-                                    th:text="${'₹' + #numbers.formatDecimal(user?.monthlyTarget ?: 100000, 1, 'COMMA', 2, 'POINT')}">₹1,00,000.00</span>
+                                    th:text="${user?.createdAt != null ? #temporals.format(user.createdAt, 'dd MMM yyyy') : 'Recently'}">21
+                                    Feb 2026</span>
                             </div>
+                        </div>
+                    </div>
+                    <div class="detail-card" th:if="${user?.role == 'CLIENT'}">
+                        <label>Monthly Revenue Target</label>
+                        <div class="value">
+                            <i class="fa-solid fa-bullseye"></i>
+                            <span
+                                th:text="${'₹' + #numbers.formatDecimal(user?.monthlyTarget ?: 100000, 1, 'COMMA', 2, 'POINT')}">₹1,00,000.00</span>
                         </div>
                     </div>
                 </div>
@@ -572,59 +562,16 @@
             <div class="modal-header">
                 <h2>Update Password</h2>
             </div>
-            <div class="form-group">
-                <label>Secret Security Key</label>
-                <div class="password-container">
-                    <input type="password" id="secretKey" placeholder="Enter your secret key">
-                    <i class="fa-solid fa-eye toggle-password" id="toggleSecretKey"
-                        onclick="togglePassword('secretKey', 'toggleSecretKey')"></i>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>New Password</label>
-                <div class="password-container">
-                    <input type="password" id="newPass" placeholder="Enter new password">
-                    <i class="fa-solid fa-eye toggle-password" id="toggleNewPass"
-                        onclick="togglePassword('newPass', 'toggleNewPass')"></i>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Confirm New Password</label>
-                <div class="password-container">
-                    <input type="password" id="confirmPass" placeholder="Re-enter new password">
-                    <i class="fa-solid fa-eye toggle-password" id="toggleConfirmPass"
-                        onclick="togglePassword('confirmPass', 'toggleConfirmPass')"></i>
-                </div>
-            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px; margin-bottom: 20px;">
+                For security, we will send a password reset link to your registered email address.
+            </p>
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeModals()">Cancel</button>
-                <button class="btn-primary" onclick="updatePassword()">Update Password</button>
+                <button class="btn-primary" onclick="requestResetLink()">Send Reset Link</button>
             </div>
         </div>
     </div>
 
-    <!-- Verify Password Modal (to see Secret Key) -->
-    <div id="verifyModal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h2>Security Check</h2>
-                <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">Enter your password to reveal the secret
-                    recovery key.</p>
-            </div>
-            <div class="form-group">
-                <label>Account Password</label>
-                <div class="password-container">
-                    <input type="password" id="verifyPassInput" placeholder="Enter password">
-                    <i class="fa-solid fa-eye toggle-password" id="toggleVerifyPass"
-                        onclick="togglePassword('verifyPassInput', 'toggleVerifyPass')"></i>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModals()">Cancel</button>
-                <button class="btn-primary" onclick="verifyAndReveal()">Reveal Key</button>
-            </div>
-        </div>
-    </div>
 
     <script th:inline="javascript">
         function togglePassword(inputId, iconId) {
@@ -682,74 +629,35 @@
             document.getElementById('verifyPassInput').value = '';
         }
 
-        async function verifyAndReveal() {
-            const pass = document.getElementById('verifyPassInput').value;
-            if (!pass) return;
+        async function requestResetLink() {
+            const btn = document.querySelector('#passModal .btn-primary');
+            Utils.setLoading(btn);
 
             try {
-                const res = await fetch('/billing-app/api/verify-password', {
+                const res = await fetch('/billing-app/api/forgot-password-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: userEmail, password: pass })
+                    body: JSON.stringify({ email: userEmail })
                 });
 
                 if (res.ok) {
-                    const data = await res.json();
-                    document.getElementById('secretKeyDisplay').innerText = data.secretKey;
-                    const btn = document.getElementById('viewSecretBtn');
-                    btn.innerText = 'Hide';
-                    btn.onclick = hideSecret;
+                    alert("A password reset link has been sent to your email!");
                     closeModals();
-                } else {
-                    alert("Incorrect password. Verification failed.");
-                }
-            } catch (err) {
-                alert("Security verification failed.");
-            }
-        }
-
-        function hideSecret() {
-            document.getElementById('secretKeyDisplay').innerText = '********';
-            const btn = document.getElementById('viewSecretBtn');
-            btn.innerText = 'View';
-            btn.onclick = openVerifyModal;
-        }
-
-        async function updatePassword() {
-            const secret = document.getElementById('secretKey').value;
-            const newP = document.getElementById('newPass').value;
-            const confP = document.getElementById('confirmPass').value;
-
-            if (newP !== confP) {
-                alert("Passwords do not match!");
-                return;
-            }
-
-            try {
-                const res = await fetch('/billing-app/api/forgot-password', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: userEmail,
-                        secretKey: secret,
-                        newPassword: newP
-                    })
-                });
-
-                if (res.ok) {
-                    alert("Password updated successfully!");
-                    closeModals();
-                    location.reload();
                 } else {
                     const msg = await res.text();
                     alert("Error: " + msg);
                 }
             } catch (err) {
-                alert("Failed to update password.");
+                alert("Failed to request reset link.");
+            } finally {
+                Utils.stopLoading(btn);
             }
         }
 
         async function saveDetails() {
+            const btn = document.querySelector('#editModal .btn-primary');
+            Utils.setLoading(btn);
+
             const payload = {
                 email: userEmail,
                 fullName: document.getElementById('editFullName').value,
@@ -784,12 +692,15 @@
         imageInput.addEventListener('change', async function (e) {
             const file = e.target.files[0];
             if (!file) return;
+            const btn = document.querySelector('.edit-image-btn');
+            Utils.setLoading(btn);
+
             const reader = new FileReader();
             reader.onload = async function (event) {
                 base64Image = event.target.result;
                 document.querySelector('.profile-avatar').style.backgroundImage = `url(${base64Image})`;
                 document.querySelector('.profile-avatar').innerText = '';
-                saveDetails();
+                await saveDetails();
             };
             reader.readAsDataURL(file);
         });

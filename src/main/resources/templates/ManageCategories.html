@@ -517,7 +517,7 @@
                                 <button class="action-btn view-btn" title="View" onclick="viewCategory(${cat.id})"><i class="fa-solid fa-eye"></i></button>
                                 ${userRole !== 'ADMIN' ? `
                                     <a href="/billing-app/api/EditCategory/${cat.id}" class="action-btn edit-btn" title="Edit Group"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <button class="action-btn delete-btn" title="Delete" onclick="deleteCategory(${cat.id})"><i class="fa-solid fa-trash"></i></button>
+                                    <button class="action-btn delete-btn" title="Delete" onclick="deleteCategory(${cat.id}, event)"><i class="fa-solid fa-trash"></i></button>
                                 ` : ''}
                             </div>
                         </td>
@@ -579,10 +579,13 @@
             window.location.href = `/billing-app/api/CategoryDetails?id=${id}`;
         };
 
-        const deleteCategory = (id) => {
+        const deleteCategory = (id, event) => {
             if (confirm('Are you sure you want to delete this category? All associated items will also be affected.')) {
+                const btn = event.currentTarget;
+                Utils.setLoading(btn);
                 fetch(`${apiBase}/deleteCategory/${id}`, { method: 'DELETE' })
-                    .then(res => res.ok && loadData());
+                    .then(res => res.ok && loadData())
+                    .finally(() => Utils.stopLoading(btn));
             }
         };
 

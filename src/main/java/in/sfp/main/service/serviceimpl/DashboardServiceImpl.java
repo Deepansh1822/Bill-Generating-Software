@@ -48,10 +48,13 @@ public class DashboardServiceImpl implements DashboardService {
                                 .count();
 
                 double balanceDue = userBills.stream()
+                                .filter(b -> "FINAL".equalsIgnoreCase(b.getStatus()))
                                 .mapToDouble(b -> parseDouble(b.getBalancePayment()))
                                 .sum();
 
-                long totalInvoices = userBills.size();
+                long totalInvoices = userBills.stream()
+                                .filter(b -> "FINAL".equalsIgnoreCase(b.getStatus()))
+                                .count();
 
                 var clientStocks = stockRepo.findByCreatedBy(username);
                 long totalProducts = clientStocks.stream()
@@ -90,8 +93,9 @@ public class DashboardServiceImpl implements DashboardService {
                                                                 .withDayOfMonth(1),
                                                 Collectors.summingDouble(b -> parseDouble(b.getStockTotalAmount()))))
                                 .entrySet().stream()
-                                .sorted(java.util.Map.Entry.comparingByKey())
+                                .sorted(Collections.reverseOrder(java.util.Map.Entry.comparingByKey()))
                                 .limit(6)
+                                .sorted(java.util.Map.Entry.comparingByKey())
                                 .map(entry -> DashboardDataDTO.MonthlyRevenueDTO.builder()
                                                 .month(entry.getKey().getMonth().getDisplayName(
                                                                 java.time.format.TextStyle.SHORT,
@@ -100,9 +104,11 @@ public class DashboardServiceImpl implements DashboardService {
                                                 .build())
                                 .collect(Collectors.toList());
 
-                // Point 1: Low Stock Alerts (Stock < 10)
+                // Point 1: Low Stock Alerts (Stock < 10, Products Only, Sorted by Urgency)
                 List<DashboardDataDTO.LowStockDTO> lowStock = clientStocks.stream()
+                                .filter(s -> s.getStockType() != null && s.getStockType().toLowerCase().contains("product"))
                                 .filter(s -> s.getAvailableQuantity() < 10)
+                                .sorted(java.util.Comparator.comparingInt(in.sfp.main.models.StockInfo::getAvailableQuantity))
                                 .map(s -> DashboardDataDTO.LowStockDTO.builder()
                                                 .itemName(s.getItemName())
                                                 .currentStock(s.getAvailableQuantity())
@@ -163,10 +169,19 @@ public class DashboardServiceImpl implements DashboardService {
                                                 .build())
                                 .collect(Collectors.toList());
 
-                // Point 5: Draft Shortcuts
-                List<DashboardDataDTO.RecentBillDTO> drafts = recent.stream()
+                // Point 5: Draft Shortcuts (Pull from all bills to ensure drafts don't disappear)
+                List<DashboardDataDTO.RecentBillDTO> drafts = userBills.stream()
                                 .filter(b -> "DRAFT".equalsIgnoreCase(b.getStatus()))
+                                .sorted((b1, b2) -> b2.getStockCreatedAt().compareTo(b1.getStockCreatedAt()))
                                 .limit(3)
+                                .map(b -> DashboardDataDTO.RecentBillDTO.builder()
+                                                .id(b.getId())
+                                                .invoiceNumber(b.getInvoiceNumber())
+                                                .recipientName(b.getRecipientBillingInfo() != null
+                                                                ? b.getRecipientBillingInfo().getRecipientName()
+                                                                : "N/A")
+                                                .status("DRAFT")
+                                                .build())
                                 .collect(Collectors.toList());
 
                 // Broadcast Message
@@ -202,7 +217,9 @@ public class DashboardServiceImpl implements DashboardService {
                                 .mapToDouble(b -> parseDouble(b.getStockTotalAmount()))
                                 .sum();
 
-                long totalClients = userRepo.findByRole("CLIENT").size();
+                long totalClients = userRepo.findByRole("CLIENT").stream()
+                                .filter(u -> "APPROVED".equalsIgnoreCase(u.getStatus()))
+                                .count();
                 long pendingRequests = userRepo.findByStatus("PENDING").size();
 
                 // Fast-Track Approvals (Point 1)
@@ -316,8 +333,9 @@ public class DashboardServiceImpl implements DashboardService {
                                                                 .withDayOfMonth(1),
                                                 Collectors.summingDouble(b -> parseDouble(b.getStockTotalAmount()))))
                                 .entrySet().stream()
-                                .sorted(java.util.Map.Entry.comparingByKey())
+                                .sorted(Collections.reverseOrder(java.util.Map.Entry.comparingByKey()))
                                 .limit(6)
+                                .sorted(java.util.Map.Entry.comparingByKey())
                                 .map(entry -> DashboardDataDTO.MonthlyRevenueDTO.builder()
                                                 .month(entry.getKey().getMonth().getDisplayName(
                                                                 java.time.format.TextStyle.SHORT,

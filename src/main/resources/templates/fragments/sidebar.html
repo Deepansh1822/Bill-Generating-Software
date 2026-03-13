@@ -449,6 +449,40 @@
                 /* Sidebar remains accessible but may overlap if needed on very small screens, 
                    or could be hidden. Keeping it fixed as per "fixed looks better". */
             }
+            /* ===== Shared Form & Button Utilities ===== */
+            .btn-loading {
+                position: relative !important;
+                color: transparent !important;
+                pointer-events: none !important;
+                opacity: 0.8 !important;
+                transition: var(--transition);
+            }
+
+            .btn-loading::after {
+                content: "";
+                position: absolute;
+                width: 18px;
+                height: 18px;
+                top: calc(50% - 9px);
+                left: calc(50% - 9px);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                border-top-color: #ffffff;
+                animation: btn-spin 0.6s linear infinite;
+            }
+
+            /* For light/secondary buttons where text is dark */
+            .btn-loading.neutral::after,
+            .btn-loading.secondary::after,
+            .btn-loading[style*="background: white"]::after,
+            .btn-loading[style*="background:white"]::after {
+                border: 2px solid rgba(0, 0, 0, 0.1);
+                border-top-color: var(--primary);
+            }
+
+            @keyframes btn-spin {
+                to { transform: rotate(360deg); }
+            }
         </style>
     </div>
 </head>

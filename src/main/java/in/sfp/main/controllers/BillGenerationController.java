@@ -69,54 +69,54 @@ public class BillGenerationController {
                 totalBilling.setInvoiceNumber(request.getInvoiceNumber());
             }
 
-            // 1. Handle Business Info (From)
-            BusinessBillingInfo business = businessRepo.findByBusinessEmail(request.getBusinessEmail());
+            // 1. Handle Business Info (From) - Isolated per Invoice to disable "Smart Profile Update"
+            BusinessBillingInfo business = totalBilling.getBusinessBillingInfo();
             if (business == null) {
                 business = new BusinessBillingInfo();
-                business.setBusinessName(request.getBusinessName());
-                business.setBusinessStreetAddress(request.getBusinessStreetAddress());
-                business.setBusinessCity(request.getBusinessCity());
-                business.setBusinessState(request.getBusinessState());
-                business.setBusinessCountry(request.getBusinessCountry());
-                business.setPinCode(request.getBusinessPinCode());
-                business.setBusinessGstNumber(request.getBusinessGstNumber());
-                business.setBusinessNumber(request.getBusinessNumber());
-                business.setBusinessEmail(request.getBusinessEmail());
-                business.setTermsAndCondition(request.getTermsAndCondition());
-                if (request.getPanNumber() != null)
-                    business.setPanNumber(request.getPanNumber());
-                if (request.getAdCode() != null)
-                    business.setAdCode(request.getAdCode());
-                if (request.getIecCode() != null)
-                    business.setIecCode(request.getIecCode());
-                if (request.getBusinessType() != null)
-                    business.setBusinessType(request.getBusinessType());
-
-                if (request.getBusinessLogoBase64() != null && !request.getBusinessLogoBase64().isBlank()) {
-                    try {
-                        byte[] img = java.util.Base64.getDecoder().decode(request.getBusinessLogoBase64());
-                        business.setBusinessLogo(img);
-                    } catch (IllegalArgumentException ex) {
-                    }
-                }
                 business.setCreatedBy(currentUser);
-                business = businessRepo.save(business);
-
-                if (request.getBankDetails() != null && !request.getBankDetails().isEmpty()) {
-                    List<String> banks = new java.util.ArrayList<>();
-                    for (in.sfp.main.dto.BillRequestDTO.BankDetailDTO b : request.getBankDetails()) {
-                        String entry = String.join("|",
-                                b.getAccountHolderName() == null ? "" : b.getAccountHolderName(),
-                                b.getBankName() == null ? "" : b.getBankName(),
-                                b.getAccountNumber() == null ? "" : b.getAccountNumber(),
-                                b.getIfscCode() == null ? "" : b.getIfscCode(),
-                                b.getBranchName() == null ? "" : b.getBranchName());
-                        banks.add(entry);
-                    }
-                    business.setBankDetails(banks);
-                    business = businessRepo.save(business);
+            }
+            // Always update business fields (for both new and existing records)
+            business.setBusinessName(request.getBusinessName());
+            business.setBusinessStreetAddress(request.getBusinessStreetAddress());
+            business.setBusinessCity(request.getBusinessCity());
+            business.setBusinessState(request.getBusinessState());
+            business.setBusinessCountry(request.getBusinessCountry());
+            business.setPinCode(request.getBusinessPinCode());
+            business.setBusinessGstNumber(request.getBusinessGstNumber());
+            business.setBusinessNumber(request.getBusinessNumber());
+            business.setBusinessEmail(request.getBusinessEmail());
+            business.setTermsAndCondition(request.getTermsAndCondition());
+            if (request.getPanNumber() != null)
+                business.setPanNumber(request.getPanNumber());
+            if (request.getAdCode() != null)
+                business.setAdCode(request.getAdCode());
+            if (request.getIecCode() != null)
+                business.setIecCode(request.getIecCode());
+            if (request.getBusinessType() != null)
+                business.setBusinessType(request.getBusinessType());
+            if (request.getBusinessLogoBase64() != null && !request.getBusinessLogoBase64().isBlank()) {
+                try {
+                    byte[] img = java.util.Base64.getDecoder().decode(request.getBusinessLogoBase64());
+                    business.setBusinessLogo(img);
+                } catch (IllegalArgumentException ex) {
                 }
             }
+
+            // Always update bank details (critical fix - was only saving for new businesses before)
+            if (request.getBankDetails() != null && !request.getBankDetails().isEmpty()) {
+                List<String> banks = new java.util.ArrayList<>();
+                for (in.sfp.main.dto.BillRequestDTO.BankDetailDTO b : request.getBankDetails()) {
+                    String entry = String.join("|",
+                            b.getAccountHolderName() == null ? "" : b.getAccountHolderName(),
+                            b.getBankName() == null ? "" : b.getBankName(),
+                            b.getAccountNumber() == null ? "" : b.getAccountNumber(),
+                            b.getIfscCode() == null ? "" : b.getIfscCode(),
+                            b.getBranchName() == null ? "" : b.getBranchName());
+                    banks.add(entry);
+                }
+                business.setBankDetails(banks);
+            }
+            business = businessRepo.save(business);
 
             // 2. Handle Recipient Info (To)
             RecipientBillingInfo recipient = totalBilling.getRecipientBillingInfo();
@@ -147,7 +147,9 @@ public class BillGenerationController {
             totalBilling.setRecipientBillingInfo(recipient);
             totalBilling.setStockCreatedBy(currentUser);
             totalBilling.setBillType(request.getBillType() != null ? request.getBillType().toUpperCase() : "PRODUCT");
+            totalBilling.setInvoiceType(request.getInvoiceType() != null ? request.getInvoiceType() : "Tax Invoice");
             totalBilling.setStatus(request.getStatus() != null ? request.getStatus().toUpperCase() : "DRAFT");
+            totalBilling.setNotes(request.getNotes());
 
             if (request.getInvoiceDate() != null)
                 totalBilling.setInvoiceDate(LocalDate.parse(request.getInvoiceDate()));

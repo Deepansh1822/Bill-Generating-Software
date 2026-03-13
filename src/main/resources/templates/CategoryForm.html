@@ -303,6 +303,9 @@
             const url = categoryId ? `${apiBase}/updateCategory/${categoryId}` : `${apiBase}/saveCategory`;
             const method = categoryId ? 'PUT' : 'POST';
 
+            const btn = e.target.querySelector('button[type="submit"]');
+            Utils.setLoading(btn);
+
             try {
                 const res = await fetch(url, {
                     method: method,
@@ -316,6 +319,8 @@
                 }
             } catch (err) {
                 alert('An error occurred. Please try again.');
+            } finally {
+                Utils.stopLoading(btn);
             }
         });
     </script>

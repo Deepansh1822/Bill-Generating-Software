@@ -490,8 +490,8 @@
                                     <a href="/billing-app/api/EditStock/${stk.id}" class="action-btn edit-btn" title="Edit Item">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                    <button class="action-btn delete-btn" onclick="deleteStock(${stk.id})" title="Delete Item"><i class="fa-solid fa-trash"></i></button>
-                                ` : ''}
+                                     <button class="action-btn delete-btn" onclick="deleteStock(${stk.id}, event)" title="Delete Item"><i class="fa-solid fa-trash"></i></button>
+                                 ` : ''}
                             </div>
                         </td>
                     `;
@@ -591,9 +591,13 @@
             window.location.href = `/billing-app/api/StockDetails?id=${id}`;
         };
 
-        const deleteStock = (id) => {
+        const deleteStock = (id, event) => {
             if (confirm('Delete this entry?')) {
-                fetch(`${apiBase}/deleteStock/${id}`, { method: 'DELETE' }).then(() => loadData());
+                const btn = event.currentTarget;
+                Utils.setLoading(btn);
+                fetch(`${apiBase}/deleteStock/${id}`, { method: 'DELETE' })
+                    .then(() => loadData())
+                    .finally(() => Utils.stopLoading(btn));
             }
         };
 

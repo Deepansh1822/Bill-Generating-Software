@@ -288,6 +288,32 @@
                 padding: 30px;
             }
         }
+
+        /* ===== Loading State Utility ===== */
+        .btn-loading {
+            position: relative !important;
+            color: transparent !important;
+            pointer-events: none !important;
+            opacity: 0.8 !important;
+            transition: all 0.3s ease;
+        }
+
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            top: calc(50% - 9px);
+            left: calc(50% - 9px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: btn-spin 0.6s linear infinite;
+        }
+
+        @keyframes btn-spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -345,35 +371,32 @@
                 <span class="close-modal" id="closeModal">&times;</span>
                 <div class="modal-header">
                     <h2>Reset Password</h2>
-                    <p>Enter your secret key to reset password</p>
+                    <p>Enter your email to receive a password reset link.</p>
                 </div>
                 <form id="forgotForm">
                     <div class="form-group">
                         <label for="resetEmail">Email Address</label>
                         <input type="email" id="resetEmail" placeholder="Enter registered email" required>
                     </div>
-                    <div class="form-group">
-                        <label for="resetSecretKey">Secret Key</label>
-                        <div class="password-container">
-                            <input type="password" id="resetSecretKey" placeholder="Enter your secret key" required>
-                            <i class="fa-solid fa-eye toggle-password" id="toggleSecretKey"
-                                onclick="togglePassword('resetSecretKey', 'toggleSecretKey')"></i>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="newPassword">New Password</label>
-                        <div class="password-container">
-                            <input type="password" id="newPassword" placeholder="••••••••" required>
-                            <i class="fa-solid fa-eye toggle-password" id="toggleNewPass"
-                                onclick="togglePassword('newPassword', 'toggleNewPass')"></i>
-                        </div>
-                    </div>
-                    <button type="submit" class="login-btn">Reset Password</button>
+                    <button type="submit" class="login-btn">Send Reset Link</button>
                 </form>
             </div>
         </div>
 
         <script>
+            const Utils = {
+                setLoading: (btn) => {
+                    if (!btn) return;
+                    btn.classList.add('btn-loading');
+                    btn.disabled = true;
+                },
+                stopLoading: (btn) => {
+                    if (!btn) return;
+                    btn.classList.remove('btn-loading');
+                    btn.disabled = false;
+                }
+            };
+
             function togglePassword(inputId, iconId) {
                 const passwordInput = document.getElementById(inputId);
                 const toggleIcon = document.getElementById(iconId);
@@ -391,7 +414,9 @@
             const form = document.querySelector('form');
 
             form.addEventListener('submit', function (e) {
-                e.preventDefault(); // Stop normal form submission
+                e.preventDefault(); 
+                const btn = e.submitter || form.querySelector('button[type="submit"]');
+                Utils.setLoading(btn);
 
                 const formData = {
                     email: document.getElementById('email').value,
@@ -418,6 +443,9 @@
                     .catch((error) => {
                         console.error('Error:', error);
                         alert('An error occurred. Please try again.');
+                    })
+                    .finally(() => {
+                        Utils.stopLoading(btn);
                     });
             });
 
@@ -444,14 +472,14 @@
 
             forgotForm.addEventListener('submit', function (e) {
                 e.preventDefault();
+                const btn = e.submitter || forgotForm.querySelector('button[type="submit"]');
+                Utils.setLoading(btn);
 
                 const resetData = {
-                    email: document.getElementById('resetEmail').value,
-                    secretKey: document.getElementById('resetSecretKey').value,
-                    newPassword: document.getElementById('newPassword').value
+                    email: document.getElementById('resetEmail').value
                 };
 
-                fetch('/billing-app/api/forgot-password', {
+                fetch('/billing-app/api/forgot-password-request', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -461,14 +489,17 @@
                     .then(response => response.text())
                     .then(data => {
                         alert(data);
-                        if (data.includes("successfully")) {
+                        if (data.includes("link has been sent")) {
                             resetModal.style.display = 'none';
                             forgotForm.reset();
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Error resetting password');
+                        alert('Error requesting reset link');
+                    })
+                    .finally(() => {
+                        Utils.stopLoading(btn);
                     });
             });
         </script>

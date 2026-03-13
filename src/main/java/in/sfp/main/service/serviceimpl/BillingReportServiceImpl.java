@@ -21,6 +21,16 @@ public class BillingReportServiceImpl implements BillingReportService {
                 .orElseThrow(() -> new RuntimeException("Bill not found with ID: " + id));
 
         validateOwnership(bill);
+        
+        // Force initialization of lazy-loaded proxies for JSON serialization
+        if (bill.getBusinessBillingInfo() != null) {
+            bill.getBusinessBillingInfo().getBankDetails().size(); // Initialize collection
+        }
+        if (bill.getRecipientBillingInfo() != null) {
+            // Recipient info is usually simple, but we can verify it's loaded
+            bill.getRecipientBillingInfo().getId();
+        }
+
         // Null-safe fallback for old records saved before billType column existed
         if (bill.getBillType() == null || bill.getBillType().isBlank()) {
             bill.setBillType("PRODUCT");

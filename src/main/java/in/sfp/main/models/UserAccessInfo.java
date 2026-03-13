@@ -44,7 +44,8 @@ public class UserAccessInfo {
 
     private String setupToken; // UUID for password setup link
 
-    private String secretKey; // For password recovery
+    private String resetToken;
+    private LocalDateTime resetTokenExpiry;
 
     @Lob
     @Column(columnDefinition = "LONGTEXT")

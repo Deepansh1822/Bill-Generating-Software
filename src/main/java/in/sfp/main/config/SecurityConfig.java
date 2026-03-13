@@ -78,7 +78,9 @@ public class SecurityConfig {
                                                 .requestMatchers(
                                                                 "/billing-app/api/EWayBillLogs",
                                                                 "/billing-app/api/EWayBill/Detail/**",
-                                                                "/billing-app/api/EWayBill/logs")
+                                                                "/billing-app/api/EWayBill/logs",
+                                                                "/billing-app/api/email/**",
+                                                                "/billing-app/api/whatsapp/**")
                                                 .hasAnyRole("ADMIN", "CLIENT")
 
                                                 // ---- Error page ----

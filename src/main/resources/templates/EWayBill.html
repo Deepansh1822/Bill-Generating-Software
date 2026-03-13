@@ -193,11 +193,11 @@
         }
 
         .paper-title {
-            font-size: 11px;
+            font-size: 14px;
             font-weight: 800;
             text-transform: uppercase;
-            color: #1e293b;
-            margin-bottom: 16px;
+            color: #000000;
+            margin-bottom: 20px;
             letter-spacing: 0.05em;
             display: flex;
             align-items: center;
@@ -220,8 +220,8 @@
         }
 
         .paper-label {
-            font-weight: 500;
-            color: #64748b;
+            font-weight: 700;
+            color: #000000;
         }
 
         .paper-value {
@@ -264,10 +264,10 @@
             </div>
             <div class="header-actions">
                 <a href="/billing-app/api/EWayBillLogs" class="btn-outline">
-                    <i class="fa-solid fa-list"></i> View Logs
+                    View Logs
                 </a>
                 <button class="btn-primary-action" onclick="generateEWayMock(event)">
-                    <i class="fa-solid fa-file-circle-check"></i> Generate & Save
+                    Generate & Save
                 </button>
             </div>
         </div>
@@ -308,7 +308,7 @@
                                 <div class="party-box-title">Consignor (From)</div>
                                 <div id="preview-fromName"
                                     style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">--</div>
-                                <div style="font-size: 11px; font-weight: 600; color: #6366f1;"
+                                <div style="font-size: 11px; font-weight: 600; color: #1e293b;"
                                     id="preview-fromGstInfo">GSTIN: --</div>
                                 <div style="font-size: 11px; color: #64748b; margin-top: 8px; line-height: 1.5;"
                                     id="preview-fromAddress">--</div>
@@ -317,7 +317,7 @@
                                 <div class="party-box-title">Consignee (To)</div>
                                 <div id="preview-toName" style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">
                                     --</div>
-                                <div style="font-size: 11px; font-weight: 600; color: #6366f1;" id="preview-toGstInfo">
+                                <div style="font-size: 11px; font-weight: 600; color: #1e293b;" id="preview-toGstInfo">
                                     GSTIN: --</div>
                                 <div style="font-size: 11px; color: #64748b; margin-top: 8px; line-height: 1.5;"
                                     id="preview-toAddress">--</div>
@@ -348,12 +348,10 @@
                     <div
                         style="margin-top: 60px; display: flex; justify-content: space-between; align-items: flex-end;">
                         <div style="text-align: center;">
-                            <i class="fa-solid fa-qrcode" style="font-size: 80px; color: #1e293b;"></i>
                             <div style="font-size: 9px; font-weight: 700; color: #94a3b8; margin-top: 8px;">DIGITAL
                                 VERIFICATION</div>
                         </div>
                         <div style="text-align: right;">
-                            <i class="fa-solid fa-barcode" style="font-size: 40px; color: #1e293b;"></i>
                             <div style="font-size: 10px; font-weight: 700; color: #1e293b; margin-top: 4px;">E-WAY BILL
                                 PREVIEW</div>
                         </div>
@@ -365,7 +363,7 @@
             <!-- Right Side: Sidebar Panel -->
             <div class="bill-sidebar-panel">
                 <div class="sidebar-card">
-                    <h3><i class="fa-solid fa-file-invoice" style="color: #6366f1;"></i> Document Config</h3>
+                    <h3> Document Config</h3>
                     <div class="form-field">
                         <label>Invoice Number</label>
                         <div style="display: flex; gap: 8px;">
@@ -413,7 +411,7 @@
                 </div>
 
                 <div class="sidebar-card">
-                    <h3><i class="fa-solid fa-truck-moving" style="color: #6366f1;"></i> Transport Section</h3>
+                    <h3> Transport Section</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                         <div class="form-field">
                             <label>Distance (km)</label>
@@ -442,7 +440,7 @@
                 </div>
 
                 <div class="sidebar-card">
-                    <h3><i class="fa-solid fa-building-user" style="color: #6366f1;"></i> Parties Info</h3>
+                    <h3> Parties Info</h3>
                     <div class="form-field">
                         <label>Consignor (From)</label>
                         <input type="text" id="fromCompanyName" th:value="${businessInfo?.businessName}">
@@ -595,7 +593,7 @@
             }
         }
 
-        async function verifyInvoice() {
+        async function verifyInvoice(e) {
             const invNum = document.getElementById('docNum').value;
             if (!invNum) {
                 showToastStatus('Please enter an Invoice Number');
@@ -603,6 +601,8 @@
             }
 
             showToastStatus("🔍 Verifying Invoice...");
+            const btn = e ? e.target : document.querySelector('button[onclick="verifyInvoice()"]');
+            Utils.setLoading(btn);
 
             try {
                 const response = await fetch(`/billing-app/api/EWayBill/fetchInvoice/${invNum}`);
@@ -631,14 +631,15 @@
                 }
             } catch (err) {
                 showToastStatus('❌ Connection error during verification');
+            } finally {
+                Utils.stopLoading(btn);
             }
         }
 
         async function generateEWayMock(e) {
             e.preventDefault();
-            const toast = document.getElementById('toast');
-            toast.innerText = "🚀 Saving E-Way Bill to database...";
-            toast.style.display = "block";
+            const btn = e.target;
+            Utils.setLoading(btn);
 
             // Collect all form data
             const ewayData = {
@@ -691,8 +692,9 @@
                 }
             } catch (err) {
                 console.error(err);
-                toast.innerText = "❌ Error connecting to server";
-                setTimeout(() => toast.style.display = "none", 3000);
+                showToastStatus("❌ Error connecting to server");
+            } finally {
+                Utils.stopLoading(btn);
             }
         }
     </script>

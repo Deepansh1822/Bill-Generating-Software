@@ -254,28 +254,7 @@
             }
         }
 
-        .password-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
 
-        .password-container input {
-            padding-right: 45px;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 15px;
-            cursor: pointer;
-            color: var(--text-light);
-            transition: color 0.3s;
-            z-index: 10;
-        }
-
-        .toggle-password:hover {
-            color: var(--primary);
-        }
     </style>
 </head>
 
@@ -355,17 +334,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="secretKey">Recovery Secret Key</label>
-                        <div class="password-container">
-                            <input type="password" id="secretKey" name="secretKey"
-                                placeholder="A word or code to recover password" required>
-                            <i class="fa-solid fa-eye toggle-password" id="toggleSecretKey"
-                                onclick="togglePassword('secretKey', 'toggleSecretKey')"></i>
-                        </div>
-                        <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 5px;">Remember this! You'll
-                            need it if you forget your password.</p>
-                    </div>
 
                     <button type="submit" class="submit-btn" id="submitBtn">
                         <div class="spinner"></div>
@@ -383,19 +351,6 @@
     </div>
 
     <script>
-        function togglePassword(inputId, iconId) {
-            const passwordInput = document.getElementById(inputId);
-            const toggleIcon = document.getElementById(iconId);
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
-        }
 
         const form = document.querySelector('form');
         const submitBtn = document.getElementById('submitBtn');
@@ -432,7 +387,6 @@
                 mobileNumber: document.getElementById('mobileNumber').value,
                 email: document.getElementById('email').value,
                 companyType: document.getElementById('companyType').value,
-                secretKey: document.getElementById('secretKey').value,
                 clientImage: base64Image
             };
 

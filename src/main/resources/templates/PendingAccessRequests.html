@@ -588,10 +588,10 @@
                                 <button class="icon-btn btn-view" title="Review Details" onclick='openModal(${JSON.stringify(req)})'>
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
-                                <button class="icon-btn btn-check" title="Approve Business" onclick="handleAction(${req.id}, 'approve')">
+                                <button class="icon-btn btn-check" title="Approve Business" onclick="handleAction(${req.id}, 'approve', event)">
                                     <i class="fa-solid fa-check"></i>
                                 </button>
-                                <button class="icon-btn btn-x" title="Reject Business" onclick="handleAction(${req.id}, 'reject')">
+                                <button class="icon-btn btn-x" title="Reject Business" onclick="handleAction(${req.id}, 'reject', event)">
                                     <i class="fa-solid fa-x"></i>
                                 </button>
                             </div>
@@ -601,8 +601,10 @@
             }).join('');
         };
 
-        const handleAction = async (id, action) => {
+        const handleAction = async (id, action, event) => {
             if (!confirm(`Confirm ${action} for this request?`)) return;
+            const btn = event.currentTarget;
+            Utils.setLoading(btn);
 
             try {
                 const res = await fetch(`/billing-app/api/admin/${action}/${id}`, { method: 'POST' });
@@ -617,6 +619,9 @@
                     }, 300);
                 } else { alert('Action failed. Please try again.'); }
             } catch (err) { alert('An error occurred.'); }
+            finally {
+                Utils.stopLoading(btn);
+            }
         };
 
         const openModal = (req) => {

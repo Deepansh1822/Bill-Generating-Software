@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
@@ -180,25 +181,44 @@ public class PagesController {
     }
 
     @Autowired
+    private in.sfp.main.repository.StockBillingInfoRepository stockBillingRepo;
+
+    @Autowired
     private in.sfp.main.service.UserBillingService userBillingService;
+
+    @GetMapping("/GenerateBill")
+    public String getGenerateBill(@RequestParam(required = false) Long id,
+            @RequestParam(required = false) String invoice) {
+        in.sfp.main.models.TotalStockBillingInfo bill = null;
+        if (id != null) {
+            bill = stockBillingRepo.findById(id).orElse(null);
+        } else if (invoice != null) {
+            bill = stockBillingRepo.findByInvoiceNumber(invoice).orElse(null);
+        }
+
+        if (bill != null) {
+            String type = bill.getBillType();
+            if ("SERVICE".equalsIgnoreCase(type)) {
+                return "redirect:/billing-app/api/GenerateServiceBill?invoice=" + bill.getInvoiceNumber();
+            } else {
+                return "redirect:/billing-app/api/GenerateProductBill?invoice=" + bill.getInvoiceNumber();
+            }
+        }
+        return "redirect:/billing-app/api/GenerateProductBill";
+    }
 
     @GetMapping("/GenerateProductBill")
     public String getGenerateProductBill(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        // Check role and redirect if Admin
-        String role = auth.getAuthorities().stream()
-                .map(a -> a.getAuthority())
-                .findFirst()
-                .orElse("");
-
-        if (role.contains("ADMIN")) {
-            return "redirect:/billing-app/api/Reports";
-        }
-
+        String role = auth.getAuthorities().stream().map(a -> a.getAuthority()).findFirst().orElse("");
+        if (role.contains("ADMIN")) return "redirect:/billing-app/api/Reports";
+        
         if (auth != null && auth.isAuthenticated()) {
-            in.sfp.main.models.BusinessBillingInfo business = userBillingService.findByCreatedBy(auth.getName());
-            model.addAttribute("businessInfo", business);
+            in.sfp.main.models.UserAccessInfo user = userAccessService.findByUsername(auth.getName());
+            if (user == null) user = userAccessService.findByEmail(auth.getName());
+            if (user != null && user.getClientImage() != null) {
+                model.addAttribute("signupBusinessLogo", user.getClientImage());
+            }
         }
         return "GenerateProductBill";
     }
@@ -206,20 +226,15 @@ public class PagesController {
     @GetMapping("/GenerateServiceBill")
     public String getGenerateServiceBill(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        // Check role and redirect if Admin
-        String role = auth.getAuthorities().stream()
-                .map(a -> a.getAuthority())
-                .findFirst()
-                .orElse("");
-
-        if (role.contains("ADMIN")) {
-            return "redirect:/billing-app/api/Reports";
-        }
-
+        String role = auth.getAuthorities().stream().map(a -> a.getAuthority()).findFirst().orElse("");
+        if (role.contains("ADMIN")) return "redirect:/billing-app/api/Reports";
+        
         if (auth != null && auth.isAuthenticated()) {
-            in.sfp.main.models.BusinessBillingInfo business = userBillingService.findByCreatedBy(auth.getName());
-            model.addAttribute("businessInfo", business);
+            in.sfp.main.models.UserAccessInfo user = userAccessService.findByUsername(auth.getName());
+            if (user == null) user = userAccessService.findByEmail(auth.getName());
+            if (user != null && user.getClientImage() != null) {
+                model.addAttribute("signupBusinessLogo", user.getClientImage());
+            }
         }
         return "GenerateServiceBill";
     }

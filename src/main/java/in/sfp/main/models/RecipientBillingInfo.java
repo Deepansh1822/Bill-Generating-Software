@@ -1,5 +1,11 @@
 package in.sfp.main.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +29,8 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "recipient_billing_info")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Getter
 @Setter
 @NoArgsConstructor
@@ -54,11 +62,15 @@ public class RecipientBillingInfo {
     private LocalTime recipientUpdatedAt;
     private String recipientUpdatedBy;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_billing_id")
+    @JsonBackReference("business-recipient")
     private BusinessBillingInfo businessBillingInfo;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "recipientBillingInfo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("recipient-bill")
     private List<TotalStockBillingInfo> stockBillingInfos = new ArrayList<>();
 
 }

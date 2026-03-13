@@ -117,12 +117,48 @@ public class UserAccessServiceImpl implements UserAccessService {
     }
 
     @Override
-    public void resetPassword(String email, String secretKey, String newPassword) {
-        UserAccessInfo user = usersAccessRepo.findByEmailAndSecretKey(email, secretKey);
+    public void sendPasswordResetLink(String email) {
+        UserAccessInfo user = usersAccessRepo.findByEmail(email);
         if (user == null) {
-            throw new RuntimeException("Invalid Email or Secret Key");
+            throw new RuntimeException("No user found with this email!");
         }
+
+        String token = UUID.randomUUID().toString();
+        user.setResetToken(token);
+        user.setResetTokenExpiry(java.time.LocalDateTime.now().plusMinutes(15));
+        usersAccessRepo.save(user);
+
+        String resetLink = "http://localhost:8080/billing-app/api/reset-password-view?token=" + token;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("SFP Billing - Password Reset Request");
+        message.setText("Heey " + user.getFullName() + ",\n\n" +
+                "You requested to reset your password. This link is only valid for 15 minutes:\n\n" +
+                resetLink + "\n\n" +
+                "If you didn't request this, just ignore this email.\n\n" +
+                "Best Regards,\nSFP Team");
+
+        mailSender.send(message);
+    }
+
+    @Override
+    public void resetPasswordWithToken(String token, String newPassword) {
+        UserAccessInfo user = usersAccessRepo.findByResetToken(token);
+        if (user == null) {
+            throw new RuntimeException("Invalid or non-existent reset link.");
+        }
+
+        if (user.getResetTokenExpiry().isBefore(java.time.LocalDateTime.now())) {
+            user.setResetToken(null);
+            user.setResetTokenExpiry(null);
+            usersAccessRepo.save(user);
+            throw new RuntimeException("This reset link has expired. Please request a new one.");
+        }
+
         user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetToken(null);
+        user.setResetTokenExpiry(null);
         usersAccessRepo.save(user);
     }
 
@@ -155,7 +191,7 @@ public class UserAccessServiceImpl implements UserAccessService {
         message.setText("Welcome to SFP Billing!\n\n" +
                 "Your request for access has been approved.\n\n" +
                 "Your temporary username is: " + username + "\n" +
-                "Please set your secret password using this link: " + setupLink + "\n\n" +
+                "Please set your password using this link: " + setupLink + "\n\n" +
                 "Note: This link is for one-time use only.\n\n" +
                 "Best Regards,\nSFP Team");
 

@@ -4,6 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -33,6 +38,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = { "billItems", "businessBillingInfo", "recipientBillingInfo" })
 @ToString(exclude = { "billItems", "businessBillingInfo", "recipientBillingInfo" })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class TotalStockBillingInfo {
 
     @Id
@@ -61,10 +68,14 @@ public class TotalStockBillingInfo {
     private String companyName;
     private String companyType;
     private String billType; // PRODUCT or SERVICE
+    private String invoiceType; // dropdown choice, e.g. "Tax Invoice"
 
     private String status; // DRAFT or FINAL
     private LocalDate invoiceDate;
     private LocalDate dueDate;
+
+    @Column(length = 2000)
+    private String notes;
 
     private LocalDateTime stockCreatedAt;
 
@@ -85,13 +96,16 @@ public class TotalStockBillingInfo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_billing_id")
+    @JsonManagedReference("business-bill")
     private BusinessBillingInfo businessBillingInfo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_billing_id")
+    @JsonManagedReference("recipient-bill")
     private RecipientBillingInfo recipientBillingInfo;
 
     @OneToMany(mappedBy = "stockBillingInfo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("bill-items")
     private List<SingleStockBillingInfo> billItems = new ArrayList<>();
 
 }

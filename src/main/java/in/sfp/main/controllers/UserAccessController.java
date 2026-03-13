@@ -80,16 +80,34 @@ public class UserAccessController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token.");
     }
 
-    // 6. Forgot Password Reset
-    @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> payload) {
+    // 6. Forgot Password - Phase 1: Request Link
+    @PostMapping("/forgot-password-request")
+    public ResponseEntity<String> forgotPasswordRequest(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
-        String secretKey = payload.get("secretKey");
-        String newPassword = payload.get("newPassword");
-
         try {
-            usersAccessRepoService.resetPassword(email, secretKey, newPassword);
-            return ResponseEntity.ok("Password reset successfully!");
+            usersAccessRepoService.sendPasswordResetLink(email);
+            return ResponseEntity.ok("Password reset link has been sent to your email!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    // Phase 2: Show Reset Page (GET)
+    @GetMapping("/reset-password-view")
+    public org.springframework.web.servlet.ModelAndView showResetPage(@RequestParam String token) {
+        org.springframework.web.servlet.ModelAndView mav = new org.springframework.web.servlet.ModelAndView("ResetPassword");
+        mav.addObject("token", token);
+        return mav;
+    }
+
+    // Phase 3: Update Password (POST)
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> payload) {
+        String token = payload.get("token");
+        String newPassword = payload.get("newPassword");
+        try {
+            usersAccessRepoService.resetPasswordWithToken(token, newPassword);
+            return ResponseEntity.ok("Your password has been reset successfully!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -168,15 +186,8 @@ public class UserAccessController {
     @GetMapping("/profile-image")
     public ResponseEntity<?> getProfileImage(
             org.springframework.security.core.Authentication auth) {
-        if (auth == null || !auth.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        UserAccessInfo user = usersAccessRepoService.findByUsername(auth.getName());
-        if (user == null) {
-            user = usersAccessRepoService.findByEmail(auth.getName());
-        }
-        String image = (user != null && user.getClientImage() != null) ? user.getClientImage() : "";
-        return ResponseEntity.ok(Map.of("clientImage", image));
+        // User requested signup image NOT be used as profile image
+        return ResponseEntity.ok(Map.of("clientImage", ""));
     }
 
     // 10. Verify Password to reveal sensitive data
@@ -188,7 +199,7 @@ public class UserAccessController {
 
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             return ResponseEntity
-                    .ok(Map.of("secretKey", user.getSecretKey() != null ? user.getSecretKey() : "NOT_SET"));
+                    .ok(Map.of("message", "Password verified"));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Incorrect password"));
     }

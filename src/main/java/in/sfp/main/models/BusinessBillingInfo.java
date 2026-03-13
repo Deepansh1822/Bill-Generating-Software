@@ -4,6 +4,12 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -33,6 +39,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = { "stockBillingInfos", "recipientBillingInfos" })
 @ToString(exclude = { "stockBillingInfos", "recipientBillingInfos" })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class BusinessBillingInfo {
 
     @Id
@@ -78,9 +86,13 @@ public class BusinessBillingInfo {
         updatedAt = LocalTime.now();
     }
 
+    @JsonIgnore
     @OneToMany(mappedBy = "businessBillingInfo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("business-bill")
     private List<TotalStockBillingInfo> stockBillingInfos = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "businessBillingInfo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("business-recipient")
     private List<RecipientBillingInfo> recipientBillingInfos = new ArrayList<>();
 }

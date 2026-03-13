@@ -23,7 +23,8 @@ public interface UserAccessService {
 
     public UserAccessInfo findByToken(String token);
 
-    public void resetPassword(String email, String secretKey, String newPassword);
+    public void sendPasswordResetLink(String email);
+    public void resetPasswordWithToken(String token, String newPassword);
 
     public UserAccessInfo createAdminAccount(UserAccessInfo adminInfo);
 

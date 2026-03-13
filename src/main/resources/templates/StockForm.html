@@ -710,6 +710,9 @@
             const url = stockId ? `${apiBase}/updateStock/${stockId}` : `${apiBase}/saveStock`;
             const method = stockId ? 'PUT' : 'POST';
 
+            const btn = document.getElementById('submitBtn');
+            Utils.setLoading(btn);
+
             try {
                 const res = await fetch(url, {
                     method: method,
@@ -723,6 +726,8 @@
                 }
             } catch (err) {
                 alert('Network error while saving.');
+            } finally {
+                Utils.stopLoading(btn);
             }
         });
 

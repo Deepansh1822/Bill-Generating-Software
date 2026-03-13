@@ -507,137 +507,20 @@
             font-size: 0.95rem;
         }
 
+        }
+
         .pdf-mode {
-            width: 1050px !important;
+            width: 1100px !important;
             margin: 0 !important;
             padding: 40px !important;
             background: white !important;
-            border: none !important;
+            border: 1px solid #cbd5e1 !important;
             border-radius: 0 !important;
             box-shadow: none !important;
-            box-sizing: border-box !important;
-            overflow: visible !important;
             position: relative !important;
-            text-align: left !important;
+            left: 0 !important;
+            top: 0 !important;
         }
-
-        /* ---- Send Confirmation Modal ---- */
-        .send-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.55);
-            backdrop-filter: blur(6px);
-            z-index: 999999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s;
-        }
-        .send-modal-overlay.open {
-            opacity: 1;
-            pointer-events: all;
-        }
-        .send-modal-box {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 32px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.18);
-            transform: translateY(20px);
-            transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
-        }
-        .send-modal-overlay.open .send-modal-box {
-            transform: translateY(0);
-        }
-        .send-modal-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            margin-bottom: 16px;
-        }
-        .send-modal-icon.email  { background:#eef2ff; color:#6366f1; }
-        .send-modal-icon.whatsapp { background:#dcfce7; color:#16a34a; }
-        .send-modal-title {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 6px;
-        }
-        .send-modal-subtitle {
-            font-size: 0.82rem;
-            color: #64748b;
-            margin-bottom: 20px;
-        }
-        .send-modal-route {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 16px 18px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .send-modal-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.85rem;
-        }
-        .send-modal-row .label {
-            font-weight: 700;
-            color: #475569;
-            min-width: 36px;
-        }
-        .send-modal-row .value {
-            color: #1e293b;
-            font-weight: 500;
-            word-break: break-all;
-        }
-        .send-modal-arrow {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 1rem;
-        }
-        .send-modal-actions {
-            display: flex;
-            gap: 10px;
-        }
-        .send-modal-cancel {
-            flex: 1;
-            padding: 11px;
-            background: #f1f5f9;
-            color: #475569;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background 0.2s;
-        }
-        .send-modal-cancel:hover { background: #e2e8f0; }
-        .send-modal-confirm {
-            flex: 2;
-            padding: 11px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: white;
-            transition: opacity 0.2s;
-        }
-        .send-modal-confirm.email    { background: linear-gradient(135deg, #6366f1, #4338ca); }
-        .send-modal-confirm.whatsapp { background: linear-gradient(135deg, #22c55e, #16a34a); }
-        .send-modal-confirm:hover { opacity: 0.88; }
-        .send-modal-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
 
     </style>
 </head>
@@ -664,7 +547,9 @@
                         <button class="share-item email" onclick="shareEmail()">
                             <i class="fa-solid fa-envelope"></i> Email
                         </button>
-
+                        <button class="share-item copy" onclick="copyInvoiceLink()">
+                            <i class="fa-solid fa-link"></i> Copy Link
+                        </button>
                     </div>
                 </div>
 
@@ -775,15 +660,17 @@
                     <table class="items-table" style="table-layout:fixed; border-collapse: collapse;">
                         <thead id="tableHeader">
                             <tr>
-                                    <th style="width: 8%; text-align: center;">#</th>
-                                    <th style="width: 11%; text-align: center;">Item</th>
-                                    <th id="hsnSacHeader" style="width: 12%; text-align: center;">HSN Code</th>
-                                    <th id="qtyHeader" style="width: 7%; text-align: center;">Qty</th>
-                                    <th style="width: 14%; text-align: center;">Rate</th>
-                                    <th style="width: 10%; text-align: center; line-height: 1.2;">CGST<br>%</th>
-                                    <th style="width: 10%; text-align: center; line-height: 1.2;">SGST<br>%</th>
-                                    <th style="width: 10%; text-align: center; line-height: 1.2;">IGST<br>%</th>
-                                    <th class="amount-col" style="width: 18%; text-align: center;">Amount</th>
+                                                                <th style="width: 8%; text-align: center;">S.No.</th>
+
+                                                                <th style="width: 11%; text-align: center;">Item</th>
+
+                                <th id="hsnSacHeader" style="width: 12%; text-align: center;">HSN Code</th>
+                                <th id="qtyHeader" style="width: 7%; text-align: center;">Qty</th>
+                                <th style="width: 14%; text-align: center;">Rate</th>
+                                <th style="width: 10%; text-align: center; line-height: 1.2;">CGST<br>%</th>
+                                <th style="width: 10%; text-align: center; line-height: 1.2;">SGST<br>%</th>
+                                <th style="width: 10%; text-align: center; line-height: 1.2;">IGST<br>%</th>
+                                <th class="amount-col" style="width: 18%; text-align: center;">Amount</th>
                             </tr>
                         </thead>
                         <tbody id="itemsBody">
@@ -921,36 +808,9 @@
     <!-- Share Toast -->
     <div id="shareToast">Link copied to clipboard!</div>
 
-    <!-- Send Confirmation Modal -->
-    <div class="send-modal-overlay" id="sendModal">
-        <div class="send-modal-box">
-            <div class="send-modal-icon" id="sendModalIcon"><i id="sendModalIconI" class="fa-solid fa-envelope"></i></div>
-            <div class="send-modal-title" id="sendModalTitle">Confirm Send</div>
-            <div class="send-modal-subtitle" id="sendModalSubtitle">Review before sending</div>
-            <div class="send-modal-route">
-                <div class="send-modal-row">
-                    <span class="label">From</span>
-                    <span class="value" id="sendModalFrom">—</span>
-                </div>
-                <div class="send-modal-arrow"><i class="fa-solid fa-arrow-down"></i></div>
-                <div class="send-modal-row">
-                    <span class="label">To</span>
-                    <span class="value" id="sendModalTo">—</span>
-                </div>
-            </div>
-            <div class="send-modal-actions">
-                <button class="send-modal-cancel" onclick="closeSendModal()">Cancel</button>
-                <button class="send-modal-confirm email" id="sendModalConfirmBtn" onclick="executeSend()">Send Now</button>
-            </div>
-        </div>
-    </div>
-
     <script th:inline="javascript">
         /*<![CDATA[*/
         const billId = /*[[${billId}]]*/ 0;
-        // Populated after bill loads
-        let billMeta = { fromEmail: '', fromPhone: '', toEmail: '', toPhone: '', toName: '' };
-        let pendingSendAction = null;
 
         function escapeHtml(text) {
             if (!text) return '';
@@ -970,14 +830,6 @@
                 if (!response.ok) throw new Error('Failed to fetch bill');
 
                 const bill = await response.json();
-                // Store meta for share modal
-                const biz = bill.businessBillingInfo || {};
-                const rec = bill.recipientBillingInfo || {};
-                billMeta.fromEmail = biz.businessEmail || '';
-                billMeta.fromPhone = biz.businessNumber || '';
-                billMeta.toEmail   = rec.recipientEmail || '';
-                billMeta.toPhone   = rec.recipientMobileNumber || '';
-                billMeta.toName    = rec.recipientName || 'Recipient';
 
                 // Header & Meta
                 const businessName = bill.businessBillingInfo?.businessName || 'SFP BILLING';
@@ -1249,64 +1101,41 @@
             }
         });
 
-        // ======================== SEND MODAL ========================
-        function openSendModal(type) {
-            const modal = document.getElementById('sendModal');
-            const icon  = document.getElementById('sendModalIcon');
-            const iconI = document.getElementById('sendModalIconI');
-            const title = document.getElementById('sendModalTitle');
-            const sub   = document.getElementById('sendModalSubtitle');
-            const fromEl = document.getElementById('sendModalFrom');
-            const toEl   = document.getElementById('sendModalTo');
-            const confirmBtn = document.getElementById('sendModalConfirmBtn');
-
-            if (type === 'email') {
-                icon.className  = 'send-modal-icon email';
-                iconI.className = 'fa-solid fa-envelope';
-                title.innerText = 'Send Invoice via Email';
-                sub.innerText   = 'An email with the PDF attachment will be sent.';
-                fromEl.innerText = billMeta.fromEmail || 'Business Email (not set)';
-                toEl.innerText   = (billMeta.toName ? billMeta.toName + ' · ' : '') + (billMeta.toEmail || 'Recipient Email (not set)');
-                confirmBtn.className = 'send-modal-confirm email';
-                confirmBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Email';
-                pendingSendAction = doSendEmail;
-            } else {
-                icon.className  = 'send-modal-icon whatsapp';
-                iconI.className = 'fa-brands fa-whatsapp';
-                title.innerText = 'Send Invoice via WhatsApp';
-                sub.innerText   = 'A PDF will be sent to the recipient\'s WhatsApp.';
-                fromEl.innerText = billMeta.fromPhone || 'Business Phone (not set)';
-                toEl.innerText   = (billMeta.toName ? billMeta.toName + ' · ' : '') + (billMeta.toPhone || 'Recipient Phone (not set)');
-                confirmBtn.className = 'send-modal-confirm whatsapp';
-                confirmBtn.innerHTML = '<i class="fa-brands fa-whatsapp"></i> Send WhatsApp';
-                pendingSendAction = doSendWhatsApp;
-            }
-
-            modal.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeSendModal() {
-            document.getElementById('sendModal').classList.remove('open');
-            document.body.style.overflow = '';
-            pendingSendAction = null;
-        }
-
-        async function executeSend() {
-            if (!pendingSendAction) return;
-            const btn = document.getElementById('sendModalConfirmBtn');
-            Utils.setLoading(btn);
-            await pendingSendAction();
-            Utils.stopLoading(btn);
-            closeSendModal();
-        }
-
         async function shareWhatsApp() {
-            openSendModal('whatsapp');
+            try {
+                showShareToast('Sending PDF to WhatsApp...');
+                const response = await fetch('/billing-app/api/whatsapp/sendInvoice/' + billId, { method: 'POST' });
+                const result = await response.json();
+                if (response.ok) {
+                    showShareToast('✅ WhatsApp PDF sent successfully!');
+                } else {
+                    showShareToast('❌ Failed: ' + (result.message || 'Check API keys'));
+                }
+            } catch (err) {
+                showShareToast('❌ Error sending WhatsApp');
+            }
         }
 
         async function shareEmail() {
-            openSendModal('email');
+            try {
+                showShareToast('Generating PDF & Sending Email...');
+                const response = await fetch('/billing-app/api/email/sendInvoice/' + billId, { method: 'POST' });
+                const result = await response.json();
+                if (response.ok) {
+                    showShareToast('✅ Email sent with PDF attachment!');
+                } else {
+                    showShareToast('❌ Failed: ' + (result.message || 'Server error'));
+                }
+            } catch (err) {
+                showShareToast('❌ Error sending email');
+            }
+        }
+
+        function copyInvoiceLink() {
+            const link = window.location.href;
+            navigator.clipboard.writeText(link).then(() => {
+                showShareToast('Link copied to clipboard!');
+            });
         }
 
         function showShareToast(msg) {
@@ -1318,198 +1147,49 @@
             }
         }
 
-        /**
-         * Core PDF Generation Logic
-         * Returns a Promise that resolves with a Blob of the PDF
-         */
-        async function generatePDFBlob() {
+        async function downloadPDF(btn) {
             const element = document.getElementById('invoiceArea');
-            const invNumEl = document.getElementById('invoiceNumber');
-            const invNum = invNumEl ? invNumEl.innerText.replace('#', '') : 'Invoice';
+            const invNumEl = document.getElementById('invoiceNumberLabel');
+            const invNum = invNumEl ? invNumEl.innerText : 'Invoice';
+            
+            // Add a temporary class for PDF generation to ensure perfect alignment
+            element.classList.add('pdf-mode');
+            
+            // Wait a tiny bit for the DOM to apply the class
+            await new Promise(resolve => setTimeout(resolve, 50));
 
             const opt = {
-                margin: 10,
-                filename: `Invoice_${invNum}.pdf`,
+                margin: [5, 5, 5, 5], 
+                filename: `${invNum}.pdf`,
                 image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: {
-                    scale: 3, 
-                    useCORS: true,
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
                     logging: false,
                     letterRendering: true,
-                    width: 720,
-                    windowWidth: 720,
-                    scrollX: 0,
+                    windowWidth: 1100,
+                    width: 1100,
                     scrollY: 0,
-                    x: 0,
-                    y: 0,
-                    onclone: (clonedDoc) => {
-                        const area = clonedDoc.getElementById('invoiceArea');
-                        const sidebar = clonedDoc.querySelector('.sidebar');
-                        const main = clonedDoc.querySelector('.main-content');
-                        const actionBar = clonedDoc.querySelector('.action-bar');
-                        
-                        if (sidebar) sidebar.style.display = 'none';
-                        if (actionBar) actionBar.style.display = 'none';
-                        if (main) {
-                            main.style.margin = '0';
-                            main.style.padding = '0';
-                            main.style.marginLeft = '0';
-                            main.style.width = '720px';
-                        }
-                        clonedDoc.body.style.margin = '0';
-                        clonedDoc.body.style.padding = '0';
-
-                        if (area) {
-                            const elWidth = 720;
-                            const pageH = 1020; 
-                            area.style.width = elWidth + 'px';
-                            area.style.margin = '0';
-                            area.style.padding = '50px 60px'; 
-                            area.style.boxSizing = 'border-box';
-                            area.style.background = 'white';
-                            area.style.position = 'relative';
-
-                            const contentH = area.offsetHeight;
-                            const numPages = Math.ceil(contentH / pageH);
-                            area.style.minHeight = (numPages * pageH) + 'px';
-
-                            const style = clonedDoc.createElement('style');
-                            style.innerHTML = `
-                                .party-card, .invoice-card, .totals-section, .items-table tr { 
-                                    page-break-inside: avoid !important;
-                                    break-inside: avoid !important;
-                                }
-                                .party-card, .items-table, .items-table td, .items-table th, .sign-placeholder { 
-                                    border: none !important; 
-                                    box-shadow: none !important; 
-                                }
-                                .items-table thead th { 
-                                    border-bottom: 2px solid #334155 !important; 
-                                }
-                                .items-table th:nth-child(1) { width: 5% !important; }
-                                .items-table th:nth-child(2) { width: 10% !important; }
-                                .items-table th:nth-child(3), .items-table td:nth-child(3) { width: 15% !important; }
-                            `;
-                            clonedDoc.head.appendChild(style);
-
-                            // Draw Borders
-                            const frameMargin = 20; 
-                            for (let i = 0; i < numPages; i++) {
-                                const frame = clonedDoc.createElement('div');
-                                frame.style.position = 'absolute';
-                                frame.style.top = (i * pageH + frameMargin) + 'px';
-                                frame.style.left = frameMargin + 'px';
-                                frame.style.width = (elWidth - 2 * frameMargin) + 'px';
-                                frame.style.height = (pageH - 2 * frameMargin) + 'px';
-                                frame.style.border = '2px solid #94a3b8';
-                                frame.style.borderRadius = '16px';
-                                frame.style.pointerEvents = 'none';
-                                frame.style.zIndex = '9999';
-                                area.appendChild(frame);
-                            }
-                        }
-                    }
+                    scrollX: 0
                 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { 
-                    mode: ['avoid-all', 'css', 'legacy'],
-                    avoid: ['.party-card', '.items-table tr', '.totals-section']
-                }
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            // Return as Blob
-            return html2pdf().set(opt).from(element).output('blob');
-        }
-
-        async function downloadPDF(btn) {
-            const invNumEl = document.getElementById('invoiceNumber');
-            if (invNumEl && invNumEl.innerText.includes('0000')) {
-                alert('Please wait, data is still loading...');
-                return;
-            }
-
             if (!btn) return;
-            Utils.setLoading(btn);
-            window.scrollTo(0, 0);
+            
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
 
             try {
-                const blob = await generatePDFBlob();
-                const invNum = invNumEl ? invNumEl.innerText.replace('#', '') : 'Invoice';
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `Invoice_${invNum}.pdf`;
-                link.click();
+                await html2pdf().set(opt).from(element).save();
             } catch (err) {
-                console.error('Download Error:', err);
-                alert('PDF generation failed.');
+                console.error('PDF generation error:', err);
+                alert('Failed to generate PDF. Please try again.');
             } finally {
-                Utils.stopLoading(btn);
-            }
-        }
-
-        async function doSendWhatsApp() {
-            try {
-                showShareToast('Generating Premium PDF...');
-                const pdfBlob = await generatePDFBlob();
-                const invNum = (document.getElementById('invoiceNumber')?.innerText || '#INV').replace('#','');
-                
-                const formData = new FormData();
-                formData.append('file', pdfBlob, `Invoice_${invNum}.pdf`);
-
-                showShareToast('Sending to WhatsApp...');
-                const response = await fetch('/billing-app/api/whatsapp/sendInvoiceWithFile/' + billId, { 
-                    method: 'POST',
-                    body: formData
-                });
-                
-                let result;
-                try {
-                    result = await response.json();
-                } catch(e) {
-                    result = { message: 'Server error (status: ' + response.status + ')' };
-                }
-
-                if (response.ok) {
-                    showShareToast('✅ WhatsApp PDF sent successfully!');
-                } else {
-                    showShareToast('❌ Failed: ' + (result.message || 'Check API keys'));
-                }
-            } catch (err) {
-                console.error(err);
-                showShareToast('❌ Error sending WhatsApp');
-            }
-        }
-
-        async function doSendEmail() {
-            try {
-                showShareToast('Generating Premium PDF...');
-                const pdfBlob = await generatePDFBlob();
-                const invNum = (document.getElementById('invoiceNumber')?.innerText || '#INV').replace('#','');
-
-                const formData = new FormData();
-                formData.append('file', pdfBlob, `Invoice_${invNum}.pdf`);
-
-                showShareToast('Sending Email...');
-                const response = await fetch('/billing-app/api/email/sendInvoiceWithFile/' + billId, { 
-                    method: 'POST',
-                    body: formData
-                });
-                
-                let result;
-                try {
-                    result = await response.json();
-                } catch(e) {
-                    result = { message: 'Server error (status: ' + response.status + ')' };
-                }
-
-                if (response.ok) {
-                    showShareToast('✅ Email sent with PDF attachment!');
-                } else {
-                    showShareToast('❌ Failed: ' + (result.message || 'Server error'));
-                }
-            } catch (err) {
-                console.error(err);
-                showShareToast('❌ Error sending email');
+                element.classList.remove('pdf-mode');
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
             }
         }
 

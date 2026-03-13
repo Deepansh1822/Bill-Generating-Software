@@ -92,6 +92,24 @@ const Utils = {
                 <p style="font-size: 0.85rem;">${message}</p>
             </div>
         `;
+    },
+
+    /**
+     * Start loading state on a button
+     */
+    setLoading: (btn) => {
+        if (!btn) return;
+        btn.classList.add('btn-loading');
+        btn.disabled = true;
+    },
+
+    /**
+     * Stop loading state on a button
+     */
+    stopLoading: (btn) => {
+        if (!btn) return;
+        btn.classList.remove('btn-loading');
+        btn.disabled = false;
     }
 };
 

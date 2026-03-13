@@ -7,6 +7,8 @@
     <title>Generate Service-Based Invoice | SFP Billing</title>
     <div th:replace="~{fragments/sidebar :: sidebar-css}"></div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         .main-content {
             background-color: #f8fafc;
@@ -91,27 +93,32 @@
         }
 
         /* ---- Bill Container ---- */
+        .main-content {
+            padding: 20px !important;
+        }
+
         .bill-layout {
             display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 28px;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
             align-items: flex-start;
             max-width: 100%;
-            margin: 0 auto;
-            padding: 0 10px;
+            margin: 0;
+            padding: 0;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .bill-paper {
             background: white;
             border-radius: 24px;
-            border: none;
-            padding: 40px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #cbd5e1;
+            padding: 50px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             font-size: 14px;
-            max-width: 1200px;
+            max-width: 1600px;
             width: 100%;
             margin-right: auto;
+            color: #111827;
         }
 
         .bill-sidebar-panel {
@@ -255,8 +262,8 @@
 
         .invoice-brand-text span {
             font-size: 0.9rem;
-            color: #94a3b8;
-            font-weight: 500;
+            color: #000000;
+            font-weight: 400;
             display: block;
             text-align: center;
         }
@@ -326,27 +333,27 @@
         }
 
         .party-label {
-            font-size: 0.7rem;
-            font-weight: 700;
+            font-size: 0.95rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #94a3b8;
-            margin-bottom: 2px;
+            letter-spacing: 0.05em;
+            color: #111827;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
         .party-name {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 6px;
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #000;
+            margin-bottom: 4px;
         }
 
         .party-detail {
-            font-size: 0.825rem;
-            color: #64748b;
+            font-size: 0.9rem;
+            color: #111827;
             line-height: 1.6;
         }
 
@@ -363,9 +370,9 @@
         }
 
         .items-section-header h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #1e293b;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #111827;
         }
 
         .add-item-btn {
@@ -397,14 +404,14 @@
 
         .items-table thead th {
             text-align: center;
-            padding: 8px 6px;
-            font-size: 0.58rem;
+            padding: 6px 4px;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: #374151;
-            font-weight: 700;
+            color: #111827;
+            font-weight: 400;
             background: #f3f4f6;
-            border: 1px solid #d1d5db;
+            border: 1px solid #94a3b8;
         }
 
         .items-table thead th:last-child {
@@ -412,7 +419,7 @@
         }
 
         .items-table tbody td {
-            padding: 7px 6px;
+            padding: 4px 5px;
             font-size: 0.7rem;
             border: 1px solid #e5e7eb;
             vertical-align: middle;
@@ -421,7 +428,7 @@
         }
 
         .items-table .amount-col {
-            font-weight: 700;
+            font-weight: 400;
             color: #1e293b;
         }
 
@@ -514,7 +521,7 @@
 
 
         .items-table tbody td {
-            padding: 10px 8px;
+            padding: 4px 5px;
             font-size: 0.875rem;
             border-bottom: 1px solid #f1f5f9;
             vertical-align: middle;
@@ -542,12 +549,12 @@
 
         .items-table .tax-col {
             font-size: 0.75rem;
-            color: #64748b;
+            color: #111827;
         }
 
         .item-input {
             width: 100%;
-            padding: 4px 5px;
+            padding: 2px 3px;
             border: 1px solid #d1d5db;
             border-radius: 4px;
             font-size: 0.68rem;
@@ -578,7 +585,7 @@
         /* Read-only cell text style */
         .item-cell {
             display: block;
-            padding: 3px 4px;
+            padding: 2px 3px;
             font-size: 0.68rem;
             color: #1e293b;
             white-space: normal;
@@ -715,11 +722,11 @@
 
         .bill-footer-block label {
             display: block;
-            font-size: 0.7rem;
-            font-weight: 700;
+            font-size: 0.95rem;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            color: #94a3b8;
+            color: #111827;
             margin-bottom: 8px;
         }
 
@@ -1154,6 +1161,7 @@
             .items-table thead th {
                 background-color: #f3f4f6 !important;
                 color: #374151 !important;
+                font-weight: 400 !important;
                 border: 1px solid #d1d5db !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -1194,6 +1202,14 @@
 
         .toast.error {
             background: #ef4444;
+        }
+
+        .toast.info {
+            background: #3b82f6;
+        }
+
+        .toast.warning {
+            background: #f59e0b;
         }
 
         /* ---- Item Edit Modal ---- */
@@ -1317,6 +1333,76 @@
         .item-row:hover td {
             background: #f8fafc;
         }
+
+        @media print {
+            @page {
+                size: portrait;
+                margin: 20mm 10mm;
+            }
+
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            aside,
+            .sidebar,
+            .page-header,
+            .header-actions,
+            #del-rail,
+            .floating-sidebar,
+            #action-sidebar {
+                display: none !important;
+            }
+
+            .main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            .bill-paper {
+                box-shadow: none !important;
+                border: 1px solid #94a3b8 !important;
+                padding: 40px !important;
+                margin: 0 auto !important;
+                width: 100% !important;
+            }
+
+            .bill-layout {
+                display: block !important;
+            }
+
+            .items-table {
+                table-layout: fixed !important;
+                width: 100% !important;
+                border-collapse: collapse !important;
+                margin: 15px 0 !important;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 4px 2px !important;
+                font-size: 8pt !important;
+                word-wrap: break-word !important;
+                overflow: hidden !important;
+                border: 1px solid #94a3b8 !important;
+            }
+
+            .items-table th {
+                background-color: #f3f4f6 !important;
+                color: #000 !important;
+                font-weight: 600 !important;
+                text-align: center !important;
+            }
+
+        }
+
+
     </style>
 </head>
 
@@ -1332,20 +1418,18 @@
             </div>
             <div class="header-actions">
                 <a href="/billing-app/api/Dashboard" class="btn-outline">
-                    <i class="fa-solid fa-arrow-left"></i> Back
+                    Back
                 </a>
                 <button class="btn-outline" onclick="clearBill()">
-                    <i class="fa-solid fa-rotate-left"></i> Reset
+                    Reset
                 </button>
-                <button class="btn-outline" onclick="window.print()">
-                    <i class="fa-solid fa-print"></i> Print
-                </button>
+
                 <button class="btn-outline" id="saveQuotationBtn" onclick="saveBill('DRAFT')"
                     style="border-color: #6366f1; color: #6366f1;">
-                    <i class="fa-solid fa-file-lines"></i> Save as Quotation
+                    Save as Quotation
                 </button>
                 <button class="btn-primary-action" id="finalizeBillBtn" onclick="saveBill('FINAL')">
-                    <i class="fa-solid fa-file-circle-check"></i> Finalize Invoice
+                    Finalize Invoice
                 </button>
             </div>
         </div>
@@ -1365,17 +1449,18 @@
                                     th:text="${userFullName != null and userFullName != '' ? userFullName : 'Your Business'}">
                                     Your Business</h2>
                                 <div id="businessTypeDisplay"
-                                    style="font-size:0.95rem;color:#64748b;margin-bottom:4px;">
+                                    style="font-size:0.95rem;color:#000000;font-weight:400;margin-bottom:4px;">
                                     Company</div>
-                                <div id="businessAddressDisplay" style="font-size:0.9rem;color:#334155;">Company address
+                                <div id="businessAddressDisplay"
+                                    style="font-size:0.9rem;color:#000000;font-weight:400;">Company address
                                     goes here</div>
                                 <div
-                                    style="margin-top:6px;font-size:0.85rem;color:#334155;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+                                    style="font-size:0.9rem;color:#000000;font-weight:400;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
                                     <span id="businessGstDisplay"></span>
                                     <span id="businessAdCode"></span>
                                 </div>
                                 <div
-                                    style="margin-top:2px;font-size:0.85rem;color:#334155;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+                                    style="font-size:0.9rem;color:#000000;font-weight:400;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
                                     <span id="businessIecCode"></span>
                                     <span id="businessPan"></span>
                                 </div>
@@ -1398,20 +1483,12 @@
                     <!-- From / To -->
                     <div class="party-grid">
                         <div class="party-card no-bg">
-                            <div class="party-label"><i class="fa-solid fa-file-invoice"
-                                    style="margin-right: 6px; color: #6366f1;"></i> Bill To</div>
+                            <div class="party-label"> Bill To</div>
                             <div class="party-name" id="toName">—</div>
                             <div class="party-detail" id="toBusinessDisplay"></div>
-                            <div class="party-detail" id="toAddress"><i class="fa-solid fa-location-dot"
-                                    style="margin-right: 6px; color: #6366f1;"></i>Add recipient details in the sidebar
-                                →
+                            <div class="party-detail" id="toAddress">Add recipient details in the sidebar
                             </div>
-                            <div class="party-detail" id="toGST"><i class="fa-solid fa-file-invoice"
-                                    style="margin-right: 6px; color: #6366f1;"></i>GSTIN: </div>
-                            <div class="party-detail" id="toPhoneDisplay"><i class="fa-solid fa-phone"
-                                    style="margin-right: 6px; color: #6366f1;"></i>Phone: </div>
-                            <div class="party-detail" id="toEmailDisplay"><i class="fa-solid fa-envelope"
-                                    style="margin-right: 6px; color: #6366f1;"></i>Email: </div>
+                            <div class="party-detail" id="toGST">GSTIN: </div>
                             <div class="party-detail" id="toADDisplay"></div>
                             <div class="party-detail" id="toIECDisplay"></div>
                             <div class="party-detail" id="toPANDisplay"></div>
@@ -1422,7 +1499,7 @@
                     <!-- Items Table -->
                     <div class="items-section" style="overflow: visible;">
                         <div class="items-section-header">
-                            <h3><i class="fa-solid fa-list-check" style="color: #6366f1;"></i> &nbsp;Invoice Services
+                            <h3>Invoice Services
                             </h3>
                             <div style="display: flex; gap: 8px;">
                                 <div class="stock-search-wrapper">
@@ -1436,14 +1513,14 @@
                         <table class="items-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 5%; text-align: center;">S.No.</th>
-                                    <th style="width: 17%;">Service Name</th>
-                                    <th style="width: 15%;">SAC Code</th>
-                                    <th style="width: 15%;">Rate</th>
-                                    <th style="width: 10%;">CGST%</th>
-                                    <th style="width: 10%;">SGST%</th>
-                                    <th style="width: 10%;">IGST%</th>
-                                    <th style="width: 18%;">Amount</th>
+                                    <th style="width: 8%; text-align: center;">#</th>
+                                    <th style="width: 14%; text-align: center;">Service Name</th>
+                                    <th style="width: 8%; text-align: center;">SAC Code</th>
+                                    <th style="width: 15%; text-align: center;">Rate</th>
+                                    <th style="width: 10%; text-align: center; line-height: 1.2;">CGST<br>%</th>
+                                    <th style="width: 10%; text-align: center; line-height: 1.2;">SGST<br>%</th>
+                                    <th style="width: 10%; text-align: center; line-height: 1.2;">IGST<br>%</th>
+                                    <th style="width: 25%; text-align: center;">Amount</th>
                                 </tr>
                             </thead>
                             <tbody id="itemsBody">
@@ -1515,16 +1592,13 @@
                     <div class="party-grid"
                         style="margin-top: 32px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 24px; grid-template-columns: 1fr 1fr;">
                         <div class="party-card no-bg">
-                            <div class="party-label"><i class="fa-solid fa-building-columns"
-                                    style="margin-right: 6px; color: #6366f1;"></i> Bank Details</div>
+                            <div class="party-label"> Bank Details</div>
                             <div id="bankDetailsDisplay" class="party-detail">
                                 <!-- populated by renderBankList() -->
                             </div>
                         </div>
                         <div class="party-card no-bg" style="text-align: justify;">
-                            <div class="party-label" style="justify-content: flex-end;"><i
-                                    class="fa-solid fa-money-check-dollar"
-                                    style="margin-right: 6px; color: #6366f1;"></i>
+                            <div class="party-label" style="justify-content: flex-end;">
                                 Payment Instructions</div>
                             <div id="paymentInstructionsDisplay" class="party-detail"
                                 style="line-height: 1.3; white-space: pre-line;">Please quote invoice number in the
@@ -1549,8 +1623,8 @@
                         <!-- Terms & Conditions Preview -->
                         <div style="padding: 0; background: transparent; border: none;">
                             <h4
-                                style="font-size: 10px; text-transform: uppercase; color: #94a3b8; margin-bottom: 8px; font-weight: 800; letter-spacing: 0.1em;">
-                                <i class="fa-solid fa-file-contract" style="margin-right: 6px;"></i> Terms & Conditions
+                                style="font-size: 14px; text-transform: uppercase; color: #111827; margin-bottom: 8px; font-weight: 800; letter-spacing: 0.1em;">
+                                Terms & Conditions
                             </h4>
                             <div id="billTermsDisplay"
                                 style="font-size: 12px; color: #475569; line-height: 1.5; white-space: pre-line;">
@@ -1609,7 +1683,7 @@
 
                 <!-- Invoice Settings -->
                 <div class="sidebar-card">
-                    <h3><i class="fa-solid fa-gear" style="color: #6366f1;"></i> Invoice Essentials</h3>
+                    <h3> Invoice Essentials</h3>
                     <div class="form-field">
                         <label>Invoice Number</label>
                         <input type="text" id="invoiceNumber" value="" placeholder="INV-0001" style="flex:1" readonly>
@@ -1636,7 +1710,7 @@
 
                 <!-- From (Sender) Details -->
                 <div class="sidebar-card">
-                    <h3><i class="fa-solid fa-building" style="color: #0ea5e9;"></i> Seller Business Information</h3>
+                    <h3> Seller Business Information</h3>
                     <div class="form-field">
                         <label>Business Logo</label>
                         <input type="file" id="fromBusinessLogoFile" accept="image/*">
@@ -1715,7 +1789,7 @@
                 </div><!-- End Seller Profile -->
 
                 <div class="sidebar-card">
-                    <h3><i class="fa-solid fa-university" style="color: #6366f1;"></i> Banking & Financials</h3>
+                    <h3> Banking & Financials</h3>
                     <div class="form-field">
                         <div id="bankList" style="margin-bottom: 12px;"></div>
                         <div style="display:flex;gap:8px;margin-top:8px;">
@@ -1735,7 +1809,7 @@
 
                 <!-- To (Recipient) Details -->
                 <div class="sidebar-card">
-                    <h3><i class="fa-solid fa-user-tie" style="color: #f59e0b;"></i> Client Billing Information</h3>
+                    <h3> Client Billing Information</h3>
                     <div class="form-field">
                         <label>Recipient Name</label>
                         <input type="text" id="toRecipientName" placeholder="e.g. John Doe">
@@ -1798,7 +1872,7 @@
 
                 <!-- Terms & Conditions Entry -->
                 <div class="sidebar-card">
-                    <h3><i class="fa-solid fa-file-contract" style="color: #6366f1;"></i> Terms & Conditions</h3>
+                    <h3> Terms & Conditions</h3>
                     <div class="form-field">
                         <textarea id="billTerms" placeholder="Terms and conditions...">Payment is due upon receipt.
 Late payments may attract interest.
@@ -1808,7 +1882,7 @@ Goods once sold will not be taken back.</textarea>
 
                 <!-- Payment Instructions Entry -->
                 <div class="sidebar-card">
-                    <h3><i class="fa-solid fa-credit-card" style="color: #6366f1;"></i> Payment Instructions</h3>
+                    <h3> Payment Instructions</h3>
                     <div class="form-field">
                         <textarea id="paymentInstructions"
                             placeholder="Payment reference, bank wire advice, etc...">Please quote invoice number in the payment reference. For international transfers, please include all beneficiary details and use the provided IFSC/Swift code.</textarea>
@@ -1817,7 +1891,7 @@ Goods once sold will not be taken back.</textarea>
 
                 <!-- Payment -->
                 <div class="sidebar-card">
-                    <h3><i class="fa-solid fa-indian-rupee-sign" style="color: #10b981;"></i> Payment & Settlement</h3>
+                    <h3> Payment & Settlement</h3>
                     <div class="form-field">
                         <label>Advance Paid</label>
                         <input type="number" id="advancePaid" value="0" min="0" step="0.01">
@@ -1839,7 +1913,7 @@ Goods once sold will not be taken back.</textarea>
                 <!-- Tax Summary -->
                 <div class="sidebar-card"
                     style="background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border-color: #ddd6fe;">
-                    <h3 style="color: #6366f1;"><i class="fa-solid fa-calculator"></i> Tax Summary</h3>
+                    <h3 style="color: #6366f1;"> Tax Summary</h3>
                     <div class="tax-summary-row">
                         <span>Subtotal</span>
                         <span id="sideSubtotal">₹0.00</span>
@@ -1978,6 +2052,14 @@ Goods once sold will not be taken back.</textarea>
                 loadBillForEditing(editInv);
             } else {
                 fetchNextInvoiceNumber();
+                // Pre-fill signup business logo if available for new bills
+                /*[# th:if="${signupBusinessLogo != null}"]*/
+                let signupLogo = /*[[${signupBusinessLogo}]]*/ '';
+                if (signupLogo) {
+                    const idx = signupLogo.indexOf('base64,');
+                    window.__businessLogoBase64 = idx >= 0 ? signupLogo.substring(idx + 7) : signupLogo;
+                }
+                /*[/]*/
             }
 
             // Initial render
@@ -2000,6 +2082,16 @@ Goods once sold will not be taken back.</textarea>
                 document.getElementById('invoiceNumber').value = b.invoiceNumber;
                 if (b.invoiceDate) document.getElementById('invoiceDate').value = b.invoiceDate;
                 if (b.dueDate) document.getElementById('dueDate').value = b.dueDate;
+                
+                if (b.invoiceType) {
+                    const typeSel = document.getElementById('invoiceType');
+                    for (let i = 0; i < typeSel.options.length; i++) {
+                        if (typeSel.options[i].text.toUpperCase() === b.invoiceType.toUpperCase()) {
+                            typeSel.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
 
                 // Business Info (often stored in the bill snapshot)
                 const biz = b.businessBillingInfo || {};
@@ -2138,20 +2230,27 @@ Goods once sold will not be taken back.</textarea>
             // If item is Tax Exempt, all GST rates must be 0 regardless of stored values
             const isTaxable = stock.taxable !== false; // defaults to taxable if undefined
 
-            billItems.push({
-                id: nextItemId++,
-                itemName: stock.itemName,
-                itemDescription: stock.itemDescription || '',
-                hsnCode: stock.sacCode || '',
-                quantity: 1,
-                unit: stock.unit || 'Service',
-                unitPrice: stock.unitPrice || 0,
-                cgstRate: isTaxable ? (stock.cgstRate || 0) : 0,
-                sgstRate: isTaxable ? (stock.sgstRate || 0) : 0,
-                igstRate: isTaxable ? (stock.igstRate || 0) : 0,
-                fromStock: true,
-                stockId: stock.id
-            });
+            // Check if service already exists in bill
+            const existingItem = billItems.find(i => i.stockId === stock.id);
+            if (existingItem) {
+                showToast(`ℹ️ "${stock.itemName}" is already in the list.`, 'info');
+            } else {
+                billItems.push({
+                    id: nextItemId++,
+                    itemName: stock.itemName,
+                    itemDescription: stock.itemDescription || '',
+                    hsnCode: stock.sacCode || '',
+                    quantity: 1,
+                    unit: stock.unit || 'Service',
+                    unitPrice: stock.unitPrice || 0,
+                    cgstRate: isTaxable ? (stock.cgstRate || 0) : 0,
+                    sgstRate: isTaxable ? (stock.sgstRate || 0) : 0,
+                    igstRate: isTaxable ? (stock.igstRate || 0) : 0,
+                    fromStock: true,
+                    stockId: stock.id
+                });
+                showToast(`Added "${stock.itemName}" to list`, 'success');
+            }
 
             searchInput.value = '';
             stockDropdown.classList.remove('show');
@@ -2186,9 +2285,9 @@ Goods once sold will not be taken back.</textarea>
                     <td><span class="item-cell">${escapeHtml(item.itemName) || '—'}</span></td>
                     <td><span class="item-cell muted">${escapeHtml(item.hsnCode) || '—'}</span></td>
                     <td><span class="item-cell right">₹${Number(item.unitPrice).toFixed(2)}</span></td>
-                    <td><span class="item-cell center muted">${item.cgstRate}%</span></td>
-                    <td><span class="item-cell center muted">${item.sgstRate}%</span></td>
-                    <td><span class="item-cell center muted">${item.igstRate}%</span></td>
+                    <td><span class="item-cell center muted">${Number(item.cgstRate || 0).toFixed(1)}<br>%</span></td>
+                    <td><span class="item-cell center muted">${Number(item.sgstRate || 0).toFixed(1)}<br>%</span></td>
+                    <td><span class="item-cell center muted">${Number(item.igstRate || 0).toFixed(1)}<br>%</span></td>
                     <td class="amount-col" id="amount-${item.id}">₹0.00</td>
                 </tr>
             `).join('');
@@ -2467,8 +2566,6 @@ Goods once sold will not be taken back.</textarea>
             const locality = fromLocalityParts.filter(x => x && x.trim()).join(', ');
             if (locality) fromDetail += (fromDetail ? ',\n' : '') + locality;
             if (fromCountry) fromDetail += (fromDetail ? ', ' : '') + fromCountry;
-            if (fromPh) fromDetail += (fromDetail ? '\n' : '') + fromPh;
-            if (fromEm) fromDetail += (fromDetail ? '\n' : '') + fromEm;
 
             const fromAddressEl = $('fromAddress'); if (fromAddressEl) fromAddressEl.textContent = fromDetail || 'Add your business details →';
             const fromGstEl = $('fromGST'); if (fromGstEl) fromGstEl.textContent = fromGST ? 'GSTIN: ' + fromGST.toUpperCase() : '';
@@ -2476,25 +2573,24 @@ Goods once sold will not be taken back.</textarea>
             // Header snapshot fields
             const businessAddressDisplayEl = $('businessAddressDisplay');
             if (businessAddressDisplayEl) {
-                let addrStr = (fromStreet || '') + (locality ? ', ' + locality : '') + (fromCountry ? (', ' + fromCountry) : '');
-                businessAddressDisplayEl.innerHTML = addrStr ? `<i class="fa-solid fa-location-dot" style="margin-right: 6px; color: #6366f1;"></i> ${addrStr}` : '';
+                businessAddressDisplayEl.innerHTML = fromDetail ? fromDetail : '';
             }
             const businessTypeDisplayEl = $('businessTypeDisplay'); if (businessTypeDisplayEl) businessTypeDisplayEl.textContent = fromType || '';
             const businessGstDisplayEl = $('businessGstDisplay');
             if (businessGstDisplayEl) {
-                businessGstDisplayEl.innerHTML = fromGST ? `<i class="fa-solid fa-id-card" style="margin-right: 6px; color: var(--primary);"></i> GSTIN: ${fromGST.toUpperCase()}` : '';
+                businessGstDisplayEl.innerHTML = fromGST ? `GSTIN: ${fromGST.toUpperCase()}` : '';
             }
             const businessAdCodeEl = $('businessAdCode');
             if (businessAdCodeEl) {
-                businessAdCodeEl.innerHTML = fromAd ? `<i class="fa-solid fa-file-signature" style="margin-right: 6px; color: var(--primary);"></i> AD Code: ${fromAd}` : '';
+                businessAdCodeEl.innerHTML = fromAd ? `AD Code: ${fromAd}` : '';
             }
             const businessIecCodeEl = $('businessIecCode');
             if (businessIecCodeEl) {
-                businessIecCodeEl.innerHTML = fromIec ? `<i class="fa-solid fa-earth-americas" style="margin-right: 6px; color: var(--primary);"></i> IEC Code: ${fromIec}` : '';
+                businessIecCodeEl.innerHTML = fromIec ? `IEC Code: ${fromIec}` : '';
             }
             const businessPanEl = $('businessPan');
             if (businessPanEl) {
-                businessPanEl.innerHTML = fromPan ? `<i class="fa-solid fa-id-card-clip" style="margin-right: 6px; color: var(--primary);"></i> PAN No.: ${fromPan.toUpperCase()}` : '';
+                businessPanEl.innerHTML = fromPan ? `PAN No.: ${fromPan.toUpperCase()}` : '';
             }
 
 
@@ -2525,7 +2621,7 @@ Goods once sold will not be taken back.</textarea>
             const toPAN = $('toPANNumber') ? $('toPANNumber').value : '';
 
             const toNameEl = $('toName'); if (toNameEl) toNameEl.textContent = toName || '—';
-            const toBusinessEl = $('toBusinessDisplay'); if (toBusinessEl) toBusinessEl.innerHTML = toBusiness ? (`<i class="fa-solid fa-building" style="margin-right: 6px; color: #6366f1;"></i> ` + toBusiness) : '';
+            const toBusinessEl = $('toBusinessDisplay'); if (toBusinessEl) toBusinessEl.innerHTML = toBusiness ? toBusiness : '';
             let toDetail = '';
             // if (toBusiness) toDetail += toBusiness + '\n'; // Removed to avoid duplication with toName
 
@@ -2544,14 +2640,14 @@ Goods once sold will not be taken back.</textarea>
 
             toDetail += addr.join(', ');
 
-            const toAddressEl = $('toAddress'); if (toAddressEl) toAddressEl.innerHTML = toDetail ? (`<i class="fa-solid fa-location-dot" style="margin-right: 6px; color: #6366f1;"></i> ` + toDetail) : (`<i class="fa-solid fa-location-dot" style="margin-right: 6px; color: #6366f1;"></i> Add recipient details in the sidebar →`);
-            const toPhoneDisplayEl = $('toPhoneDisplay'); if (toPhoneDisplayEl) toPhoneDisplayEl.innerHTML = toPh ? ('<i class="fa-solid fa-phone" style="margin-right: 6px; color: #6366f1;"></i> Phone: ' + toPh) : '';
-            const toEmailDisplayEl = $('toEmailDisplay'); if (toEmailDisplayEl) toEmailDisplayEl.innerHTML = toEm ? ('<i class="fa-solid fa-envelope" style="margin-right: 6px; color: #6366f1;"></i> Email: ' + toEm) : '';
-            const toGstEl = $('toGST'); if (toGstEl) toGstEl.innerHTML = toGST ? ('<i class="fa-solid fa-id-card" style="margin-right: 6px; color: #6366f1;"></i> GSTIN: ' + toGST.toUpperCase()) : '';
+            const toAddressEl = $('toAddress'); if (toAddressEl) toAddressEl.innerHTML = toDetail ? toDetail : `Add recipient details in the sidebar`;
+            const toPhoneDisplayEl = $('toPhoneDisplay'); if (toPhoneDisplayEl) toPhoneDisplayEl.innerHTML = toPh ? ('Phone: ' + toPh) : '';
+            const toEmailDisplayEl = $('toEmailDisplay'); if (toEmailDisplayEl) toEmailDisplayEl.innerHTML = toEm ? ('Email: ' + toEm) : '';
+            const toGstEl = $('toGST'); if (toGstEl) toGstEl.innerHTML = toGST ? ('GSTIN: ' + toGST.toUpperCase()) : 'GSTIN: ';
 
-            const toADDisplayEl = $('toADDisplay'); if (toADDisplayEl) toADDisplayEl.innerHTML = toAD ? (`<i class="fa-solid fa-file-signature" style="margin-right: 6px; color: #6366f1;"></i> AD Code: ` + toAD) : '';
-            const toIECDisplayEl = $('toIECDisplay'); if (toIECDisplayEl) toIECDisplayEl.innerHTML = toIEC ? (`<i class="fa-solid fa-earth-americas" style="margin-right: 6px; color: #6366f1;"></i> IEC Code: ` + toIEC) : '';
-            const toPANDisplayEl = $('toPANDisplay'); if (toPANDisplayEl) toPANDisplayEl.innerHTML = toPAN ? (`<i class="fa-solid fa-id-card-clip" style="margin-right: 6px; color: #6366f1;"></i> PAN No.: ` + toPAN.toUpperCase()) : '';
+            const toADDisplayEl = $('toADDisplay'); if (toADDisplayEl) toADDisplayEl.innerHTML = toAD ? (`AD Code: ` + toAD) : '';
+            const toIECDisplayEl = $('toIECDisplay'); if (toIECDisplayEl) toIECDisplayEl.innerHTML = toIEC ? (`IEC Code: ` + toIEC) : '';
+            const toPANDisplayEl = $('toPANDisplay'); if (toPANDisplayEl) toPANDisplayEl.innerHTML = toPAN ? (`PAN No.: ` + toPAN.toUpperCase()) : '';
 
             // Terms
             const terms = $('billTerms') ? $('billTerms').value : '';
@@ -2594,9 +2690,9 @@ Goods once sold will not be taken back.</textarea>
                     <div style="margin-bottom:4px;">
                         <div class="party-name">${escapeHtml(b.holder || '')}</div>
                         <div class="party-detail" style="line-height: 1.5;">
-                            <i class="fa-solid fa-university" style="margin-right: 6px; width: 14px; color: #6366f1;"></i> ${escapeHtml(b.bank || '')}<br>
-                            <i class="fa-solid fa-credit-card" style="margin-right: 6px; width: 14px; color: #6366f1;"></i> A/C: ${escapeHtml(b.account || '')}<br>
-                            <i class="fa-solid fa-fingerprint" style="margin-right: 6px; width: 14px; color: #6366f1;"></i> IFSC: ${escapeHtml(b.ifsc || '')}${b.branch ? '<br><i class="fa-solid fa-location-dot" style="margin-right: 6px; width: 14px; color: #6366f1;"></i> ' + escapeHtml(b.branch) : ''}
+                            ${escapeHtml(b.bank || '')}<br>
+                            A/C: ${escapeHtml(b.account || '')}<br>
+                            IFSC: ${escapeHtml(b.ifsc || '')}${b.branch ? '<br>' + escapeHtml(b.branch) : ''}
                         </div>
                     </div>
                 `).join('');
@@ -2638,13 +2734,10 @@ Goods once sold will not be taken back.</textarea>
             const qBtn = document.getElementById('saveQuotationBtn');
             const fBtn = document.getElementById('finalizeBillBtn');
 
-            qBtn.disabled = true;
-            fBtn.disabled = true;
-
             if (status === 'FINAL') {
-                fBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Finalizing...';
+                Utils.setLoading(fBtn);
             } else {
-                qBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+                Utils.setLoading(qBtn);
             }
 
             const payload = {
@@ -2652,6 +2745,7 @@ Goods once sold will not be taken back.</textarea>
                 invoiceDate: document.getElementById('invoiceDate').value,
                 dueDate: document.getElementById('dueDate').value,
                 status: status,
+                invoiceType: document.getElementById('invoiceType') && document.getElementById('invoiceType').options ? document.getElementById('invoiceType').options[document.getElementById('invoiceType').selectedIndex].text : 'Tax Invoice',
                 billType: 'SERVICE',
                 businessName: document.getElementById('fromBusinessName').value,
                 businessStreetAddress: document.getElementById('fromBusinessAddress').value,
@@ -2685,7 +2779,13 @@ Goods once sold will not be taken back.</textarea>
                 amountInWords: document.getElementById('amountInWordsDisplay').textContent,
                 advancedPayment: document.getElementById('advancePaid').value,
                 balancePayment: (parseFloat(document.getElementById('grandTotalDisplay').textContent.replace('₹', '')) - parseFloat(document.getElementById('advancePaid').value || 0)).toFixed(2),
-                bankDetails: window.__bankDetails || [],
+                bankDetails: (window.__bankDetails || []).map(b => ({
+                    accountHolderName: b.holder,
+                    bankName: b.bank,
+                    accountNumber: b.account,
+                    ifscCode: b.ifsc,
+                    branchName: b.branch
+                })),
                 advancedPayment: document.getElementById('advancePaid').value,
                 items: billItems.map(item => ({
                     itemName: item.itemName,
@@ -2725,10 +2825,8 @@ Goods once sold will not be taken back.</textarea>
                 showToast('Could not connect to server.', 'error');
             }
 
-            qBtn.disabled = false;
-            fBtn.disabled = false;
-            qBtn.innerHTML = '<i class="fa-solid fa-file-lines"></i> Save as Quotation';
-            fBtn.innerHTML = '<i class="fa-solid fa-file-circle-check"></i> Finalize Invoice';
+            Utils.stopLoading(qBtn);
+            Utils.stopLoading(fBtn);
         }
 
         // ======================== CLEAR BILL ========================
@@ -2777,7 +2875,12 @@ Goods once sold will not be taken back.</textarea>
         function showToast(message, type) {
             const toast = document.getElementById('toast');
             toast.className = 'toast ' + type;
-            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            let iconClass = 'fa-exclamation-circle';
+            if (type === 'success') iconClass = 'fa-check-circle';
+            else if (type === 'info') iconClass = 'fa-info-circle';
+            else if (type === 'warning') iconClass = 'fa-triangle-exclamation';
+
+            toast.innerHTML = `<i class="fa-solid ${iconClass}"></i> ${message}`;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3500);
         }
@@ -2795,6 +2898,8 @@ Goods once sold will not be taken back.</textarea>
                 console.error('Failed to fetch next invoice number:', e);
             }
         }
+
+
     </script>
 </body>
 

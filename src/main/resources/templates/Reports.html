@@ -90,6 +90,16 @@
             transform: translateY(-2px);
         }
 
+        .btn-view.edit-quotation {
+            color: #6366f1;
+            background: #eef2ff;
+        }
+
+        .btn-view.edit-quotation:hover {
+            background: #6366f1 !important;
+            color: white !important;
+        }
+
         .btn-share {
             padding: 8px;
             border-radius: 10px;
@@ -390,7 +400,7 @@
                     <i class="fa-solid fa-file-lines"></i>
                 </div>
                 <div class="reports-stat-info">
-                    <label>Total Bills</label>
+                    <label>Total Invoices</label>
                     <div class="value" id="cardTotalBills">0</div>
                 </div>
             </div>
@@ -399,7 +409,7 @@
                     <i class="fa-solid fa-check-double"></i>
                 </div>
                 <div class="reports-stat-info">
-                    <label>Final Bills</label>
+                    <label>Final Invoices</label>
                     <div class="value" id="cardFinalBills">0</div>
                 </div>
             </div>
@@ -408,7 +418,7 @@
                     <i class="fa-solid fa-pen-ruler"></i>
                 </div>
                 <div class="reports-stat-info">
-                    <label>Draft Bills</label>
+                    <label>Draft Invoices</label>
                     <div class="value" id="cardDraftBills">0</div>
                 </div>
             </div>
@@ -438,11 +448,12 @@
             <div
                 style="margin-bottom: 20px; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
                 <h2 id="reportTableHeading"
-                    style="font-size: 1.3rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                    style="font-size: 1.3rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 10px; padding-left: 15px;">
                     <i class="fa-solid fa-file-invoice" style="color: #6366f1;"></i>
                     Invoice Reports
                 </h2>
-                <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;" id="tableResultCount">Showing all
+                <div style="font-size: 0.85rem; color: #64748b; font-weight: 500; padding-right: 15px;"
+                    id="tableResultCount">Showing all
                     invoices</div>
             </div>
             <table>
@@ -581,7 +592,7 @@
                             <i class="fa-solid fa-eye"></i>
                         </a>
                         ${bill.status !== 'FINAL' ? `
-                            <a href="/billing-app/api/GenerateBill?invoice=${bill.invoiceNumber}" class="btn-view" style="color: #6366f1; background: #eef2ff;" title="Edit Quotation">
+                            <a href="/billing-app/api/GenerateBill?invoice=${bill.invoiceNumber}" class="btn-view edit-quotation" title="Edit Quotation">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
                         ` : ''}

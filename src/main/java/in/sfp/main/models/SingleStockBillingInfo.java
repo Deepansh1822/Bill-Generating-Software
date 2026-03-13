@@ -1,5 +1,7 @@
 package in.sfp.main.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,7 +33,9 @@ public class SingleStockBillingInfo {
     private double igstAmount;
     private double totalItemAmount;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_billing_info_id")
+    @JsonBackReference("bill-items")
     private TotalStockBillingInfo stockBillingInfo;
 }

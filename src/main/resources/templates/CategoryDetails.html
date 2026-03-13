@@ -773,7 +773,7 @@
                                     <a href="/billing-app/api/EditStock/${s.id}" class="action-btn edit-btn" title="Edit Item">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <button onclick="deleteStock(${s.id})" class="action-btn delete-btn" title="Delete Item">
+                                    <button onclick="deleteStock(${s.id}, event)" class="action-btn delete-btn" title="Delete Item">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 ` : ''}
@@ -805,11 +805,24 @@
 
 
 
-        function deleteStock(id) {
-            if (confirm('Are you sure you want to delete this item?')) {
-                fetch(`${apiBase}/deleteStock/${id}`, { method: 'DELETE' }).then(() => loadCategoryDetails());
+        const deleteStock = async (id, event) => {
+            if (confirm('Delete this entry?')) {
+                const btn = event.currentTarget;
+                Utils.setLoading(btn);
+                try {
+                    const res = await fetch(`${apiBase}/deleteStock/${id}`, { method: 'DELETE' });
+                    if (res.ok) {
+                        loadCategoryDetails();
+                    } else {
+                        alert("Failed to delete stock.");
+                    }
+                } catch (err) {
+                    alert("An error occurred.");
+                } finally {
+                    Utils.stopLoading(btn);
+                }
             }
-        }
+        };
 
         const backBtn = document.getElementById('backBtn');
         if (backBtn) {

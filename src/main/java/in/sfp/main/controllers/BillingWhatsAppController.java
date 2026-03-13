@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,9 +31,18 @@ public class BillingWhatsAppController {
     private WhatsAppService whatsappService;
 
     @PostMapping("/sendInvoice/{billId}")
+    @Transactional
     public ResponseEntity<?> sendInvoiceWhatsApp(@PathVariable Long billId, Authentication auth) {
         try {
             TotalStockBillingInfo bill = reportService.getBillDetailById(billId);
+
+            // Helper to parse numbers safely from formatted strings
+            java.util.function.Function<String, Double> safeParse = (s) -> {
+                if (s == null || s.isBlank()) return 0.0;
+                try {
+                    return Double.parseDouble(s.replaceAll("[^\\d.]", ""));
+                } catch (Exception e) { return 0.0; }
+            };
 
             // Prepare data for PDF (same logic as Email)
             Map<String, Object> model = new HashMap<>();
@@ -48,7 +59,9 @@ public class BillingWhatsAppController {
             }
             model.put("subtotal", subtotal);
             model.put("totalTax", totalTax);
-            model.put("grandTotal", Double.parseDouble(bill.getStockTotalAmount()));
+            model.put("grandTotal", safeParse.apply(bill.getStockTotalAmount()));
+            model.put("advancePaid", safeParse.apply(bill.getAdvancedPayment()));
+            model.put("balanceDue", safeParse.apply(bill.getBalancePayment()));
 
             List<Map<String, String>> parsedBanks = new ArrayList<>();
             if (bill.getBusinessBillingInfo() != null && bill.getBusinessBillingInfo().getBankDetails() != null) {
@@ -95,6 +108,34 @@ public class BillingWhatsAppController {
             e.printStackTrace();
             return ResponseEntity.internalServerError()
                     .body(Map.of("message", "WhatsApp delivery failed: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/sendInvoiceWithFile/{billId}")
+    @Transactional
+    public ResponseEntity<?> sendInvoiceWhatsAppWithFile(@PathVariable Long billId, 
+                                                       @RequestParam("file") MultipartFile file,
+                                                       Authentication auth) {
+        try {
+            TotalStockBillingInfo bill = reportService.getBillDetailById(billId);
+            
+            String recipientPhone = (bill.getRecipientBillingInfo() != null
+                    && bill.getRecipientBillingInfo().getRecipientMobileNumber() != null)
+                            ? bill.getRecipientBillingInfo().getRecipientMobileNumber()
+                            : bill.getBillByMobileNumber();
+
+            if (recipientPhone == null || recipientPhone.isBlank()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Recipient phone not found."));
+            }
+
+            recipientPhone = recipientPhone.replaceAll("[^0-9]", "");
+            if (recipientPhone.length() == 10) recipientPhone = "91" + recipientPhone;
+
+            whatsappService.sendInvoicePdf(recipientPhone, file.getBytes(), file.getOriginalFilename());
+
+            return ResponseEntity.ok(Map.of("message", "WhatsApp PDF sent successfully."));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("message", "Failed: " + e.getMessage()));
         }
     }
 }
