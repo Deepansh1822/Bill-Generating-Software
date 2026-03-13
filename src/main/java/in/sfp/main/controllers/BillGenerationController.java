@@ -52,8 +52,8 @@ public class BillGenerationController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String currentUser = auth.getName();
 
-            // 0. Check for Existing Bill for Update logic
-            TotalStockBillingInfo totalBilling = stockBillingRepo.findByInvoiceNumber(request.getInvoiceNumber())
+            // 0. Check for Existing Bill for Update logic (Scoped to current user)
+            TotalStockBillingInfo totalBilling = stockBillingRepo.findByInvoiceNumberAndStockCreatedBy(request.getInvoiceNumber(), currentUser)
                     .orElse(null);
 
             if (totalBilling != null) {
@@ -191,21 +191,27 @@ public class BillGenerationController {
             // A. Restore Stock: If we are updating an existing draft, "return" its items to
             // inventory first
             for (SingleStockBillingInfo oldItem : totalBilling.getBillItems()) {
-                StockInfo stock = stockRepo.findByItemNameAndCreatedBy(oldItem.getItemName(), currentUser);
-                if (stock != null && "PRODUCT".equalsIgnoreCase(stock.getStockType())) {
-                    stock.setAvailableQuantity(stock.getAvailableQuantity() + oldItem.getQuantity());
-                    stockRepo.save(stock);
+                List<StockInfo> stocks = stockRepo.findByItemNameAndCreatedBy(oldItem.getItemName(), currentUser);
+                if (!stocks.isEmpty()) {
+                    StockInfo stock = stocks.get(0); // Take the first match
+                    if ("PRODUCT".equalsIgnoreCase(stock.getStockType())) {
+                        stock.setAvailableQuantity(stock.getAvailableQuantity() + oldItem.getQuantity());
+                        stockRepo.save(stock);
+                    }
                 }
             }
 
             // B. Strict Mode Check: If finalizing, ensure we have enough physical stock
             if ("FINAL".equalsIgnoreCase(request.getStatus())) {
                 for (BillRequestDTO.BillItemDTO newItem : request.getItems()) {
-                    StockInfo stock = stockRepo.findByItemNameAndCreatedBy(newItem.getItemName(), currentUser);
-                    if (stock != null && "PRODUCT".equalsIgnoreCase(stock.getStockType())) {
-                        if (stock.getAvailableQuantity() < newItem.getQuantity()) {
-                            return ResponseEntity.badRequest().body("Insufficient stock for: " + newItem.getItemName()
-                                    + " (Available: " + stock.getAvailableQuantity() + ")");
+                    List<StockInfo> stocks = stockRepo.findByItemNameAndCreatedBy(newItem.getItemName(), currentUser);
+                    if (!stocks.isEmpty()) {
+                        StockInfo stock = stocks.get(0);
+                        if ("PRODUCT".equalsIgnoreCase(stock.getStockType())) {
+                            if (stock.getAvailableQuantity() < newItem.getQuantity()) {
+                                return ResponseEntity.badRequest().body("Insufficient stock for: " + newItem.getItemName()
+                                        + " (Available: " + stock.getAvailableQuantity() + ")");
+                            }
                         }
                     }
                 }
@@ -216,10 +222,13 @@ public class BillGenerationController {
 
             for (BillRequestDTO.BillItemDTO itemDto : request.getItems()) {
                 // C. Deduct Stock: Apply the new quantities to inventory
-                StockInfo stock = stockRepo.findByItemNameAndCreatedBy(itemDto.getItemName(), currentUser);
-                if (stock != null && "PRODUCT".equalsIgnoreCase(stock.getStockType())) {
-                    stock.setAvailableQuantity(stock.getAvailableQuantity() - itemDto.getQuantity());
-                    stockRepo.save(stock);
+                List<StockInfo> stocks = stockRepo.findByItemNameAndCreatedBy(itemDto.getItemName(), currentUser);
+                if (!stocks.isEmpty()) {
+                    StockInfo stock = stocks.get(0);
+                    if ("PRODUCT".equalsIgnoreCase(stock.getStockType())) {
+                        stock.setAvailableQuantity(stock.getAvailableQuantity() - itemDto.getQuantity());
+                        stockRepo.save(stock);
+                    }
                 }
 
                 SingleStockBillingInfo item = new SingleStockBillingInfo();
@@ -284,7 +293,7 @@ public class BillGenerationController {
                 .findFirst()
                 .orElse("CLIENT");
 
-        return stockBillingRepo.findByInvoiceNumber(invoiceNumber)
+        return stockBillingRepo.findByInvoiceNumberAndStockCreatedBy(invoiceNumber, email)
                 .map(bill -> {
                     // SEC-CHECK: Only ADMIN or the creator can view
                     if (!"ADMIN".equals(role) && !email.equalsIgnoreCase(bill.getStockCreatedBy())) {

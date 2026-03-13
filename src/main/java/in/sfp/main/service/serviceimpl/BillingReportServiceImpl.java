@@ -41,7 +41,11 @@ public class BillingReportServiceImpl implements BillingReportService {
     @Override
     @Transactional(readOnly = true)
     public TotalStockBillingInfo getBillDetailByInvoiceNumber(String invoiceNumber) {
-        TotalStockBillingInfo bill = stockRepo.findByInvoiceNumber(invoiceNumber)
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        String currentUser = auth != null ? auth.getName() : null;
+
+        TotalStockBillingInfo bill = stockRepo.findByInvoiceNumberAndStockCreatedBy(invoiceNumber, currentUser)
                 .orElseThrow(() -> new RuntimeException("Bill not found with Invoice: " + invoiceNumber));
 
         validateOwnership(bill);

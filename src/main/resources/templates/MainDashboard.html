@@ -197,21 +197,31 @@
 
         .module-card {
             background: var(--white);
-            padding: 40px;
+            padding: 30px 40px;
             border-radius: 24px;
             display: flex;
-            gap: 30px;
+            flex-direction: column;
+            gap: 0;
             align-items: flex-start;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
             transition: var(--transition);
             border: 1px solid rgba(241, 245, 249, 1);
+            cursor: pointer;
+            overflow: hidden;
         }
 
         .module-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
             border-color: rgba(2, 132, 199, 0.1);
+        }
+
+        .module-card-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            width: 100%;
         }
 
         .module-icon {
@@ -226,6 +236,74 @@
             font-size: 26px;
             flex-shrink: 0;
             box-shadow: inset 0 0 0 1px rgba(2, 132, 199, 0.1);
+        }
+
+        .module-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .module-card .expand-icon {
+            margin-left: auto;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--light);
+            color: var(--secondary);
+            transition: var(--transition);
+        }
+
+        .module-card.active .expand-icon {
+            transform: rotate(180deg);
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .module-details {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            padding-left: 95px;
+        }
+
+        .module-card.active .module-details {
+            max-height: 800px;
+            opacity: 1;
+            margin-top: 25px;
+            padding-bottom: 10px;
+        }
+
+        .module-details p {
+            color: var(--secondary);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .feature-tag-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .feature-tag {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .feature-tag i {
+            color: var(--primary);
+            font-size: 14px;
         }
 
         /* --- CTA Section --- */
@@ -1153,34 +1231,80 @@
             <span class="section-tag">Powerful Modules</span>
             <h2 class="section-title">Everything you need to succeed</h2>
 
+            <!-- Module 1 -->
             <div class="module-card">
-                <div class="module-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
-                <div>
-                    <h3>Stock & Inventory</h3>
-                    <p>Full control over your inventory with automated low-stock alerts and smart grouping. Categorize
-                        items into Groups for better organization and tracking.</p>
+                <div class="module-card-header">
+                    <div class="module-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                    <h3>Stock & Inventory Management</h3>
+                    <div class="expand-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                </div>
+                <div class="module-details">
+                    <p>Gain absolute control over your warehouse and store. Our smart inventory system tracks every single movement, ensuring you never run out of top-selling items or overstock slow-moving goods.</p>
+                    <div class="feature-tag-grid">
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Low Stock Smart Alerts</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Multi-Category Grouping</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Automated HSN/SAC Tracking</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Real-time Stock Sync</div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Module 2 -->
             <div class="module-card">
-                <div class="module-icon"><i class="fa-solid fa-file-invoice"></i></div>
-                <div>
-                    <h3>GST Ready Invoicing</h3>
-                    <p>Generate professional, GST-compliant invoices instantly. Handles CGST, SGST, and IGST
-                        automatically based on your customer's location.</p>
+                <div class="module-card-header">
+                    <div class="module-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                    <h3>GST-Compliant Billing</h3>
+                    <div class="expand-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                </div>
+                <div class="module-details">
+                    <p>Professionalism meets simplicity. Generate high-fidelity GST invoices in seconds. Whether it is B2B or B2C, our engine handles the complex tax calculations so you don't have to.</p>
+                    <div class="feature-tag-grid">
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> CGST, SGST & IGST Auto-Calc</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Multi-Currency Support</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Custom Thermal & A4 Prints</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Digital Signature Ready</div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Module 3 -->
             <div class="module-card">
-                <div class="module-icon"><i class="fa-solid fa-users-gear"></i></div>
-                <div>
-                    <h3>Client Management</h3>
-                    <p>Detailed client profiles with historical invoice tracking, unpaid balance monitoring, and
-                        professional quotation management.</p>
+                <div class="module-card-header">
+                    <div class="module-icon"><i class="fa-solid fa-users-gear"></i></div>
+                    <h3>Advanced CRM & Client Tracking</h3>
+                    <div class="expand-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                </div>
+                <div class="module-details">
+                    <p>Build lasting relationships with your customers. Keep a full history of transactions, preferences, and payment cycles in one unified dashboard.</p>
+                    <div class="feature-tag-grid">
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Outstanding Balance Alerts</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Client-wise Pricing Rules</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Bulk Email/WA Statements</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> KYC & GSTIN Verification</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 4 -->
+            <div class="module-card">
+                <div class="module-card-header">
+                    <div class="module-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                    <h3>Financial Analytics & Reports</h3>
+                    <div class="expand-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                </div>
+                <div class="module-details">
+                    <p>Make data-driven decisions. Our analytics engine distills complex transaction data into beautiful, easy-to-read charts and comprehensive financial reports.</p>
+                    <div class="feature-tag-grid">
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> P&L Statement Generation</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> GSTR-1 & GSTR-3B Ready</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Sales Performance Heatmaps</div>
+                        <div class="feature-tag"><i class="fa-solid fa-check-circle"></i> Customizable Report Filters</div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+
 
     <!-- ==================== Invoice Gallery Section ==================== -->
     <section class="invoice-gallery" id="invoice-gallery" style="padding: 100px 0; background: #ffffff;">
@@ -1411,34 +1535,6 @@
                         <li><i class="fa-solid fa-circle-check"></i> Custom branding</li>
                     </ul>
                     <a href="/billing-app/api/RequestAccess" class="pricing-plan-btn">Upgrade Now</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== Future Roadmap ==================== -->
-    <section class="how-it-works" id="roadmap" style="background: var(--light);">
-        <div class="container">
-            <span class="section-tag">Coming Soon</span>
-            <h2 class="section-title">What's next for SFP Billing</h2>
-            <div class="step-grid">
-                <div class="step-item">
-                    <i class="fa-solid fa-mobile-screen-button"
-                        style="font-size: 32px; color: var(--primary); margin-bottom: 20px;"></i>
-                    <h3>Mobile App</h3>
-                    <p>Native iOS and Android apps for billing on the go.</p>
-                </div>
-                <div class="step-item">
-                    <i class="fa-solid fa-robot"
-                        style="font-size: 32px; color: var(--primary); margin-bottom: 20px;"></i>
-                    <h3>AI Insights</h3>
-                    <p>Automated sales forecasting and inventory planning.</p>
-                </div>
-                <div class="step-item">
-                    <i class="fa-solid fa-link"
-                        style="font-size: 32px; color: var(--primary); margin-bottom: 20px;"></i>
-                    <h3>Tally Sync</h3>
-                    <p>One-click data export to Tally and other ERPs.</p>
                 </div>
             </div>
         </div>
@@ -1805,6 +1901,21 @@
                 waNote.style.transform = 'scale(1)';
             }
         }, 3000);
+
+        // Module Card Expansion Logic
+        document.querySelectorAll('.module-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // Toggle active class on the clicked card
+                this.classList.toggle('active');
+                
+                // Optional: Close other cards when one is opened
+                /*
+                document.querySelectorAll('.module-card').forEach(otherCard => {
+                    if (otherCard !== this) otherCard.classList.remove('active');
+                });
+                */
+            });
+        });
     </script>
 </body>
 
