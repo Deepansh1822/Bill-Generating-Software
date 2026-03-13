@@ -409,12 +409,8 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Details</th>
-                        <th>Type</th>
+                        <th>Details & Code</th>
                         <th>Category</th>
-                        <th>Code (HSN/SAC)</th>
-                        <th>Unit</th>
-                        <th>Tax</th>
                         <th>Price</th>
                         <th>Stock Status</th>
                         <th>Actions</th>
@@ -422,7 +418,7 @@
                 </thead>
                 <tbody id="stockTableBody">
                     <tr>
-                        <td colspan="9" style="text-align: center; padding: 60px; color: var(--text-muted);">
+                        <td colspan="5" style="text-align: center; padding: 60px; color: var(--text-muted);">
                             <i class="fa-solid fa-circle-notch fa-spin"></i> Loading data...
                         </td>
                     </tr>
@@ -462,7 +458,7 @@
             if (items.length === 0) {
                 els.tbody.innerHTML = `
                     <tr>
-                        <td colspan="9">
+                        <td colspan="5">
                             <div class="premium-empty-state">
                                 <i class="fa-solid fa-box-open"></i>
                                 <h3>No Items Found</h3>
@@ -500,23 +496,25 @@
                         <tr>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div class="img-wrapper">
+                                    <div class="img-wrapper" style="flex-shrink: 0;">
                                         <span class="placeholder-text">No Image</span>
                                         <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Crect width='48' height='48' fill='transparent'/%3E%3C/svg%3E" data-stock-id="${stk.id}" class="lazy-stock-img">
                                     </div>
-                                    <span style="font-weight: 600;">${stk.itemName}</span>
+                                    <div>
+                                        <div style="font-weight: 700; color: var(--text-main); font-size: 15px;">${stk.itemName}</div>
+                                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                                            <span class="type-badge ${isProduct ? 'type-product' : 'type-service'}" style="padding: 2px 6px; font-size: 9px; line-height: 1;">${stk.stockType || 'PRODUCT'}</span>
+                                            ${code !== '-' ? `<code style="font-size: 11px; opacity: 0.7;">#${code}</code>` : ''}
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
-                            <td><span class="type-badge ${isProduct ? 'type-product' : 'type-service'}">${stk.stockType || 'PRODUCT'}</span></td>
-                            <td>${stk.stockCategories?.categoryName || 'N/A'}</td>
-                            <td><code style="font-weight: 700; color: var(--text-main);">${code}</code></td>
-                            <td><span style="color: #6366f1; font-weight: 600;">${stk.unit || (isProduct ? 'Pcs' : 'Service')}</span></td>
-                            <td><span style="color: ${taxColor}; font-weight: 700; font-size: 11px; text-transform: uppercase;">${taxType}</span></td>
-                            <td style="font-weight: 700;">₹ ${parseFloat(stk.unitPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                            <td><span style="font-weight: 500;">${stk.stockCategories?.categoryName || 'N/A'}</span></td>
+                            <td style="font-weight: 700; color: var(--text-main);">₹ ${parseFloat(stk.unitPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                             <td>
                                 ${isProduct
                         ? `<span class="stock-qty ${stk.availableQuantity < 10 ? 'qty-low' : 'qty-ok'}">${stk.availableQuantity} ${stk.unit || 'Pcs'}</span>`
-                        : `<span class="stock-qty" style="background: #f5f3ff; color: #7c3aed; padding: 4px 10px;"><i class="fa-solid fa-infinity" style="font-size: 0.7rem; margin-right: 4px;"></i> Active / Service</span>`}
+                        : `<span class="stock-qty" style="background: #f5f3ff; color: #7c3aed; padding: 4px 10px;"><i class="fa-solid fa-infinity" style="font-size: 0.7rem; margin-right: 4px;"></i> Service</span>`}
                             </td>
                             ${actionsHtml}
                         </tr>

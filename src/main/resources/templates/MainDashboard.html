@@ -72,16 +72,18 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primary);
             text-decoration: none;
-            letter-spacing: -0.5px;
         }
 
-        .logo i {
-            font-size: 28px;
+        .logo img {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+            transition: var(--transition);
+        }
+
+        .logo:hover img {
+            transform: scale(1.05);
         }
 
         .nav-links {
@@ -1044,9 +1046,8 @@
 
     <!-- Top Navbar -->
     <nav>
-        <a href="#" class="logo">
-            <i class="fa-solid fa-file-invoice-dollar"></i>
-            <span>SFP Billing</span>
+        <a href="/billing-app/api/MainDashboard" class="logo">
+            <img src="/images/SFP-Billing-Bigger.png" alt="SFP Billing Logo">
         </a>
         <div class="nav-links">
             <a href="#how-it-works" class="feature-btn">How it Works</a>
@@ -1554,9 +1555,8 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <a href="#" class="logo">
-                        <i class="fa-solid fa-file-invoice-dollar"></i>
-                        <span>SFP Billing</span>
+                    <a href="/billing-app/api/MainDashboard" class="logo">
+                        <img src="/images/SFP-Billing-Bigger.png" alt="SFP Billing Logo" style="height: 55px;">
                     </a>
                     <p>Revolutionizing business management with smart billing and real-time inventory solutions.</p>
                     <div class="social-links">

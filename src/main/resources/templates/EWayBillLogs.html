@@ -408,10 +408,10 @@
                                 <i class="fa-solid fa-share-nodes"></i>
                             </button>
                             <div class="share-menu" id="menu-${log.id}">
-                                <button class="share-menu-item whatsapp" onclick="rowShareWhatsApp(${log.id})">
+                                <button class="share-menu-item whatsapp" onclick="rowShareWhatsApp(event, ${log.id})">
                                     <i class="fa-brands fa-whatsapp"></i> WhatsApp
                                 </button>
-                                <button class="share-menu-item email" onclick="rowShareEmail(${log.id})">
+                                <button class="share-menu-item email" onclick="rowShareEmail(event, ${log.id})">
                                     <i class="fa-solid fa-envelope"></i> Email
                                 </button>
                                 <button class="share-menu-item copy" onclick="copyLink(${log.id})">
@@ -439,12 +439,22 @@
             }
         }
 
-        function rowShareWhatsApp(id) {
-            showToast('🚀 WhatsApp feature coming soon!');
+        function rowShareWhatsApp(event, id) {
+            const btn = event.currentTarget || event.target;
+            Utils.setLoading(btn);
+            setTimeout(() => {
+                showToast('🚀 WhatsApp feature coming soon!');
+                Utils.stopLoading(btn);
+            }, 800);
         }
 
-        function rowShareEmail(id) {
-            showToast('📧 Email feature coming soon!');
+        function rowShareEmail(event, id) {
+            const btn = event.currentTarget || event.target;
+            Utils.setLoading(btn);
+            setTimeout(() => {
+                showToast('📧 Email feature coming soon!');
+                Utils.stopLoading(btn);
+            }, 800);
         }
 
         function copyLink(id) {

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request Access | BillMaster</title>
+    <title>Request Access | SFP Billing</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -99,6 +99,20 @@
             flex: 1.2;
             padding: 50px;
             background: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .logo-img {
+            max-width: 135px;
+            height: auto;
+            filter: drop-shadow(0 10px 15px rgba(67, 97, 238, 0.1));
         }
 
         .header {
@@ -267,13 +281,16 @@
             <!-- Left Side Image -->
             <div class="card-image">
                 <h2>Empower Your Business Assets</h2>
-                <p>Join thousands of businesses that use BillMaster to simplify their financial workflows and track
+                <p>Join thousands of businesses that use SFP Billing to simplify their financial workflows and track
                     growth in real-time.</p>
             </div>
 
             <!-- Right Side Form -->
             <div class="card-content">
-                <div class="header">
+                <div class="logo-container">
+                    <img src="/images/SFP-Billing-Small.png" alt="SFP Billing Logo" class="logo-img">
+                </div>
+                <div class="header" style="text-align: center;">
                     <h1>Request Access</h1>
                     <p>Tell us about your business to get started.</p>
                 </div>

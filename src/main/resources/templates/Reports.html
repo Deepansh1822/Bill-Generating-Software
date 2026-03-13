@@ -601,13 +601,13 @@
                                 <i class="fa-solid fa-share-nodes"></i>
                             </button>
                             <div class="share-menu" id="shareMenu-${bill.id}">
-                                <div class="share-menu-item" onclick="shareReportAction('whatsapp', '${bill.invoiceNumber}', '${bill.stockTotalAmount}', ${bill.id}, '${(bill.recipientBillingInfo?.recipientName || 'Valued Customer').replace(/'/g, "\\'")}')">
+                                <div class="share-menu-item" onclick="shareReportAction(event, 'whatsapp', '${bill.invoiceNumber}', '${bill.stockTotalAmount}', ${bill.id}, '${(bill.recipientBillingInfo?.recipientName || 'Valued Customer').replace(/'/g, "\\'")}')">
                                     <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp
                                 </div>
-                                <div class="share-menu-item" onclick="shareReportAction('email', '${bill.invoiceNumber}', '${bill.stockTotalAmount}', ${bill.id}, '${(bill.recipientBillingInfo?.recipientName || 'Valued Customer').replace(/'/g, "\\'")}')">
+                                <div class="share-menu-item" onclick="shareReportAction(event, 'email', '${bill.invoiceNumber}', '${bill.stockTotalAmount}', ${bill.id}, '${(bill.recipientBillingInfo?.recipientName || 'Valued Customer').replace(/'/g, "\\'")}')">
                                     <i class="fa-solid fa-envelope" style="color: #ea4335;"></i> Email
                                 </div>
-                                <div class="share-menu-item" onclick="shareReportAction('copy', '${bill.invoiceNumber}', '${bill.stockTotalAmount}', ${bill.id})">
+                                <div class="share-menu-item" onclick="shareReportAction(event, 'copy', '${bill.invoiceNumber}', '${bill.stockTotalAmount}', ${bill.id})">
                                     <i class="fa-solid fa-link" style="color: var(--primary);"></i> Copy Link
                                 </div>
                             </div>
@@ -649,12 +649,20 @@
             });
         });
 
-        async function shareReportAction(type, invNum, amount, id, recipient) {
+        async function shareReportAction(event, type, invNum, amount, id, recipient) {
+            const btn = event.currentTarget || event.target;
             const link = `${window.location.origin}/billing-app/api/Reports/BillDetail/${id}`;
-            const businessName = "SFP Billing";
 
-            if (type === 'whatsapp') {
-                try {
+            if (type === 'copy') {
+                navigator.clipboard.writeText(link).then(() => {
+                    showToast('Link copied to clipboard!');
+                });
+                return;
+            }
+
+            Utils.setLoading(btn);
+            try {
+                if (type === 'whatsapp') {
                     showToast('Sending PDF to WhatsApp...');
                     const response = await fetch(`/billing-app/api/whatsapp/sendInvoice/${id}`, { method: 'POST' });
                     const result = await response.json();
@@ -663,11 +671,7 @@
                     } else {
                         showToast('❌ Failed: ' + (result.message || 'Check API keys'));
                     }
-                } catch (err) {
-                    showToast('❌ Error sending WhatsApp');
-                }
-            } else if (type === 'email') {
-                try {
+                } else if (type === 'email') {
                     showToast('Generating PDF & Sending Email...');
                     const response = await fetch(`/billing-app/api/email/sendInvoice/${id}`, { method: 'POST' });
                     const result = await response.json();
@@ -676,13 +680,11 @@
                     } else {
                         showToast('❌ Failed: ' + (result.message || 'Server error'));
                     }
-                } catch (err) {
-                    showToast('❌ Error sending email');
                 }
-            } else if (type === 'copy') {
-                navigator.clipboard.writeText(link).then(() => {
-                    showToast('Link copied to clipboard!');
-                });
+            } catch (err) {
+                showToast('❌ Something went wrong');
+            } finally {
+                Utils.stopLoading(btn);
             }
         }
 

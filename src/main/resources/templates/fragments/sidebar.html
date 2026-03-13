@@ -121,34 +121,26 @@
             }
 
             .sidebar-logo {
-                width: 48px;
-                height: 48px;
-                background: linear-gradient(135deg, var(--sb-primary), var(--sb-primary-dark));
-                border-radius: 16px;
+                width: auto;
+                height: 50px;
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                font-weight: 800;
-                font-size: 1.6rem;
-                box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4),
-                    inset 0 2px 2px rgba(255, 255, 255, 0.2);
+                justify-content: flex-start;
                 flex-shrink: 0;
-                color: white;
                 position: relative;
-                overflow: hidden;
             }
 
-            /* Logo Shine Effect */
-            .sidebar-logo::after {
-                content: '';
-                position: absolute;
-                top: -50%;
-                left: -50%;
-                width: 200%;
-                height: 200%;
-                background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-                transform: rotate(45deg);
-                animation: shine 4s infinite;
+            .sidebar-logo img {
+                height: 100%;
+                width: auto;
+                max-width: 200px;
+                object-fit: contain;
+                filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+                transition: var(--sb-transition-luxury);
+            }
+
+            .sidebar-logo:hover img {
+                transform: scale(1.05);
             }
 
             @keyframes shine {
@@ -493,8 +485,9 @@
             <div class="sidebar-header">
                 <!-- Points to Profile for easy back-navigation -->
                 <a href="/billing-app/api/Dashboard" class="sidebar-brand">
-                    <div class="sidebar-logo">B</div>
-                    <span class="brand-name">SFP Billing</span>
+                    <div class="sidebar-logo">
+                        <img src="/images/SFP-Billing-Dark.png" alt="SFP Billing Logo">
+                    </div>
                 </a>
             </div>
             <ul class="nav-menu">

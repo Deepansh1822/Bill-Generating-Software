@@ -588,7 +588,7 @@
             }
         }
 
-        const userEmail = /*[[${user?.email}]]*/ '';
+        const userEmail = /*[[${userEmail}]]*/ '';
         let base64Image = null; // Loaded async via /api/profile-image
 
         // Load profile image asynchronously to prevent massive Base64 being embedded in HTML
@@ -626,7 +626,8 @@
         function openVerifyModal() { document.getElementById('verifyModal').style.display = 'flex'; }
         function closeModals() {
             document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-            document.getElementById('verifyPassInput').value = '';
+            const verifyInput = document.getElementById('verifyPassInput');
+            if (verifyInput) verifyInput.value = ''; // Check for existence before accessing value
         }
 
         async function requestResetLink() {
@@ -648,7 +649,8 @@
                     alert("Error: " + msg);
                 }
             } catch (err) {
-                alert("Failed to request reset link.");
+                console.error("Reset link error:", err);
+                alert("Failed to request reset link. Please check your internet connection.");
             } finally {
                 Utils.stopLoading(btn);
             }
@@ -685,6 +687,8 @@
                 }
             } catch (err) {
                 alert("An error occurred while saving profile.");
+            } finally {
+                Utils.stopLoading(btn);
             }
         }
 

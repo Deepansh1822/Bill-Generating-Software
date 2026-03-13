@@ -40,7 +40,9 @@ public class SecurityConfig {
                                                                 "/billing-app/api/login",
                                                                 "/billing-app/api/logout",
                                                                 "/billing-app/api/saveAccessRequests",
-                                                                "/billing-app/api/forgot-password",
+                                                                "/billing-app/api/forgot-password-request",
+                                                                "/billing-app/api/reset-password-view",
+                                                                "/billing-app/api/reset-password",
                                                                 "/billing-app/api/setup-password",
                                                                 "/billing-app/api/internal/**",
                                                                 "/api-diag/**")
