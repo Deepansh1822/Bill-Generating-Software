@@ -646,6 +646,14 @@
     <div th:replace="~{fragments/sidebar :: sidebar(activePage='reports')}"></div>
 
     <div class="main-content">
+        <!-- Page Title & Status -->
+        <div class="page-top-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; max-width: 1600px; margin-left: auto; margin-right: auto;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h1 style="font-size: 1.7rem; font-weight: 800; margin: 0; color: #1e293b;">Invoice Overview</h1>
+                <div id="statusBadgeContainer"></div>
+            </div>
+        </div>
+
         <!-- Action Bar -->
         <div class="action-bar">
             <a href="/billing-app/api/Reports" class="btn-back">
@@ -676,6 +684,8 @@
                     style="background: #1e293b; box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);">
                     <i class="fa-solid fa-truck-fast"></i> E-Way Bill
                 </a>
+
+                <div id="editActionPlaceholder"></div>
             </div>
         </div>
 
@@ -948,6 +958,7 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         const billId = /*[[${billId}]]*/ 0;
+        const userRole = /*[[${userRole}]]*/ 'CLIENT';
         // Populated after bill loads
         let billMeta = { fromEmail: '', fromPhone: '', toEmail: '', toPhone: '', toName: '' };
         let pendingSendAction = null;
@@ -1034,20 +1045,24 @@
                 
                 document.title = 'Invoice ' + bill.invoiceNumber + ' | SFP Billing';
 
-                // Update Status Badge & Template Label
-                const statusBadge = document.getElementById('statusBadge');
-                const titleLabel = document.getElementById('invoiceTitleLabel');
-                if (bill.status === 'FINAL' || bill.status === 'PAID' || bill.status === 'UNPAID') {
-                    if (statusBadge) {
-                        statusBadge.innerText = 'Finalized';
-                        statusBadge.className = 'status-badge final';
-                    }
-                } else {
-                    if (statusBadge) {
-                        statusBadge.innerText = 'Quotation';
-                        statusBadge.className = 'status-badge draft';
+                // Update Status Badge (Outside Bill)
+                const statusContainer = document.getElementById('statusBadgeContainer');
+                if (statusContainer) {
+                    const isFinal = bill.status === 'FINAL';
+                    const isPaid = isFinal && parseFloat(bill.balancePayment || 0) <= 0.01;
+                    const isDue = isFinal && !isPaid;
+
+                    if (isPaid) {
+                        statusContainer.innerHTML = `<span class="status-badge" style="background:#ecfdf5; color:#10b981; padding:6px 14px; border-radius:10px; font-size:0.8rem; font-weight:800; border:1px solid #d1fae5;"><i class="fa-solid fa-circle-check"></i> FINAL & PAID</span>`;
+                    } else if (isDue) {
+                        statusContainer.innerHTML = `<span class="status-badge" style="background:#fff1f2; color:#e11d48; padding:6px 14px; border-radius:10px; font-size:0.8rem; font-weight:800; border:1px solid #fee2e2;"><i class="fa-solid fa-clock-rotate-left"></i> FINAL & DUE</span>`;
+                    } else {
+                        statusContainer.innerHTML = `<span class="status-badge" style="background:#fef9c3; color:#a16207; padding:6px 14px; border-radius:10px; font-size:0.8rem; font-weight:800; border:1px solid #fef08a;"><i class="fa-solid fa-file-pen"></i> DRAFT / QUOTATION</span>`;
                     }
                 }
+                
+                // Update Template Label (Inside Bill Paper - keep it clean)
+                const titleLabel = document.getElementById('invoiceTitleLabel');
                 
                 if (titleLabel) {
                     titleLabel.innerText = bill.invoiceType ? bill.invoiceType.toUpperCase() : (bill.status === 'FINAL' || bill.status === 'PAID' || bill.status === 'UNPAID' ? 'TAX INVOICE' : 'QUOTATION / PROFORMA');
@@ -1228,6 +1243,21 @@
                                 '</div>';
                         }).join('');
                     }
+                }
+
+                // Show Edit/Payment Update Button if eligible
+                const isDraft = bill.status !== 'FINAL';
+                const isFinalButDue = bill.status === 'FINAL' && parseFloat(bill.balancePayment || 0) > 0.01;
+                const editPlaceholder = document.getElementById('editActionPlaceholder');
+                
+                if (editPlaceholder && userRole === 'CLIENT' && (isDraft || isFinalButDue)) {
+                    const icon = isDraft ? 'fa-pen-to-square' : 'fa-wallet';
+                    const text = isDraft ? 'Edit Quotation' : 'Update Payment';
+                    editPlaceholder.innerHTML = `
+                        <a href="/billing-app/api/GenerateBill?invoice=${bill.invoiceNumber}" class="print-btn" style="background: #6366f1; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+                            <i class="fa-solid ${icon}"></i> ${text}
+                        </a>
+                    `;
                 }
 
             } catch (err) {

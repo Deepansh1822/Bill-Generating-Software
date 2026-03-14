@@ -57,13 +57,24 @@ public class BillGenerationController {
                     .orElse(null);
 
             if (totalBilling != null) {
-                // If it exists, check status
                 if ("FINAL".equalsIgnoreCase(totalBilling.getStatus())) {
-                    return ResponseEntity.badRequest().body("Invoice " + request.getInvoiceNumber()
-                            + " is already FINAL and cannot be modified.");
+                    // If it's already FINAL, strictly allow only payment updates
+                    totalBilling.setAdvancedPayment(request.getAdvancedPayment());
+                    double grandTotalStored = Double.parseDouble(totalBilling.getStockTotalAmount());
+                    double balance = grandTotalStored - Double.parseDouble(request.getAdvancedPayment());
+                    totalBilling.setBalancePayment(String.valueOf(balance));
+                    totalBilling.setAmountInWords(request.getAmountInWords());
+                    
+                    totalBilling = stockBillingRepo.save(totalBilling);
+
+                    java.util.Map<String, Object> response = new java.util.HashMap<>();
+                    response.put("id", totalBilling.getId());
+                    response.put("invoiceNumber", totalBilling.getInvoiceNumber());
+                    response.put("status", "FINAL");
+                    response.put("message", "Payment information updated for finalized invoice.");
+                    return ResponseEntity.ok(response);
                 }
-                // If it's DRAFT, we will clear existing items and recipient for fresh update
-                // Or just update them. For simplicity in this logic, we'll reuse objects.
+                // If it's DRAFT, we proceed with the standard logic (items update etc.)
             } else {
                 totalBilling = new TotalStockBillingInfo();
                 totalBilling.setInvoiceNumber(request.getInvoiceNumber());

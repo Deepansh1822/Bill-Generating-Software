@@ -67,6 +67,7 @@ public class DashboardDataDTO {
         private String date;
         private double amount;
         private String status;
+        private double balancePayment;
     }
 
     @Data

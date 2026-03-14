@@ -518,6 +518,11 @@
             color: #065f46;
         }
 
+        .status.due {
+            background: #fff1f2;
+            color: #991b1b;
+        }
+
         .status.pending {
             background: #fef3c7;
             color: #92400e;
@@ -1355,6 +1360,21 @@
 
         async function initDashboard() {
             try {
+                // Fetch profile image separately
+                fetch('/billing-app/api/profile-image')
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.profileImage) {
+                            const avatar = document.querySelector('.user-profile .avatar');
+                            if (avatar) {
+                                avatar.style.backgroundImage = `url(${data.profileImage})`;
+                                avatar.style.backgroundSize = 'cover';
+                                avatar.style.backgroundPosition = 'center';
+                                avatar.innerText = '';
+                            }
+                        }
+                    });
+
                 const response = await fetch('/billing-app/api/dashboard/stats');
                 const data = await response.json();
 
@@ -1857,6 +1877,20 @@
 
             tableBody.innerHTML = invoices.map(inv => {
                 const businessCol = userRole === 'ADMIN' ? `<td><span style="font-weight:600; color:var(--primary);">${inv.businessName}</span></td>` : '';
+                
+                // Eligibility for Edit/Payment Update
+                const isDraft = inv.status !== 'FINAL';
+                const isFinalButDue = inv.status === 'FINAL' && parseFloat(inv.balancePayment || 0) > 0.01;
+                
+                let actionBtns = `<a href="/billing-app/api/Reports/BillDetail/${inv.id}" style="text-decoration:none; color:var(--primary); font-weight:700; margin-right: 12px;" title="View Detail">View</a>`;
+                
+                if (userRole === 'CLIENT' && (isDraft || isFinalButDue)) {
+                    const icon = isDraft ? 'fa-pen-to-square' : 'fa-wallet';
+                    const title = isDraft ? 'Edit Quotation' : 'Update Payment';
+                    const color = isDraft ? '#6366f1' : '#f59e0b';
+                    actionBtns += `<a href="/billing-app/api/GenerateBill?invoice=${inv.invoiceNumber}" style="text-decoration:none; color:${color}; font-weight:700;" title="${title}"><i class="fa-solid ${icon}"></i></a>`;
+                }
+
                 return `
                     <tr>
                         <td style="font-weight: 700;">#${inv.invoiceNumber}</td>
@@ -1864,8 +1898,18 @@
                         <td>${inv.recipientName}</td>
                         <td>${inv.date}</td>
                         <td style="font-weight:600;">₹${inv.amount.toLocaleString('en-IN')}</td>
-                        <td><span class="status ${inv.status === 'FINAL' ? 'paid' : 'pending'}">${inv.status}</span></td>
-                        <td><a href="/billing-app/api/Reports/BillDetail/${inv.id}" style="text-decoration:none; color:var(--primary); font-weight:700;">View</a></td>
+                        <td>
+                            <span class="status ${
+                                inv.status !== 'FINAL' ? 'pending' : 
+                                (parseFloat(inv.balancePayment || 0) > 0.01 ? 'due' : 'paid')
+                            }">
+                                ${
+                                    inv.status !== 'FINAL' ? 'DRAFT' : 
+                                    (parseFloat(inv.balancePayment || 0) > 0.01 ? 'FINAL & DUE' : 'FINAL & PAID')
+                                }
+                            </span>
+                        </td>
+                        <td style="display: flex; align-items: center;">${actionBtns}</td>
                     </tr>
                 `;
             }).join('');

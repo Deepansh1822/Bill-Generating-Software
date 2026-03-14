@@ -51,6 +51,10 @@ public class UserAccessInfo {
     @Column(columnDefinition = "LONGTEXT")
     private String clientImage;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String profileImage;
+
     private Double monthlyTarget = 100000.0;
 
     private LocalDateTime createdAt;

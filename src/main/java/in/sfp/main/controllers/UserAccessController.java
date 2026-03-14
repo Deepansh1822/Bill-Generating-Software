@@ -173,8 +173,8 @@ public class UserAccessController {
             user.setCompanyType(payload.get("companyType"));
         if (payload.containsKey("mobileNumber"))
             user.setMobileNumber(payload.get("mobileNumber"));
-        if (payload.containsKey("clientImage"))
-            user.setClientImage(payload.get("clientImage"));
+        if (payload.containsKey("profileImage") && payload.get("profileImage") != null)
+            user.setProfileImage(payload.get("profileImage"));
         if (payload.containsKey("monthlyTarget"))
             user.setMonthlyTarget(Double.parseDouble(payload.get("monthlyTarget")));
 
@@ -186,7 +186,27 @@ public class UserAccessController {
     @GetMapping("/profile-image")
     public ResponseEntity<?> getProfileImage(
             org.springframework.security.core.Authentication auth) {
-        // User requested signup image NOT be used as profile image
+        if (auth != null && auth.isAuthenticated()) {
+            UserAccessInfo user = usersAccessRepoService.findByUsername(auth.getName());
+            if (user == null) {
+                user = usersAccessRepoService.findByEmail(auth.getName());
+            }
+            if (user != null && user.getProfileImage() != null) {
+                return ResponseEntity.ok(Map.of("profileImage", user.getProfileImage()));
+            }
+        }
+        return ResponseEntity.ok(Map.of("profileImage", ""));
+    }
+
+    @GetMapping("/business-logo")
+    public ResponseEntity<?> getBusinessLogo(org.springframework.security.core.Authentication auth) {
+        if (auth != null && auth.isAuthenticated()) {
+            UserAccessInfo user = usersAccessRepoService.findByUsername(auth.getName());
+            if (user == null) user = usersAccessRepoService.findByEmail(auth.getName());
+            if (user != null && user.getClientImage() != null) {
+                return ResponseEntity.ok(Map.of("clientImage", user.getClientImage()));
+            }
+        }
         return ResponseEntity.ok(Map.of("clientImage", ""));
     }
 

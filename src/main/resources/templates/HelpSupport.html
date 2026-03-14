@@ -255,14 +255,9 @@
             padding: 16px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            text-decoration: none;
             color: white;
             transition: var(--transition);
-        }
-
-        .contact-method:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(8px);
+            cursor: default;
         }
 
         .contact-method i {
@@ -290,10 +285,6 @@
             .contact-method {
                 justify-content: center;
             }
-
-            .contact-method:hover {
-                transform: translateY(-4px);
-            }
         }
     </style>
 </head>
@@ -312,30 +303,6 @@
                     <input type="text" placeholder="Search for articles, guides, or terms...">
                 </div>
             </section>
-
-            <!-- Support Categories -->
-            <div class="support-grid">
-                <a href="#" class="support-card">
-                    <div class="support-card-icon"><i class="fa-solid fa-rocket"></i></div>
-                    <h3>Getting Started</h3>
-                    <p>Learn the basics of setting up your account and generating your first bill.</p>
-                </a>
-                <a href="#" class="support-card">
-                    <div class="support-card-icon"><i class="fa-solid fa-credit-card"></i></div>
-                    <h3>Payments & Billing</h3>
-                    <p>Information about subscription plans, payment methods, and invoice history.</p>
-                </a>
-                <a href="#" class="support-card">
-                    <div class="support-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                    <h3>Account & Security</h3>
-                    <p>Manage your profile settings, change passwords, and secure your business data.</p>
-                </a>
-                <a href="#" class="support-card">
-                    <div class="support-card-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-                    <h3>Technical Guides</h3>
-                    <p>Advanced integration steps, API documentation, and troubleshooting common issues.</p>
-                </a>
-            </div>
 
             <!-- FAQ Section -->
             <section class="faq-section">
@@ -428,6 +395,30 @@
                 </div>
             </section>
 
+            <!-- Support Categories -->
+            <div class="support-grid">
+                <a href="#" class="support-card">
+                    <div class="support-card-icon"><i class="fa-solid fa-rocket"></i></div>
+                    <h3>Getting Started</h3>
+                    <p>Learn the basics of setting up your account and generating your first bill.</p>
+                </a>
+                <a href="#" class="support-card">
+                    <div class="support-card-icon"><i class="fa-solid fa-credit-card"></i></div>
+                    <h3>Payments & Billing</h3>
+                    <p>Information about subscription plans, payment methods, and invoice history.</p>
+                </a>
+                <a href="#" class="support-card">
+                    <div class="support-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3>Account & Security</h3>
+                    <p>Manage your profile settings, change passwords, and secure your business data.</p>
+                </a>
+                <a href="#" class="support-card">
+                    <div class="support-card-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                    <h3>Technical Guides</h3>
+                    <p>Advanced integration steps, API documentation, and troubleshooting common issues.</p>
+                </a>
+            </div>
+
             <!-- Contact Section -->
             <section class="contact-section">
                 <div class="contact-info">
@@ -435,18 +426,18 @@
                     <p>Our dedicated support team is available 24/7 to assist you with any questions or technical
                         issues.</p>
                     <div class="contact-methods">
-                        <a href="mailto:support@sfpbilling.com" class="contact-method">
+                        <div class="contact-method">
                             <i class="fa-solid fa-envelope"></i>
                             <span>support@sfpbilling.com</span>
-                        </a>
-                        <a href="tel:+1234567890" class="contact-method">
+                        </div>
+                        <div class="contact-method">
                             <i class="fa-solid fa-phone"></i>
                             <span>+91 123 456 7890</span>
-                        </a>
-                        <a href="#" class="contact-method">
+                        </div>
+                        <div class="contact-method">
                             <i class="fa-solid fa-comments"></i>
                             <span>Live Chat Support</span>
-                        </a>
+                        </div>
                     </div>
                 </div>
                 <div class="support-img">

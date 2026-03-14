@@ -140,6 +140,12 @@
             border: 1px solid #86efac;
         }
 
+        .status-due {
+            background: #fff1f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
         .export-btn {
             background: #eef2ff;
             color: #6366f1 !important;
@@ -583,17 +589,23 @@
                     <td class="amount">₹${Number(bill.stockTotalAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                     <td class="date">${formatDate(bill.invoiceDate || bill.stockCreatedAt)}</td>
                     <td>
-                        <span class="status-badge ${bill.status === 'FINAL' ? 'status-final' : 'status-draft'}">
-                            ${bill.status || 'DRAFT'}
+                        <span class="status-badge ${
+                            bill.status !== 'FINAL' ? 'status-draft' : 
+                            (parseFloat(bill.balancePayment || 0) > 0.01 ? 'status-due' : 'status-final')
+                        }">
+                            ${
+                                bill.status !== 'FINAL' ? 'DRAFT' : 
+                                (parseFloat(bill.balancePayment || 0) > 0.01 ? 'FINAL & DUE' : 'FINAL & PAID')
+                            }
                         </span>
                     </td>
                     <td style="display:flex; gap:8px;">
                         <a href="/billing-app/api/Reports/BillDetail/${bill.id}" class="btn-view" title="View Bill">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        ${userRole === 'CLIENT' && bill.status !== 'FINAL' ? `
-                            <a href="/billing-app/api/GenerateBill?invoice=${bill.invoiceNumber}" class="btn-view edit-quotation" title="Edit Quotation">
-                                <i class="fa-solid fa-pen-to-square"></i>
+                        ${userRole === 'CLIENT' && (bill.status !== 'FINAL' || parseFloat(bill.balancePayment || 0) > 0.01) ? `
+                            <a href="/billing-app/api/GenerateBill?invoice=${bill.invoiceNumber}" class="btn-view edit-quotation" title="${bill.status === 'FINAL' ? 'Update Payment' : 'Edit Quotation'}">
+                                <i class="fa-solid ${bill.status === 'FINAL' ? 'fa-wallet' : 'fa-pen-to-square'}"></i>
                             </a>
                         ` : ''}
                         <div class="share-cell">

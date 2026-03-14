@@ -57,6 +57,7 @@ public class DashboardServiceImpl implements DashboardService {
                                                                 : b.getStockCreatedAt().toLocalDate().toString())
                                                 .amount(parseDouble(b.getStockTotalAmount()))
                                                 .status(b.getStatus())
+                                                .balancePayment(parseDouble(b.getBalancePayment()))
                                                 .build())
                                 .collect(Collectors.toList());
 
@@ -245,6 +246,7 @@ public class DashboardServiceImpl implements DashboardService {
                                                                 : b.getStockCreatedAt().toLocalDate().toString())
                                                 .amount(parseDouble(b.getStockTotalAmount()))
                                                 .status(b.getStatus())
+                                                .balancePayment(parseDouble(b.getBalancePayment()))
                                                 .build())
                                 .collect(Collectors.toList());
 

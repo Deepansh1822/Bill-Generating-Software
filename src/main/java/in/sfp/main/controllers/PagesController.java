@@ -86,6 +86,7 @@ public class PagesController {
                 // The profile avatar image is loaded asynchronously via /api/profile-image
                 // instead.
                 user.setClientImage(null);
+                user.setProfileImage(null);
             }
             model.addAttribute("user", user);
         }
