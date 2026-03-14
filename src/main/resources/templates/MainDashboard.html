@@ -1809,7 +1809,7 @@
     </style>
 
     <script>
-        const words = ["Inventory", "Invoicing", "Analytics", "Business", "Finances"];
+        const words = ["Inventory", "Analytics", "Invoicing", "Business", "Finances", "E-Ways", "Reports"];
         let wordIndex = 0;
         const rotateWord = document.getElementById('rotate-word');
 
@@ -1821,6 +1821,9 @@
                 }, 900);
             }
         }
+        
+        // Fire instantly to align with the first animation flip
+        updateWord();
         setInterval(updateWord, 3000);
 
         // WhatsApp Widget Logic
