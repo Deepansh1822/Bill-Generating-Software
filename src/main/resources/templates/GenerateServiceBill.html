@@ -1476,7 +1476,7 @@
                     Reset
                 </button>
 
-                <button class="btn-outline" id="saveQuotationBtn" onclick="saveBill('DRAFT')"
+                <button class="btn-outline" id="saveQuotationBtn" onclick="confirmSaveQuotation()"
                     style="border-color: #6366f1; color: #6366f1;">
                     Save as Quotation
                 </button>
@@ -1947,7 +1947,8 @@ Goods once sold will not be taken back.</textarea>
                         <div class="info-icon-wrapper">
                             <i class="fa-solid fa-circle-info"></i>
                             <div class="info-tooltip">
-                                This section is for finalizing the bill. Payment records are not maintained for Drafts/Quotations as no money is exchanged at that stage.
+                                This section is for finalizing the bill. Payment records are not maintained for
+                                Drafts/Quotations as no money is exchanged at that stage.
                             </div>
                         </div>
                     </h3>
@@ -2060,6 +2061,27 @@ Goods once sold will not be taken back.</textarea>
         </div>
     </div>
 
+    <!-- Quotation Confirmation Modal -->
+    <div class="modal-overlay" id="quotationConfirmModal">
+        <div class="edit-modal" style="max-width: 450px; text-align: center;">
+            <div
+                style="width: 60px; height: 60px; background: #fff7ed; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.5rem; color: #f59e0b;"></i>
+            </div>
+            <h3 style="margin-bottom: 15px; justify-content: center;">Confirm Quotation/Draft</h3>
+            <p style="font-size: 0.95rem; color: #475569; line-height: 1.6; margin-bottom: 25px;">
+                If you are paying the amount then you should not mark it as draft/quotation as we dont pay for
+                quotation, only pay for finalized bills.
+            </p>
+            <div class="modal-actions" style="justify-content: center; gap: 12px;">
+                <button type="button" class="btn-cancel" onclick="closeQuotationModal()"
+                    style="padding: 10px 24px;">Cancel</button>
+                <button type="button" class="btn-save" onclick="proceedSaveQuotation()"
+                    style="background: #6366f1; padding: 10px 24px;">Save as Quotation</button>
+            </div>
+        </div>
+    </div>
+
     <script th:inline="javascript">
         const $ = id => document.getElementById(id);
 
@@ -2128,6 +2150,20 @@ Goods once sold will not be taken back.</textarea>
             renderBankList();
         });
 
+        // ======================== QUOTATION CONFIRMATION ========================
+        function confirmSaveQuotation() {
+            document.getElementById('quotationConfirmModal').classList.add('show');
+        }
+
+        function closeQuotationModal() {
+            document.getElementById('quotationConfirmModal').classList.remove('show');
+        }
+
+        function proceedSaveQuotation() {
+            closeQuotationModal();
+            saveBill('DRAFT');
+        }
+
         // ======================== LOAD BILL FOR EDITING ========================
         async function loadBillForEditing(invoiceNumber) {
             try {
@@ -2143,7 +2179,7 @@ Goods once sold will not be taken back.</textarea>
                 document.getElementById('invoiceNumber').value = b.invoiceNumber;
                 if (b.invoiceDate) document.getElementById('invoiceDate').value = b.invoiceDate;
                 if (b.dueDate) document.getElementById('dueDate').value = b.dueDate;
-                
+
                 if (b.invoiceType) {
                     const typeSel = document.getElementById('invoiceType');
                     for (let i = 0; i < typeSel.options.length; i++) {
@@ -2221,7 +2257,7 @@ Goods once sold will not be taken back.</textarea>
                 if (b.status === 'FINAL') {
                     const grandTotal = parseFloat(document.getElementById('grandTotalDisplay').textContent.replace('₹', '')) || 0;
                     const balance = grandTotal - (b.advancedPayment || 0);
-                    
+
                     // Hide Save as Quotation for finalized bills
                     if (document.getElementById('saveQuotationBtn')) {
                         document.getElementById('saveQuotationBtn').style.display = 'none';
@@ -2278,17 +2314,17 @@ Goods once sold will not be taken back.</textarea>
                 const el = document.getElementById(id);
                 if (el) el.disabled = lock;
             });
-            
+
             // Lock items table
             document.querySelectorAll('.item-row').forEach(row => {
-               row.style.pointerEvents = lock ? 'none' : 'auto';
-               row.style.opacity = lock ? '0.8' : '1';
+                row.style.pointerEvents = lock ? 'none' : 'auto';
+                row.style.opacity = lock ? '0.8' : '1';
             });
-            
+
             // Hide clear button
             const clearBtn = document.getElementById('clearBillBtn');
             if (clearBtn) clearBtn.style.display = lock ? 'none' : 'inline-flex';
-            
+
             // Mark isLocked global
             window.__isLocked = lock;
         }
@@ -2438,7 +2474,7 @@ Goods once sold will not be taken back.</textarea>
             rows.forEach((row, idx) => {
                 const rowRect = row.getBoundingClientRect();
                 const centerY = rowRect.top - wrapperRect.top + rowRect.height / 2;
-                
+
                 if (window.__isLocked) return;
 
                 const btn = document.createElement('button');
@@ -2611,10 +2647,10 @@ Goods once sold will not be taken back.</textarea>
             // Advance Paid Validation
             const ap = document.getElementById('advancePaid');
             if (ap) {
-                ap.addEventListener('input', function() {
+                ap.addEventListener('input', function () {
                     const checkedOption = document.querySelector('input[name="paymentStatus"]:checked');
                     if (!checkedOption) return;
-                    
+
                     const status = checkedOption.value;
                     const grandTotalStr = document.getElementById('grandTotalDisplay').textContent.replace('₹', '');
                     const grandTotal = parseFloat(grandTotalStr) || 0;
@@ -2642,7 +2678,7 @@ Goods once sold will not be taken back.</textarea>
                         this.value = grandTotal.toFixed(2);
                         val = grandTotal;
                     }
-                    
+
                     recalculate();
                 });
             }
@@ -2827,7 +2863,7 @@ Goods once sold will not be taken back.</textarea>
             // Payment Instructions
             const inst = $('paymentInstructions') ? $('paymentInstructions').value : '';
             const instEl = $('paymentInstructionsDisplay'); if (instEl) instEl.textContent = inst || 'Please quote invoice number in the payment reference.';
-            
+
             // Sync delete rail after layout shifts
             if (typeof updateDeleteRail === 'function') updateDeleteRail();
         }
@@ -2863,7 +2899,7 @@ Goods once sold will not be taken back.</textarea>
                 advanceInput.readOnly = false;
                 advanceInput.style.backgroundColor = '#ffffff';
                 if (parseFloat(advanceInput.value) >= grandTotal || parseFloat(advanceInput.value) <= 0) {
-                   advanceInput.value = (grandTotal * 0.1).toFixed(2); 
+                    advanceInput.value = (grandTotal * 0.1).toFixed(2);
                 }
             }
             recalculate();

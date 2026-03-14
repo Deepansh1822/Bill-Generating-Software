@@ -98,6 +98,11 @@ public class PagesController {
         return "ManageClients";
     }
 
+    @GetMapping("/HowItWorks")
+    public String getHowItWorks() {
+        return "HowItWorks";
+    }
+
     @GetMapping("/MainDashboard")
     public String getMainDashboard() {
         return "MainDashboard";
@@ -212,11 +217,13 @@ public class PagesController {
     public String getGenerateProductBill(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String role = auth.getAuthorities().stream().map(a -> a.getAuthority()).findFirst().orElse("");
-        if (role.contains("ADMIN")) return "redirect:/billing-app/api/Reports";
-        
+        if (role.contains("ADMIN"))
+            return "redirect:/billing-app/api/Reports";
+
         if (auth != null && auth.isAuthenticated()) {
             in.sfp.main.models.UserAccessInfo user = userAccessService.findByUsername(auth.getName());
-            if (user == null) user = userAccessService.findByEmail(auth.getName());
+            if (user == null)
+                user = userAccessService.findByEmail(auth.getName());
             if (user != null && user.getClientImage() != null) {
                 model.addAttribute("signupBusinessLogo", user.getClientImage());
             }
@@ -228,11 +235,13 @@ public class PagesController {
     public String getGenerateServiceBill(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String role = auth.getAuthorities().stream().map(a -> a.getAuthority()).findFirst().orElse("");
-        if (role.contains("ADMIN")) return "redirect:/billing-app/api/Reports";
-        
+        if (role.contains("ADMIN"))
+            return "redirect:/billing-app/api/Reports";
+
         if (auth != null && auth.isAuthenticated()) {
             in.sfp.main.models.UserAccessInfo user = userAccessService.findByUsername(auth.getName());
-            if (user == null) user = userAccessService.findByEmail(auth.getName());
+            if (user == null)
+                user = userAccessService.findByEmail(auth.getName());
             if (user != null && user.getClientImage() != null) {
                 model.addAttribute("signupBusinessLogo", user.getClientImage());
             }

@@ -431,7 +431,7 @@
                         <h1 th:text="${user?.fullName ?: 'User Profile'}">User Name</h1>
                         <p th:text="${user?.designation ?: 'Business Professional'}">Designation</p>
                         <div class="role-pill" th:classappend="${user?.role == 'ADMIN' ? 'role-admin' : 'role-client'}"
-                            th:text="${user?.role ?: 'USER'}">CLIENT</div>
+                            th:text="${user?.role == 'CLIENT' ? 'OWNER' : (user?.role ?: 'USER')}">CLIENT</div>
                     </div>
                 </div>
 
@@ -448,11 +448,17 @@
                             </div>
                         </div>
                     </div>
-                    <div id="businessLogoPreview" class="business-logo-preview">
-                        <i class="fa-solid fa-image" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.3;"></i>
-                        <span style="font-size: 0.85rem; font-weight: 600;">No Official Logo Found</span>
-                        <span style="font-size: 0.75rem; opacity: 0.7;">Upload via Billing Form or Client Request</span>
+                    <div style="position: relative; width: 240px; margin: 0 auto;">
+                        <label for="businessLogoInput" id="businessLogoPreview" class="business-logo-preview" style="cursor: pointer; position: relative; margin: 0;">
+                            <i class="fa-solid fa-image" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.3;"></i>
+                            <span style="font-size: 0.85rem; font-weight: 600;">No Official Logo Found</span>
+                            <p style="margin: 0; font-size: 0.7rem; color: #64748b;">Click to upload corporate identity</p>
+                        </label>
+                        <label for="businessLogoInput" class="edit-image-btn" style="position: absolute; bottom: -5px; right: -5px;">
+                            <i class="fa-solid fa-camera"></i>
+                        </label>
                     </div>
+                    <input type="file" id="businessLogoInput" style="display: none;" accept="image/*">
                 </div>
 
                 <div class="details-grid">
@@ -648,7 +654,8 @@
         }
 
         const userEmail = /*[[${userEmail}]]*/ '';
-        let base64Image = null; // Loaded async via /api/profile-image
+        let base64Image = null; // Profile photo
+        let businessLogoBase64 = null; // Business branding logo
 
         // Load profile image asynchronously to prevent massive Base64 being embedded in HTML
         window.addEventListener('DOMContentLoaded', function () {
@@ -673,10 +680,11 @@
                 .then(r => r.json())
                 .then(data => {
                     if (data.clientImage) {
+                        businessLogoBase64 = data.clientImage;
                         const preview = document.getElementById('businessLogoPreview');
                         if (preview) {
                             preview.style.backgroundImage = `url(${data.clientImage})`;
-                            preview.innerText = '';
+                            preview.innerHTML = '';
                         }
                     }
                 });
@@ -739,8 +747,9 @@
                 companyName: document.getElementById('editCompanyName').value,
                 companyType: document.getElementById('editCompanyType').value,
                 mobileNumber: document.getElementById('editMobile').value,
-                monthlyTarget: document.getElementById('editMonthlyTarget').value,
-                profileImage: base64Image
+                monthlyTarget: document.getElementById('editMonthlyTarget')?.value || 0,
+                profileImage: base64Image,
+                clientImage: businessLogoBase64
             };
 
             try {
@@ -774,8 +783,30 @@
             const reader = new FileReader();
             reader.onload = async function (event) {
                 base64Image = event.target.result;
-                document.querySelector('.profile-avatar').style.backgroundImage = `url(${base64Image})`;
-                document.querySelector('.profile-avatar').innerText = '';
+                const avatar = document.querySelector('.profile-avatar');
+                if (avatar) {
+                    avatar.style.backgroundImage = `url(${base64Image})`;
+                    avatar.innerText = '';
+                }
+                await saveDetails();
+            };
+            reader.readAsDataURL(file);
+        });
+
+        const bizLogoInput = document.getElementById('businessLogoInput');
+        bizLogoInput.addEventListener('change', async function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const preview = document.getElementById('businessLogoPreview');
+            // Show loading on the preview div maybe? Or just use a spinner
+            
+            const reader = new FileReader();
+            reader.onload = async function (event) {
+                businessLogoBase64 = event.target.result;
+                if (preview) {
+                    preview.style.backgroundImage = `url(${businessLogoBase64})`;
+                    preview.innerHTML = '';
+                }
                 await saveDetails();
             };
             reader.readAsDataURL(file);

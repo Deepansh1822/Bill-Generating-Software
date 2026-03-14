@@ -144,52 +144,6 @@
             border-bottom: 1px solid var(--primary);
         }
 
-        /* --- How It Works --- */
-        .how-it-works {
-            padding: 100px 0;
-            background: var(--white);
-            text-align: center;
-        }
-
-        .step-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 40px;
-            margin-top: 60px;
-            position: relative;
-        }
-
-        .step-item {
-            position: relative;
-            z-index: 1;
-        }
-
-        .step-number {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), #38bdf8);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            margin: 0 auto 25px;
-            font-size: 20px;
-            box-shadow: 0 10px 20px rgba(2, 132, 199, 0.3);
-            border: 3px solid white;
-            outline: 2px solid rgba(2, 132, 199, 0.1);
-        }
-
-        .step-item h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-        }
-
-        .step-item p {
-            color: var(--secondary);
-            font-size: 16px;
-        }
 
         /* --- Modules Section --- */
         .modules-section {
@@ -1050,7 +1004,7 @@
             <img src="/images/SFP-Billing-Bigger.png" alt="SFP Billing Logo">
         </a>
         <div class="nav-links">
-            <a href="#how-it-works" class="feature-btn">How it Works</a>
+            <a href="/billing-app/api/HowItWorks" class="feature-btn">Documentation</a>
             <a href="#modules" class="feature-btn">Modules</a>
             <a href="#invoice-gallery" class="feature-btn">Invoices</a>
             <a href="#features" class="feature-btn">Features</a>
@@ -1128,10 +1082,10 @@
                                 <i class="fa-solid fa-arrow-right"
                                     style="background: rgba(255,255,255,0.2); padding: 8px; border-radius: 50%; margin-left: 8px; font-size: 14px; transition: 0.3s; transform: translateX(0);"></i>
                             </a>
-                            <a href="#how-it-works" class="request-btn btn-transparent-hover"
+                            <a href="/billing-app/api/HowItWorks" class="request-btn btn-transparent-hover"
                                 style="background: transparent; color: #082f49; box-shadow: none; border: 2px solid #cbd5e1; padding: 16px 45px; font-size: 17px; border-radius: 50px;">
                                 <i class="fa-solid fa-circle-play" style="font-size: 20px; color: #0ea5e9;"></i>
-                                See How it Works
+                                Documentation
                             </a>
                         </th:block>
                         <th:block th:if="${authStatus == 'authenticated'}">
@@ -1200,30 +1154,6 @@
         </div>
     </section>
 
-    <!-- How It Works -->
-    <section class="how-it-works" id="how-it-works">
-        <div class="container">
-            <span class="section-tag">Getting Started</span>
-            <h2 class="section-title">Three steps to organized billing</h2>
-            <div class="step-grid">
-                <div class="step-item">
-                    <div class="step-number">1</div>
-                    <h3>Setup Inventory</h3>
-                    <p>Create categories and add your products or services with custom GST rates.</p>
-                </div>
-                <div class="step-item">
-                    <div class="step-number">2</div>
-                    <h3>Manage Business</h3>
-                    <p>Track stock levels in real-time and manage your recurring customer base.</p>
-                </div>
-                <div class="step-item">
-                    <div class="step-number">3</div>
-                    <h3>Generate & Grow</h3>
-                    <p>Create professional invoices and monitor your growth via the live dashboard.</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Modules Section -->
     <section class="modules-section" id="modules">
@@ -1598,7 +1528,7 @@
                 <div class="footer-col">
                     <h4>Resources</h4>
                     <ul>
-                        <li><a href="#">Documentation</a></li>
+                        <li><a href="/billing-app/api/HowItWorks">Documentation</a></li>
                         <li><a href="#">Help Center</a></li>
                         <li><a href="#">API Reference</a></li>
                         <li><a href="#">Status</a></li>
@@ -1608,7 +1538,7 @@
             <div class="footer-bottom">
                 <p style="color: #94a3b8"><a href="https://www.sfpedutech.com"
                         style="color: aliceblue; text-decoration: none;">&copy; 2026
-                        SFPedutech.</a> All rights reserved.</p>
+                        SFPEduTech.</a> All rights reserved.</p>
                 <div class="bottom-links" style="display: flex; gap: 30px;">
                     <a href="#" style="color: #94a3b8; text-decoration: none;">Privacy Policy</a>
                     <a href="#" style="color: #94a3b8; text-decoration: none;">Terms of Service</a>
@@ -1649,7 +1579,7 @@
             </div>
 
             <div class="wa-chat-footer">
-                <a href="https://wa.me/911234567890?text=Hi SFP Support, I need some help with the billing app!"
+                <a href="https://wa.me/919210767600?text=Hi SFP Support, I need some help with the billing app!"
                     target="_blank" class="wa-send-btn">
                     <i class="fa-brands fa-whatsapp"></i>
                     Start Chat on WhatsApp

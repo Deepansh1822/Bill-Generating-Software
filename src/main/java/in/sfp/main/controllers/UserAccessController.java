@@ -175,6 +175,8 @@ public class UserAccessController {
             user.setMobileNumber(payload.get("mobileNumber"));
         if (payload.containsKey("profileImage") && payload.get("profileImage") != null)
             user.setProfileImage(payload.get("profileImage"));
+        if (payload.containsKey("clientImage") && payload.get("clientImage") != null)
+            user.setClientImage(payload.get("clientImage"));
         if (payload.containsKey("monthlyTarget"))
             user.setMonthlyTarget(Double.parseDouble(payload.get("monthlyTarget")));
 

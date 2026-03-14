@@ -798,7 +798,7 @@
                     Welcome
                 </h1>
                 <p
-                    th:text="${userRole == 'ADMIN' ? 'Overview of all client activities and requests.' : 'Here is what is happening with your business today.'}">
+                    th:text="${userRole == 'ADMIN' ? 'Overview of all business owner activities and requests.' : 'Here is what is happening with your business today.'}">
                     Subtitle</p>
             </div>
             <a href="/billing-app/api/Profile" class="user-profile"
@@ -809,7 +809,7 @@
                     U</div>
                 <div style="font-size: 0.9rem; font-weight: 700;" th:text="${displayUsername}">Username</div>
                 <span class="role-badge" th:classappend="${userRole == 'ADMIN' ? 'role-admin' : 'role-client'}"
-                    th:text="${userRole}">Role</span>
+                    th:text="${userRole == 'CLIENT' ? 'OWNER' : userRole}">Role</span>
             </a>
         </div>
 
@@ -1119,17 +1119,16 @@
                     style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
                     <div>
                         <h3 style="font-weight: 800; display: flex; align-items: center; gap: 8px;">
-                            🏆 Top Performing Merchants
+                            🏆 Elite Business Owners
                             <i class="fa-solid fa-circle-info"
                                 style="font-size: 0.85rem; color: #94a3b8; cursor: pointer;"
                                 onclick="toggleInfoModal()"></i>
                         </h3>
-                        <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Top performing businesses based
-                            on total finalized revenue.</p>
+                        <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Top performing business owners based on total finalized revenue.</p>
                     </div>
                     <a href="/billing-app/api/ManageClients"
                         style="font-size: 0.8rem; color: var(--primary); font-weight: 700; text-decoration: none; margin-top: 4px;">View
-                        All Clients →</a>
+                        All Owners →</a>
                 </div>
                 <div class="client-grid" id="eliteClientsGrid">
                     <!-- Populated via JS for Admin -->
@@ -1213,7 +1212,7 @@
                 </div>
                 <div class="info-block">
                     <label>System Role</label>
-                    <p>CLIENT (Standard)</p>
+                    <p>OWNER (Standard)</p>
                 </div>
             </div>
         </div>
@@ -1225,7 +1224,7 @@
             <button class="modal-close" onclick="toggleInfoModal()"><i class="fa-solid fa-xmark"></i></button>
             <div class="modal-header">
                 <div class="modal-logo">🏆</div>
-                <h2 style="font-weight: 800; font-size: 1.25rem; margin: 0;">Top Performing Merchants Insight</h2>
+                <h2 style="font-weight: 800; font-size: 1.25rem; margin: 0;">Elite Owners Insight</h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin: 4px 0 0 0;">Ranking Logic & Transparency
                 </p>
             </div>
@@ -2063,7 +2062,7 @@
                         }
                     });
                 } else {
-                    showChartFallback('billStatsChart', 'fa-file-invoice-dollar', 'No Invoices', 'Global billing efficiency metrics will show once clients start creating bills.');
+                    showChartFallback('billStatsChart', 'fa-file-invoice-dollar', 'No Invoices', 'Global billing efficiency metrics will show once owners start creating bills.');
                 }
 
             } else {
