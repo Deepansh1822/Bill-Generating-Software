@@ -22,6 +22,11 @@
             --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 100px;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -40,7 +45,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 40px;
         }
@@ -520,6 +525,234 @@
             transform: rotate(180deg);
             color: var(--primary);
         }
+
+        /* --- Bookmark / Sidebar Styles --- */
+        .main-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .bookmark-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .bookmark-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bookmark-title i {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--secondary);
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            border-radius: 15px;
+            transition: var(--transition);
+        }
+
+        .nav-links a i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+            transform: translateX(5px);
+        }
+
+        .nav-links a.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 20px rgba(2, 132, 199, 0.2);
+        }
+
+        /* --- Floating Action Button (Mobile Only) --- */
+        .mobile-nav-toggle {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4);
+            z-index: 2000;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mobile-nav-toggle:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .gallery-actual-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            /* This makes sure the image fills the space without stretching */
+            display: block;
+            transition: transform 0.5s ease;
+            cursor: zoom-in;
+        }
+
+        .gallery-item:hover .gallery-actual-img {
+            transform: scale(1.08);
+            /* Sophisticated zoom effect on hover */
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+            cursor: zoom-out;
+            padding: 40px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 95%;
+            max-height: 90vh;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .lightbox-modal.active .lightbox-content {
+            transform: scale(1);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            color: white;
+            font-size: 34px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .lightbox-close:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+
+        @media (max-width: 1024px) {
+            .main-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(10px);
+                z-index: 3000;
+                padding: 40px 20px;
+                overflow-y: auto;
+            }
+
+            .sidebar.show {
+                display: block;
+            }
+
+            .bookmark-card {
+                max-width: 400px;
+                margin: 40px auto;
+            }
+
+            .mobile-nav-toggle {
+                display: flex;
+            }
+        }
     </style>
 </head>
 
@@ -529,7 +762,6 @@
             style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0;">
             <a href="/billing-app/api/MainDashboard" class="logo">
                 <img src="/images/SFP-Billing-Bigger.png" alt="SFP Billing">
-                <span>Solutions</span>
             </a>
             <a href="/billing-app/api/MainDashboard" class="back-btn">
                 <i class="fa-solid fa-arrow-left"></i> Back to Main Dashboard
@@ -547,411 +779,653 @@
     </header>
 
     <main class="container">
-        <!-- Section 1: Introduction -->
-        <section class="content-section">
-            <h2><i class="fa-solid fa-compass"></i> Platform Overview</h2>
-            <p>SFP Billing Solutions is a high-performance ERP system designed for modern commerce. It unifies complex
-                inventory logistics with a lightning-fast billing engine, giving you total visibility into your business
-                growth.</p>
-        </section>
-
-        <!-- Section 2: Roles -->
-        <section class="content-section">
-            <h2><i class="fa-solid fa-users"></i> Understanding Roles</h2>
-            <div class="role-grid">
-                <div class="role-card">
-                    <h3><i class="fa-solid fa-shield-halved"></i> Administrator</h3>
-                    <ul>
-                        <li><i class="fa-solid fa-check"></i> Review and onboard new owners</li>
-                        <li><i class="fa-solid fa-check"></i> Monitor global system revenue</li>
-                        <li><i class="fa-solid fa-check"></i> Real-time server diagnostics</li>
-                        <li><i class="fa-solid fa-check"></i> Broadcast system announcements</li>
+        <div class="main-wrapper">
+            <!-- Sidebar / Bookmark Section -->
+            <aside class="sidebar">
+                <div class="bookmark-card">
+                    <div class="bookmark-title">
+                        <i class="fa-solid fa-bookmark"></i>
+                        Quick Navigation
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="#overview"><i class="fa-solid fa-compass"></i> Overview</a></li>
+                        <li><a href="#roles"><i class="fa-solid fa-users"></i> Roles</a></li>
+                        <li><a href="#workflow"><i class="fa-solid fa-route"></i> Workflow</a></li>
+                        <li><a href="#video-tour"><i class="fa-solid fa-circle-play"></i> Video Guide</a></li>
+                        <li><a href="#modules"><i class="fa-solid fa-cube"></i> Modules</a></li>
+                        <li><a href="#spotlight"><i class="fa-solid fa-camera-retro"></i> Spotlight</a></li>
+                        <li><a href="#analytics"><i class="fa-solid fa-chart-simple"></i> Analytics</a></li>
+                        <li><a href="#faq"><i class="fa-solid fa-circle-question"></i> FAQ</a></li>
+                        <li><a href="#tips"><i class="fa-solid fa-lightbulb"></i> Pro Tips</a></li>
+                        <li><a href="#support"><i class="fa-solid fa-headset"></i> Support</a></li>
                     </ul>
                 </div>
-                <div class="role-card">
-                    <h3><i class="fa-solid fa-crown"></i> Business Owner</h3>
-                    <ul>
-                        <li><i class="fa-solid fa-check"></i> Manage items and stock levels</li>
-                        <li><i class="fa-solid fa-check"></i> Create GST-ready invoices</li>
-                        <li><i class="fa-solid fa-check"></i> Customize business branding</li>
-                        <li><i class="fa-solid fa-check"></i> Analyze personal sales growth</li>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="main-content">
+                <!-- Section 1: Introduction -->
+                <section id="overview" class="content-section">
+                    <h2><i class="fa-solid fa-compass"></i> Platform Overview</h2>
+                    <p style="font-size: 16px; margin-bottom: 25px;">SFP Billing Solutions is an enterprise-grade ERP
+                        ecosystem engineered to eliminate the friction between inventory management and financial
+                        transactions. Our platform provides a centralized command center for businesses to scale with
+                        confidence and precision.</p>
+
+                    <div class="role-grid"
+                        style="margin-top: 20px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                        <div
+                            style="background: rgba(2, 132, 199, 0.05); padding: 20px; border-radius: 20px; border: 1px solid rgba(2, 132, 199, 0.1);">
+                            <h4
+                                style="color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-bolt-lightning"></i> Peak Performance
+                            </h4>
+                            <p style="font-size: 13px; color: var(--secondary); line-height: 1.5;">Built on a
+                                high-concurrency architecture that handles massive product catalogs and rapid-fire
+                                billing without latency.</p>
+                        </div>
+                        <div
+                            style="background: rgba(16, 185, 129, 0.05); padding: 20px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.1);">
+                            <h4
+                                style="color: #10b981; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-scale-balanced"></i> Zero-Error Compliance
+                            </h4>
+                            <p style="font-size: 13px; color: var(--secondary); line-height: 1.5;">Real-automated GST
+                                calculations (CGST/SGST/IGST) and E-Way bill generation fully aligned with current tax
+                                regulations.</p>
+                        </div>
+                        <div
+                            style="background: rgba(99, 102, 241, 0.05); padding: 20px; border-radius: 20px; border: 1px solid rgba(99, 102, 241, 0.1);">
+                            <h4
+                                style="color: #6366f1; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-shield-check"></i> Data Integrity
+                            </h4>
+                            <p style="font-size: 13px; color: var(--secondary); line-height: 1.5;">Enterprise-level
+                                encryption and internal audit logs ensure every stock movement and payment is tracked
+                                and secured.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Roles -->
+                <section id="roles" class="content-section">
+                    <h2><i class="fa-solid fa-users"></i> Understanding Roles</h2>
+                    <div class="role-grid">
+                        <div class="role-card">
+                            <h3><i class="fa-solid fa-shield-halved"></i> Administrator</h3>
+                            <ul>
+                                <li><i class="fa-solid fa-check"></i> Review and onboard new owners</li>
+                                <li><i class="fa-solid fa-check"></i> Monitor global system revenue</li>
+                                <li><i class="fa-solid fa-check"></i> Real-time server diagnostics</li>
+                                <li><i class="fa-solid fa-check"></i> Broadcast system announcements</li>
+                            </ul>
+                        </div>
+                        <div class="role-card">
+                            <h3><i class="fa-solid fa-crown"></i> Business Owner</h3>
+                            <ul>
+                                <li><i class="fa-solid fa-check"></i> Manage items and stock levels</li>
+                                <li><i class="fa-solid fa-check"></i> Create GST-ready invoices</li>
+                                <li><i class="fa-solid fa-check"></i> Customize business branding</li>
+                                <li><i class="fa-solid fa-check"></i> Analyze personal sales growth</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: The Workflow -->
+                <section id="workflow" class="content-section">
+                    <h2><i class="fa-solid fa-route"></i> The Standard Workflow</h2>
+                    <p>Experience the complete lifecycle of a business entry, from initial onboarding to real-time
+                        financial
+                        reporting.</p>
+
+                    <div class="flow-container">
+                        <!-- Step 1 -->
+                        <div class="flow-node">
+                            <div class="flow-icon"><i class="fa-solid fa-user-plus"></i></div>
+                            <div class="flow-content">
+                                <h4>Owner Registration</h4>
+                                <p>Business Owner submits identity and company credentials via the public portal.</p>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+                        <div class="flow-decision">Admin Verification</div>
+                        <div class="flow-connector"></div>
+
+                        <!-- Step 2 -->
+                        <div class="flow-node">
+                            <div class="flow-icon"><i class="fa-solid fa-sliders"></i></div>
+                            <div class="flow-content">
+                                <h4>System Initialization</h4>
+                                <p>Owner uploads branding (Logo) and sets up core categories & inventory items.</p>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <!-- Step 3 -->
+                        <div class="flow-node">
+                            <div class="flow-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                            <div class="flow-content">
+                                <h4>The Transaction Engine</h4>
+                                <p>Generate draft quotes. Finalization triggers automated GST math and Stock deduction.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <!-- Step 4 -->
+                        <div class="flow-node">
+                            <div class="flow-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
+                            <div class="flow-content">
+                                <h4>Logistics & Transport</h4>
+                                <p>Optionally generate E-Way bills for moving goods with integrated vehicle tracking.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <!-- Step 5 -->
+                        <div class="flow-node" style="border-color: #10b981; background: #f0fdf4;">
+                            <div class="flow-icon" style="background: #10b981; color: white;"><i
+                                    class="fa-solid fa-chart-line"></i></div>
+                            <div class="flow-content">
+                                <h4>Analytics & Growth</h4>
+                                <p>Data aggregates into the dashboard, showing revenue trends and sales heatmaps.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-box" style="margin-top: 60px;">
+                        <p style="font-size: 15px; color: var(--dark); font-weight: 700; margin-bottom: 10px;">
+                            End-to-End
+                            Automation</p>
+                        <p style="font-size: 14px; color: var(--secondary);">Every node in this flowchart is
+                            interconnected. A
+                            change in inventory reflects in billing, and a finalized bill reflects in global revenue
+                            instantly.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 4: Video Walkthrough -->
+                <section id="video-tour" class="content-section">
+                    <h2><i class="fa-solid fa-play"></i> Platform Walkthrough</h2>
+                    <p style="margin-bottom: 30px;">Watch this 2-minute masterclass to see the complete flow of SFP
+                        Billing in real-time. This video covers everything from initial setup to generating your first
+                        GST invoice.</p>
+
+                    <div
+                        style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 30px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.4); background: #000;">
+                        <!-- Update the source 'src' with your actual video filename -->
+                        <video controls
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;">
+                            <source src="/videos/Demo.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+
+                    <div
+                        style="margin-top: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; color: var(--secondary); font-size: 14px; font-weight: 500;">
+                        <span><i class="fa-solid fa-clock" style="color: var(--primary);"></i> Duration: 1m 50s</span>
+                    </div>
+                </section>
+
+
+                <!-- Section 4: Key Modules -->
+                <section id="modules" class="content-section">
+                    <h2><i class="fa-solid fa-cube"></i> Powerful Modules</h2>
+                    <div class="module-list">
+                        <div class="mod-item">
+                            <div class="mod-icon"><i class="fa-solid fa-warehouse"></i></div>
+                            <div class="mod-info">
+                                <h4>Inventory Engine</h4>
+                                <p>Real-time stock alerts and multi-category management with HSN/SAC tracking.</p>
+                            </div>
+                        </div>
+                        <div class="mod-item">
+                            <div class="mod-icon"><i class="fa-solid fa-receipt"></i></div>
+                            <div class="mod-info">
+                                <h4>GST Billing</h4>
+                                <p>Automated tax calculations for CGST, SGST, and IGST with beautiful PDF exports.</p>
+                            </div>
+                        </div>
+                        <div class="mod-item">
+                            <div class="mod-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                            <div class="mod-info">
+                                <h4>E-Way Bill</h4>
+                                <p>Generate transport documents instantly for state-to-state movement of goods.</p>
+                            </div>
+                        </div>
+                        <div class="mod-item">
+                            <div class="mod-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                            <div class="mod-info">
+                                <h4>Smart Analytics</h4>
+                                <p>Interactive sales heatmaps, growth trends, and category distribution charts.</p>
+                            </div>
+                        </div>
+                        <div class="mod-item">
+                            <div class="mod-icon"><i class="fa-solid fa-address-book"></i></div>
+                            <div class="mod-info">
+                                <h4>Client CRM</h4>
+                                <p>Maintain a digital directory of your customers with transaction history and contact
+                                    management.</p>
+                            </div>
+                        </div>
+                        <div class="mod-item">
+                            <div class="mod-icon"><i class="fa-solid fa-file-contract"></i></div>
+                            <div class="mod-info">
+                                <h4>Cloud Reporting</h4>
+                                <p>Download comprehensive financial summaries, GST reports, and ledger statements in one
+                                    click.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 5: Visual Spotlight -->
+                <section id="spotlight" class="content-section">
+                    <h2><i class="fa-solid fa-camera-retro"></i> Visual Module Spotlight</h2>
+                    <p>Take a closer look at the premium interface designed for maximum productivity.</p>
+
+                    <div class="gallery-grid">
+                        <!-- 1. Dashboard -->
+                        <div class="gallery-item">
+                            <img src="/images/Owner-Dashboard.png" alt="Dashboard Preview" class="gallery-actual-img">
+                            <div class="gallery-info">
+                                <h4>Main Dashboard</h4>
+                                <p>A central hub showing your daily sales, tax collections, and business growth at a
+                                    glance.</p>
+                            </div>
+                        </div>
+                        <!-- 2. Product Invoice -->
+                        <div class="gallery-item">
+                            <img src="/images/Product-Invoice.png" alt="Product Invoice" class="gallery-actual-img">
+                            <div class="gallery-info">
+                                <h4>Create Products Invoices</h4>
+                                <p>Generate professional GST invoices for your products with automatic tax and stock
+                                    updates.</p>
+                            </div>
+                        </div>
+                        <!-- 3. Service Invoice -->
+                        <div class="gallery-item">
+                            <img src="/images/Service-Invoice.png" alt="Service Invoice" class="gallery-actual-img">
+                            <div class="gallery-info">
+                                <h4>Create Services Invoices</h4>
+                                <p>Professional billing for labor and consulting, tailored for services without physical
+                                    inventory.</p>
+                            </div>
+                        </div>
+                        <!-- 4. Item Categories -->
+                        <div class="gallery-item">
+                            <img src="/images/Categories.png" alt="Categories" class="gallery-actual-img">
+                            <div class="gallery-info">
+                                <h4>Categories Management</h4>
+                                <p>Organize your catalog into groups like Electronics or Services for easier searching.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 5. Category Insights -->
+                        <div class="gallery-item">
+                            <img src="/images/Categories-Details.png" alt="Category Details" class="gallery-actual-img">
+                            <div class="gallery-info">
+                                <h4>Category Insights</h4>
+                                <p>View exactly what's inside each category and see who made recent updates.</p>
+                            </div>
+                        </div>
+                        <!-- 6. Stock Management -->
+                        <div class="gallery-item">
+                            <img src="/images/Products-Services.png" alt="Stock Level" class="gallery-actual-img">
+                            <div class="gallery-info">
+                                <h4>Stock Management</h4>
+                                <p>Keep track of every item in your shop with real-time alerts when inventory runs low.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 7. Product Details -->
+                        <div class="gallery-item">
+                            <img src="/images/Products-Services-Details.png" alt="Product Details"
+                                class="gallery-actual-img">
+                            <div class="gallery-info">
+                                <h4>Product Insights</h4>
+                                <p>Advanced view for every item showing HSN/SAC codes, tax history, and pricing DNA.</p>
+                            </div>
+                        </div>
+                        <!-- 8. Professional Profile -->
+                        <div class="gallery-item">
+                            <img src="/images/Profile.png" alt="Business Profile" class="gallery-actual-img">
+                            <div class="gallery-info">
+                                <h4>Professional Profile</h4>
+                                <p>Set up your business logo, GSTIN, and custom terms to build a professional brand
+                                    identity.</p>
+                            </div>
+                        </div>
+                        <!-- 9. Sales Reports -->
+                        <div class="gallery-item">
+                            <img src="/images/Bills-Reports.png" alt="Reports" class="gallery-actual-img">
+                            <div class="gallery-info">
+                                <h4>Invoices & Sales Reports</h4>
+                                <p>Download detailed transaction history in Excel or PDF for your tax filings and
+                                    accounting.</p>
+                            </div>
+                        </div>
+                        <!-- 10. Support Center -->
+                        <div class="gallery-item">
+                            <img src="/images/Help-Support.png" alt="Support" class="gallery-actual-img">
+                            <div class="gallery-info">
+                                <h4>Support Center</h4>
+                                <p>Instant help with role-specific FAQs and contact details for our technical team.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 6: Analytics Spotlight -->
+                <section id="analytics" class="content-section">
+                    <h2><i class="fa-solid fa-chart-simple"></i> Analytics Deep Dive</h2>
+                    <p>Understand the intelligence behind your dashboard metrics.</p>
+
+                    <div class="role-grid" style="margin-top: 30px;">
+                        <div class="role-card">
+                            <h3><i class="fa-solid fa-money-bill-trend-up"></i> Revenue Growth</h3>
+                            <p style="font-size: 14px; color: var(--secondary);">The growth chart calculates your
+                                'Finalized' billing trends over the last 6 months to help you predict future business
+                                flow.</p>
+                        </div>
+                        <div class="role-card">
+                            <h3><i class="fa-solid fa-gauge-high"></i> Efficiency Index</h3>
+                            <p style="font-size: 14px; color: var(--secondary);">Our unique ratio analyzer tracks
+                                'Finalized' vs 'Draft' invoices to show your lead conversion success rate.</p>
+                        </div>
+                        <div class="role-card">
+                            <h3><i class="fa-solid fa-box-open"></i> Stock Health Status</h3>
+                            <p style="font-size: 14px; color: var(--secondary);">Visual alerts trigger for items falling
+                                below safety levels, ensuring you never miss a sale due to out-of-stock situations.</p>
+                        </div>
+                        <div class="role-card">
+                            <h3><i class="fa-solid fa-pie-chart"></i> Category Distribution</h3>
+                            <p style="font-size: 14px; color: var(--secondary);">Understand which product categories are
+                                driving your business with at-a-glance percentage breakdowns of your inventory sales.
+                            </p>
+                        </div>
+                        <div class="role-card">
+                            <h3><i class="fa-solid fa-credit-card"></i> Payment Lifecycle</h3>
+                            <p style="font-size: 14px; color: var(--secondary);">Track the real-time ratio of 'Paid',
+                                'Due', and 'Partially Paid' invoices to maintain a healthy cash flow for your business.
+                            </p>
+                        </div>
+                        <div class="role-card">
+                            <h3><i class="fa-solid fa-file-invoice"></i> GST Contribution</h3>
+                            <p style="font-size: 14px; color: var(--secondary);">Get a detailed split of CGST, SGST, and
+                                IGST collected across all bills, simplifying your monthly tax filing process.</p>
+                        </div>
+                    </div>
+                    <div
+                        style="text-align: center; margin-top: 40px; opacity: 0.7; font-style: italic; font-size: 14px;">
+                        <i class="fa-solid fa-plus"></i> And many more granular data points available in your live
+                        dashboard...
+                    </div>
+                </section>
+
+                <!-- Section 7: FAQ -->
+                <section id="faq" class="content-section">
+                    <h2><i class="fa-solid fa-circle-question"></i> Frequently Asked Questions</h2>
+
+                    <div class="faq-list">
+                        <!-- FAQ 1 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>How do I add my business logo?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Navigate to 'My Profile' in the sidebar. Click on the business logo area to upload your
+                                official
+                                PNG or JPG file. This logo will automatically appear on all Product and Service
+                                invoices.
+                            </div>
+                        </div>
+                        <!-- FAQ 2 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Is the inventory deduction automatic?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Yes! As soon as you click 'Finalize & Paid' or 'Finalize & Due' for a Product-Based
+                                bill, the
+                                system instantly subtracts those quantities from your specific product stock levels.
+                            </div>
+                        </div>
+                        <!-- FAQ 3 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Can I edit a bill after it's been finalized?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                To maintain audit integrity, 'Finalized' bills cannot be edited. However, 'Draft' bills
+                                can be
+                                modified as many times as needed before finalization.
+                            </div>
+                        </div>
+                        <!-- FAQ 4 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>What is the difference between Product-Based and Service-Based bills?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Product-Based bills track physical quantities and HSN codes, automatically deducting
+                                from
+                                inventory. Service-Based bills are for labor or consulting and use SAC codes without
+                                stock
+                                deduction.
+                            </div>
+                        </div>
+                        <!-- FAQ 5 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>How do I generate an E-Way Bill?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Select the 'E-Way Bill' option from the sidebar, enter the transport details (Vehicle
+                                Number,
+                                Transporter ID), and the system will generate a compliant document linked to your
+                                invoice data.
+                            </div>
+                        </div>
+                        <!-- FAQ 6 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Can I track internal system-wide health as an Admin?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Yes. Admins have a 'Global Dashboard' that aggregates revenue across all owners,
+                                monitors server
+                                response times, and shows recent registration activity.
+                            </div>
+                        </div>
+                        <!-- FAQ 7 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Does the system support multiple GST tiers?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Absolutely. You can set individual GST percentages (5%, 12%, 18%, 28%) for each product
+                                or
+                                service during the inventory setup phase.
+                            </div>
+                        </div>
+                        <!-- FAQ 8 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>How can I handle 'Partially Paid' bills?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                When finalizing a bill, entering an amount less than the total will mark the invoice as
+                                'DUE'.
+                                You can later update the payment from the Dashboard's 'Outstanding Payments' widget.
+                            </div>
+                        </div>
+                        <!-- FAQ 9 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Are my reports exportable to Excel or PDF?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Yes, every invoice and detailed financial report can be downloaded as a PDF. Advanced
+                                data
+                                exports for tax filing (CSV) are available in the Reports section.
+                            </div>
+                        </div>
+                        <!-- FAQ 10 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>What happens if I reject a registration request?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Rejected requests are deleted from the pending queue. The requester will not be able to
+                                log in,
+                                but they can submit a new request if needed.
+                            </div>
+                        </div>
+                        <!-- FAQ 11 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Is there an alert for 'Inventory Low'?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Yes, the system highlights products in red on your Manage Stocks page when they fall
+                                below the
+                                safety threshold.
+                            </div>
+                        </div>
+                        <!-- FAQ 12 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Can I search for a specific invoice number?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Yes, both the Dashboard and the Reports page feature a real-time search bar where you
+                                can filter
+                                by Invoice #, Client Name, or Amount.
+                            </div>
+                        </div>
+                        <!-- FAQ 13 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>What is the 'Broadcast System'?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Administrators can send real-time alerts or announcements that appear immediately on
+                                every live
+                                Business Owner's dashboard via a scrolling header marquee.
+                            </div>
+                        </div>
+                        <!-- FAQ 14 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>How do I delete an item I no longer sell?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Go to 'Manage Stocks', find the item, and click the delete icon. Note that this won't
+                                remove the
+                                item from past invoices to preserve historical data.
+                            </div>
+                        </div>
+                        <!-- FAQ 15 -->
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Is the system mobile responsive?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Yes, the software is built with a mobile-first approach. You can manage inventory and
+                                view
+                                reports comfortably on any smartphone or tablet.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 8: Tips -->
+                <section id="tips" class="content-section"
+                    style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none;">
+                    <h2 style="color: white;"><i class="fa-solid fa-lightbulb"></i> Pro Tips</h2>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 20px; display: flex; align-items: flex-start; gap: 15px;">
+                            <i class="fa-solid fa-circle-check"
+                                style="margin-top: 4px; font-size: 18px; color: #fbbf24;"></i>
+                            <span style="font-size: 15px; line-height: 1.6;">Ensure your Business Logo is uploaded in
+                                Settings for professional-looking bills.</span>
+                        </li>
+                        <li style="margin-bottom: 20px; display: flex; align-items: flex-start; gap: 15px;">
+                            <i class="fa-solid fa-circle-check"
+                                style="margin-top: 4px; font-size: 18px; color: #fbbf24;"></i>
+                            <span style="font-size: 15px; line-height: 1.6;">Use the "Draft" feature to save quotations
+                                and finalize them when the sale is confirmed.</span>
+                        </li>
+                        <li style="display: flex; align-items: flex-start; gap: 15px;">
+                            <i class="fa-solid fa-circle-check"
+                                style="margin-top: 4px; font-size: 18px; color: #fbbf24;"></i>
+                            <span style="font-size: 15px; line-height: 1.6;">Admins: Monitor the "Requests" badge in the
+                                sidebar to onboard new owners promptly.</span>
+                        </li>
                     </ul>
-                </div>
+                </section>
+
+                <!-- Section: Discover More -->
+                <section class="content-section"
+                    style="background: rgba(2, 132, 199, 0.03); border: 1px solid rgba(2, 132, 199, 0.1);">
+                    <div style="text-align: center; padding: 20px;">
+                        <h3 style="color: var(--primary); margin-bottom: 15px;">🚀 Discover Even More</h3>
+                        <p style="color: var(--secondary); max-width: 600px; margin: 0 auto 20px;">Our platform is
+                            constantly evolving. Beyond these guides, you'll find powerful features like <b>Keyboard
+                                Shortcuts</b>, <b>Multi-currency Support</b>, <b>Automated Backups</b>, and <b>Custom
+                                Report Builders</b> waiting for you in the app.</p>
+                        <div
+                            style="display: flex; justify-content: center; gap: 20px; font-size: 14px; color: var(--primary); font-weight: 600;">
+                            <span>#FasterBilling</span>
+                            <span>#SmartInventory</span>
+                            <span>#SecureData</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 9: Support -->
+                <section id="support" class="content-section"
+                    style="text-align: center; border-style: dashed; border-color: var(--primary);">
+                    <h2><i class="fa-solid fa-headset"></i> Still Have Questions?</h2>
+                    <p style="margin-bottom: 30px;">Our support team is ready to help you optimize your billing
+                        workflow.</p>
+                    <a href="https://wa.me/919210767600?text=Hi SFP Support, I have a question about the billing workflow!"
+                        target="_blank"
+                        style="background: var(--primary); color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 10px;">
+                        <i class="fa-brands fa-whatsapp"></i> Chat with Support
+                    </a>
+                </section>
             </div>
-        </section>
+        </div>
 
-        <!-- Section 3: The Workflow -->
-        <section class="content-section">
-            <h2><i class="fa-solid fa-route"></i> The Standard Workflow</h2>
-            <p>Experience the complete lifecycle of a business entry, from initial onboarding to real-time financial
-                reporting.</p>
+        <!-- Floating Mobile Toggle -->
+        <div class="mobile-nav-toggle" id="mobile-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </div>
 
-            <div class="flow-container">
-                <!-- Step 1 -->
-                <div class="flow-node">
-                    <div class="flow-icon"><i class="fa-solid fa-user-plus"></i></div>
-                    <div class="flow-content">
-                        <h4>Owner Registration</h4>
-                        <p>Business Owner submits identity and company credentials via the public portal.</p>
-                    </div>
-                </div>
-
-                <div class="flow-connector"></div>
-                <div class="flow-decision">Admin Verification</div>
-                <div class="flow-connector"></div>
-
-                <!-- Step 2 -->
-                <div class="flow-node">
-                    <div class="flow-icon"><i class="fa-solid fa-sliders"></i></div>
-                    <div class="flow-content">
-                        <h4>System Initialization</h4>
-                        <p>Owner uploads branding (Logo) and sets up core categories & inventory items.</p>
-                    </div>
-                </div>
-
-                <div class="flow-connector"></div>
-
-                <!-- Step 3 -->
-                <div class="flow-node">
-                    <div class="flow-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-                    <div class="flow-content">
-                        <h4>The Transaction Engine</h4>
-                        <p>Generate draft quotes. Finalization triggers automated GST math and Stock deduction.</p>
-                    </div>
-                </div>
-
-                <div class="flow-connector"></div>
-
-                <!-- Step 4 -->
-                <div class="flow-node">
-                    <div class="flow-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
-                    <div class="flow-content">
-                        <h4>Logistics & Transport</h4>
-                        <p>Optionally generate E-Way bills for moving goods with integrated vehicle tracking.</p>
-                    </div>
-                </div>
-
-                <div class="flow-connector"></div>
-
-                <!-- Step 5 -->
-                <div class="flow-node" style="border-color: #10b981; background: #f0fdf4;">
-                    <div class="flow-icon" style="background: #10b981; color: white;"><i
-                            class="fa-solid fa-chart-line"></i></div>
-                    <div class="flow-content">
-                        <h4>Analytics & Growth</h4>
-                        <p>Data aggregates into the dashboard, showing revenue trends and sales heatmaps.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="workflow-box" style="margin-top: 60px;">
-                <p style="font-size: 15px; color: var(--dark); font-weight: 700; margin-bottom: 10px;">End-to-End
-                    Automation</p>
-                <p style="font-size: 14px; color: var(--secondary);">Every node in this flowchart is interconnected. A
-                    change in inventory reflects in billing, and a finalized bill reflects in global revenue instantly.
-                </p>
-            </div>
-        </section>
-
-        <!-- Section 4: Key Modules -->
-        <section class="content-section">
-            <h2><i class="fa-solid fa-cube"></i> Powerful Modules</h2>
-            <div class="module-list">
-                <div class="mod-item">
-                    <div class="mod-icon"><i class="fa-solid fa-warehouse"></i></div>
-                    <div class="mod-info">
-                        <h4>Inventory Engine</h4>
-                        <p>Real-time stock alerts and multi-category management with HSN/SAC tracking.</p>
-                    </div>
-                </div>
-                <div class="mod-item">
-                    <div class="mod-icon"><i class="fa-solid fa-receipt"></i></div>
-                    <div class="mod-info">
-                        <h4>GST Billing</h4>
-                        <p>Automated tax calculations for CGST, SGST, and IGST with beautiful PDF exports.</p>
-                    </div>
-                </div>
-                <div class="mod-item">
-                    <div class="mod-icon"><i class="fa-solid fa-truck-fast"></i></div>
-                    <div class="mod-info">
-                        <h4>E-Way Bill</h4>
-                        <p>Generate transport documents instantly for state-to-state movement of goods.</p>
-                    </div>
-                </div>
-                <div class="mod-item">
-                    <div class="mod-icon"><i class="fa-solid fa-chart-pie"></i></div>
-                    <div class="mod-info">
-                        <h4>Smart Analytics</h4>
-                        <p>Interactive sales heatmaps, growth trends, and category distribution charts.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 5: Visual Spotlight -->
-        <section class="content-section">
-            <h2><i class="fa-solid fa-camera-retro"></i> Visual Module Spotlight</h2>
-            <p>Take a closer look at the premium interface designed for maximum productivity.</p>
-
-            <div class="gallery-grid">
-                <div class="gallery-item">
-                    <div class="gallery-img-placeholder">
-                        <i class="fa-solid fa-image" style="font-size: 30px; margin-right: 10px;"></i> Dashboard Preview
-                    </div>
-                    <div class="gallery-info">
-                        <h4>Smart Dashboard</h4>
-                        <p>Visualizing your business growth with real-time interactive charts.</p>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <div class="gallery-img-placeholder">
-                        <i class="fa-solid fa-image" style="font-size: 30px; margin-right: 10px;"></i> Billing Engine
-                    </div>
-                    <div class="gallery-info">
-                        <h4>Professional Billing</h4>
-                        <p>Dynamic item management with automated GST calculations.</p>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <div class="gallery-img-placeholder">
-                        <i class="fa-solid fa-image" style="font-size: 30px; margin-right: 10px;"></i> Inventory View
-                    </div>
-                    <div class="gallery-info">
-                        <h4>Inventory Manager</h4>
-                        <p>Color-coded stock alerts and multi-category tracking system.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 6: Analytics Spotlight -->
-        <section class="content-section">
-            <h2><i class="fa-solid fa-chart-simple"></i> Analytics Deep Dive</h2>
-            <p>Understand the intelligence behind your dashboard metrics.</p>
-
-            <div class="role-grid" style="margin-top: 30px;">
-                <div class="role-card">
-                    <h3><i class="fa-solid fa-money-bill-trend-up"></i> Revenue Growth</h3>
-                    <p style="font-size: 14px; color: var(--secondary);">The growth chart calculates your 'Finalized'
-                        billing trends over the last 6 months to help you predict future business flow.</p>
-                </div>
-                <div class="role-card">
-                    <h3><i class="fa-solid fa-gauge-high"></i> Efficiency Index</h3>
-                    <p style="font-size: 14px; color: var(--secondary);">Our unique ratio analyzer tracks 'Finalized' vs
-                        'Draft' invoices to show your lead conversion success rate.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 7: FAQ -->
-        <section class="content-section">
-            <h2><i class="fa-solid fa-circle-question"></i> Frequently Asked Questions</h2>
-
-            <div class="faq-list">
-                <!-- FAQ 1 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>How do I add my business logo?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Navigate to 'My Profile' in the sidebar. Click on the business logo area to upload your official
-                        PNG or JPG file. This logo will automatically appear on all Product and Service invoices.
-                    </div>
-                </div>
-                <!-- FAQ 2 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Is the inventory deduction automatic?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Yes! As soon as you click 'Finalize & Paid' or 'Finalize & Due' for a Product-Based bill, the
-                        system instantly subtracts those quantities from your specific product stock levels.
-                    </div>
-                </div>
-                <!-- FAQ 3 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Can I edit a bill after it's been finalized?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        To maintain audit integrity, 'Finalized' bills cannot be edited. However, 'Draft' bills can be
-                        modified as many times as needed before finalization.
-                    </div>
-                </div>
-                <!-- FAQ 4 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>What is the difference between Product-Based and Service-Based bills?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Product-Based bills track physical quantities and HSN codes, automatically deducting from
-                        inventory. Service-Based bills are for labor or consulting and use SAC codes without stock
-                        deduction.
-                    </div>
-                </div>
-                <!-- FAQ 5 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>How do I generate an E-Way Bill?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Select the 'E-Way Bill' option from the sidebar, enter the transport details (Vehicle Number,
-                        Transporter ID), and the system will generate a compliant document linked to your invoice data.
-                    </div>
-                </div>
-                <!-- FAQ 6 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Can I track internal system-wide health as an Admin?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Yes. Admins have a 'Global Dashboard' that aggregates revenue across all owners, monitors server
-                        response times, and shows recent registration activity.
-                    </div>
-                </div>
-                <!-- FAQ 7 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Does the system support multiple GST tiers?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Absolutely. You can set individual GST percentages (5%, 12%, 18%, 28%) for each product or
-                        service during the inventory setup phase.
-                    </div>
-                </div>
-                <!-- FAQ 8 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>How can I handle 'Partially Paid' bills?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        When finalizing a bill, entering an amount less than the total will mark the invoice as 'DUE'.
-                        You can later update the payment from the Dashboard's 'Outstanding Payments' widget.
-                    </div>
-                </div>
-                <!-- FAQ 9 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Are my reports exportable to Excel or PDF?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Yes, every invoice and detailed financial report can be downloaded as a PDF. Advanced data
-                        exports for tax filing (CSV) are available in the Reports section.
-                    </div>
-                </div>
-                <!-- FAQ 10 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>What happens if I reject a registration request?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Rejected requests are deleted from the pending queue. The requester will not be able to log in,
-                        but they can submit a new request if needed.
-                    </div>
-                </div>
-                <!-- FAQ 11 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Is there an alert for 'Inventory Low'?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Yes, the system highlights products in red on your Manage Stocks page when they fall below the
-                        safety threshold.
-                    </div>
-                </div>
-                <!-- FAQ 12 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Can I search for a specific invoice number?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Yes, both the Dashboard and the Reports page feature a real-time search bar where you can filter
-                        by Invoice #, Client Name, or Amount.
-                    </div>
-                </div>
-                <!-- FAQ 13 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>What is the 'Broadcast System'?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Administrators can send real-time alerts or announcements that appear immediately on every live
-                        Business Owner's dashboard via a scrolling header marquee.
-                    </div>
-                </div>
-                <!-- FAQ 14 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>How do I delete an item I no longer sell?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Go to 'Manage Stocks', find the item, and click the delete icon. Note that this won't remove the
-                        item from past invoices to preserve historical data.
-                    </div>
-                </div>
-                <!-- FAQ 15 -->
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Is the system mobile responsive?</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Yes, the software is built with a mobile-first approach. You can manage inventory and view
-                        reports comfortably on any smartphone or tablet.
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 8: Tips -->
-        <section class="content-section"
-            style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none;">
-            <h2 style="color: white;"><i class="fa-solid fa-lightbulb"></i> Pro Tips</h2>
-            <ul style="list-style: none;">
-                <li style="margin-bottom: 15px; display: flex; gap: 10px;"><i class="fa-solid fa-circle-check"></i>
-                    Ensure your Business Logo is uploaded in Settings for professional-looking bills.</li>
-                <li style="margin-bottom: 15px; display: flex; gap: 10px;"><i class="fa-solid fa-circle-check"></i> Use
-                    the "Draft" feature to save quotations and finalize them when the sale is confirmed.</li>
-                <li style="display: flex; gap: 10px;"><i class="fa-solid fa-circle-check"></i> Admins: Monitor the
-                    "Requests" badge in the sidebar to onboard new owners promptly.</li>
-            </ul>
-        </section>
-
-        <!-- Section 9: Support -->
-        <section class="content-section"
-            style="text-align: center; border-style: dashed; border-color: var(--primary);">
-            <h2><i class="fa-solid fa-headset"></i> Still Have Questions?</h2>
-            <p style="margin-bottom: 30px;">Our support team is ready to help you optimize your billing workflow.</p>
-            <a href="https://wa.me/919210767600?text=Hi SFP Support, I have a question about the billing workflow!"
-                target="_blank"
-                style="background: var(--primary); color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 10px;">
-                <i class="fa-brands fa-whatsapp"></i> Chat with Support
-            </a>
-        </section>
-
-        <script>
-            // FAQ Accordion Logic
-            document.querySelectorAll('.faq-question').forEach(q => {
-                q.addEventListener('click', () => {
-                    const item = q.parentElement;
-                    item.classList.toggle('active');
-                });
-            });
-        </script>
     </main>
 
     <footer>
@@ -964,6 +1438,99 @@
             </p>
         </div>
     </footer>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox-modal" id="lightbox">
+        <span class="lightbox-close"><i class="fa-solid fa-xmark"></i></span>
+        <img class="lightbox-content" id="lightbox-img" alt="Enlarged view">
+    </div>
+
+    <script>
+        // FAQ Accordion Logic
+        document.querySelectorAll('.faq-question').forEach(q => {
+            q.addEventListener('click', () => {
+                const item = q.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+
+        // Mobile Sidebar Toggle
+        const toggle = document.getElementById('mobile-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        if (toggle && sidebar) {
+            toggle.addEventListener('click', () => {
+                sidebar.classList.toggle('show');
+                const icon = toggle.querySelector('i');
+                if (sidebar.classList.contains('show')) {
+                    icon.classList.replace('fa-bars', 'fa-xmark');
+                } else {
+                    icon.classList.replace('fa-xmark', 'fa-bars');
+                }
+            });
+        }
+
+        // Close sidebar when link is clicked (mobile)
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (sidebar) sidebar.classList.remove('show');
+                if (toggle) toggle.querySelector('i').classList.replace('fa-xmark', 'fa-bars');
+            });
+        });
+
+        // Scrollspy Logic
+        const sections = document.querySelectorAll('.content-section');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            let current = "";
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Lightbox functionality
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        if (lightbox && lightboxImg) {
+            console.log("Lightbox initialized successfully.");
+
+            // Use event delegation for all gallery images
+            document.addEventListener('click', (e) => {
+                const img = e.target.closest('.gallery-actual-img');
+                if (img) {
+                    console.log("Image clicked:", img.src);
+                    lightboxImg.src = img.src;
+                    lightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+
+            // Close lightbox when clicking the overlay or close button
+            lightbox.addEventListener('click', (e) => {
+                // If the user clicked the overlay or the close icon, close it
+                // But if they clicked the image itself, don't close it
+                if (e.target.id === 'lightbox' || e.target.closest('.lightbox-close') || e.target === lightbox) {
+                    console.log("Closing lightbox.");
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        } else {
+            console.error("Lightbox elements not found in DOM.");
+        }
+    </script>
 </body>
 
 </html>

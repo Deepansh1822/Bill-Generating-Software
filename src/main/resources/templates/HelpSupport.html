@@ -338,6 +338,57 @@
                         </div>
                     </div>
 
+                    <div th:if="${userRole == 'CLIENT'}" class="faq-item"
+                        data-search="inventory low stock alerts threshold">
+                        <div class="faq-question">
+                            How do I set up low-stock alerts?
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            When adding or editing a product in "Manage Stocks", you can set a "Safety Threshold" value.
+                            The system will automatically highlight the item in red on your dashboard when stock falls
+                            below this number.
+                        </div>
+                    </div>
+
+                    <div th:if="${userRole == 'CLIENT'}" class="faq-item"
+                        data-search="customize invoice branding logo footer">
+                        <div class="faq-question">
+                            Can I customize the look of my PDF invoices?
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes. In "My Profile", you can upload your business logo and set custom terms and conditions.
+                            These details will be automatically formatted into a professional layout whenever you
+                            generate a bill.
+                        </div>
+                    </div>
+
+                    <div th:if="${userRole == 'CLIENT'}" class="faq-item"
+                        data-search="eway bill validity transport duration">
+                        <div class="faq-question">
+                            How long is an E-Way Bill valid?
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            E-Way bill validity is based on the distance. Generally, for every 100km, the validity is 1
+                            day. The system automatically calculates the expected distance if you provide the correct
+                            PIN codes.
+                        </div>
+                    </div>
+
+                    <div th:if="${userRole == 'CLIENT'}" class="faq-item"
+                        data-search="update gstin business profile settings">
+                        <div class="faq-question">
+                            How do I update my business GSTIN?
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Go to "My Profile" > "Business Details". You can update your GSTIN there. Note that this
+                            change will only apply to new invoices generated after the update.
+                        </div>
+                    </div>
+
                     <!-- Admin Specific FAQs -->
                     <div th:if="${userRole == 'ADMIN'}" class="faq-item"
                         data-search="approve client access request registration">
@@ -352,7 +403,7 @@
                     </div>
 
                     <div th:if="${userRole == 'ADMIN'}" class="faq-item"
-                        data-search="monitor global activity dashboard business">
+                        data-search="monitor global activity dashboard business text revenue">
                         <div class="faq-question">
                             Can I monitor all global billing transactions?
                             <i class="fa-solid fa-chevron-down"></i>
@@ -360,6 +411,54 @@
                         <div class="faq-answer">
                             Yes. The Admin Dashboard features a "Global Billing Activity" section that shows all
                             invoices generated across the entire platform in real-time, regardless of the business.
+                        </div>
+                    </div>
+
+                    <div th:if="${userRole == 'ADMIN'}" class="faq-item"
+                        data-search="system broadcast announcement notification marquee">
+                        <div class="faq-question">
+                            How do I send a system-wide announcement?
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Use the "Broadcast" tool in the Admin panel. Any message you type will appear as a scrolling
+                            marquee header on every active Business Owner's dashboard instantly.
+                        </div>
+                    </div>
+
+                    <div th:if="${userRole == 'ADMIN'}" class="faq-item"
+                        data-search="server status diagnostics health uptime">
+                        <div class="faq-question">
+                            Where can I check system health diagnostics?
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Admins have access to a "Diagnostics" pane which shows real-time server response times,
+                            database connection status, and active user sessions.
+                        </div>
+                    </div>
+
+                    <div th:if="${userRole == 'ADMIN'}" class="faq-item"
+                        data-search="database backup data recovery safety">
+                        <div class="faq-question">
+                            How often are database backups performed?
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            The system performs automated encrypted backups every 24 hours. Admins can also trigger
+                            a manual snapshot from the "Settings" > "Data Management" section before major updates.
+                        </div>
+                    </div>
+
+                    <div th:if="${userRole == 'ADMIN'}" class="faq-item"
+                        data-search="global analytics performance business leaders">
+                        <div class="faq-question">
+                            Can I see which businesses are performing best?
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, the "Leaderboard" section in the Admin Dashboard ranks registered businesses by
+                            transaction volume and revenue growth over the last 30 days.
                         </div>
                     </div>
 
@@ -397,6 +496,31 @@
 
             <!-- Support Categories -->
             <div class="support-grid">
+                <!-- Owner Specific Cards -->
+                <a th:if="${userRole == 'CLIENT'}" href="#" class="support-card">
+                    <div class="support-card-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                    <h3>Inventory Strategy</h3>
+                    <p>Optimize your stock turnover ratio and learn how to manage multi-category products efficiently.</p>
+                </a>
+                <a th:if="${userRole == 'CLIENT'}" href="#" class="support-card">
+                    <div class="support-card-icon"><i class="fa-solid fa-users-viewfinder"></i></div>
+                    <h3>Customer Insights</h3>
+                    <p>Deep dive into your sales data to understand client buying patterns and payment tendencies.</p>
+                </a>
+
+                <!-- Admin Specific Cards -->
+                <a th:if="${userRole == 'ADMIN'}" href="#" class="support-card">
+                    <div class="support-card-icon"><i class="fa-solid fa-users-gear"></i></div>
+                    <h3>User Management</h3>
+                    <p>Best practices for onboarding business owners and managing pending registration requests.</p>
+                </a>
+                <a th:if="${userRole == 'ADMIN'}" href="#" class="support-card">
+                    <div class="support-card-icon"><i class="fa-solid fa-gears"></i></div>
+                    <h3>System Configuration</h3>
+                    <p>Learn how to manage platform-wide settings, broadcasts, and security feature-flags.</p>
+                </a>
+
+                <!-- General Cards -->
                 <a href="#" class="support-card">
                     <div class="support-card-icon"><i class="fa-solid fa-rocket"></i></div>
                     <h3>Getting Started</h3>
@@ -416,6 +540,11 @@
                     <div class="support-card-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
                     <h3>Technical Guides</h3>
                     <p>Advanced integration steps, API documentation, and troubleshooting common issues.</p>
+                </a>
+                <a href="#" class="support-card">
+                    <div class="support-card-icon"><i class="fa-solid fa-file-export"></i></div>
+                    <h3>Export & Tax</h3>
+                    <p>Learn how to generate CSV/Excel files for GST filing and audited financial statements.</p>
                 </a>
             </div>
 

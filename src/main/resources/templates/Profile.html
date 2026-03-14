@@ -387,7 +387,7 @@
             border-radius: 20px;
             border: 2px dashed #e2e8f0;
             background: #f8fafc;
-            background-size: contain;
+            background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
             display: flex;
@@ -684,6 +684,8 @@
                         const preview = document.getElementById('businessLogoPreview');
                         if (preview) {
                             preview.style.backgroundImage = `url(${data.clientImage})`;
+                            preview.style.backgroundSize = 'cover';
+                            preview.style.backgroundPosition = 'center';
                             preview.innerHTML = '';
                         }
                     }
@@ -805,6 +807,8 @@
                 businessLogoBase64 = event.target.result;
                 if (preview) {
                     preview.style.backgroundImage = `url(${businessLogoBase64})`;
+                    preview.style.backgroundSize = 'cover';
+                    preview.style.backgroundPosition = 'center';
                     preview.innerHTML = '';
                 }
                 await saveDetails();

@@ -37,6 +37,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/billing-app/api/login",
             "/billing-app/api/Login",
             "/billing-app/api/MainDashboard",
+            "/billing-app/api/HowItWorks",
+            "/billing-app/api/HelpSupport",
             "/billing-app/api/RequestAccess",
             "/billing-app/api/saveAccessRequests",
             "/billing-app/api/forgot-password-request",
@@ -49,6 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/css/**",
             "/js/**",
             "/images/**",
+            "/videos/**",
             "/webjars/**",
             "/error"
     };

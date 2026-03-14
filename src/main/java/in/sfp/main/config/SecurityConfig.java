@@ -53,12 +53,14 @@ public class SecurityConfig {
                                                 .requestMatchers(
                                                                 "/billing-app/api/Login",
                                                                 "/billing-app/api/MainDashboard",
+                                                                "/billing-app/api/HowItWorks",
+                                                                "/billing-app/api/HelpSupport",
                                                                 "/billing-app/api/RequestAccess",
                                                                 "/billing-app/api/pdfs/**")
                                                 .permitAll()
 
                                                 // ---- Static resources ----
-                                                .requestMatchers("/css/**", "/js/**", "/images/**", "/pdfs/**",
+                                                .requestMatchers("/css/**", "/js/**", "/images/**", "/videos/**", "/pdfs/**",
                                                                 "/webjars/**")
                                                 .permitAll()
 

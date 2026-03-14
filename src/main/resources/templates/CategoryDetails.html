@@ -163,6 +163,48 @@
             color: var(--primary);
         }
 
+        .audit-meta {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px 40px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .audit-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .audit-item i {
+            font-size: 14px;
+        }
+
+        .audit-label {
+            font-weight: 700;
+            color: var(--text-main);
+            margin-right: 4px;
+        }
+
+        .audit-separator {
+            margin: 0 8px;
+            opacity: 0.3;
+            font-weight: 300;
+        }
+
+        .audit-author {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .audit-author.update {
+            color: #059669;
+        }
+
         .products-section h2 {
             font-size: 22px;
             font-weight: 800;
@@ -505,7 +547,7 @@
             <div class="category-profile">
                 <div class="hero-img-wrapper">
                     <span class="placeholder-text" id="categoryHeroPlaceholder">No Image</span>
-                    <img id="categoryHeroImg" src="" style="display:none;">
+                    <img id="categoryHeroImg" src="">
                 </div>
                 <div class="category-info">
                     <h1 id="categoryName">-</h1>
@@ -517,23 +559,21 @@
                         </div>
                     </div>
                     <!-- Audit Meta Info -->
-                    <div class="audit-meta"
-                        style="margin-top: 24px; font-size: 13px; color: var(--text-muted); display: flex; gap: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
-                        <span title="Created Info">
-                            <i class="fa-solid fa-clock" style="color: var(--primary); margin-right: 6px;"></i>
-                            <span style="font-weight: 600; color: var(--text-main);">Created:</span>
+                    <div class="audit-meta">
+                        <div class="audit-item" title="Creation Details">
+                            <i class="fa-solid fa-clock" style="color: var(--primary);"></i>
+                            <span class="audit-label">Created:</span>
                             <span id="createdAt">-</span>
-                            <span style="margin: 0 4px; opacity: 0.5;">|</span>
-                            <span>by <span id="createdBy"
-                                    style="font-weight: 600; color: var(--primary);">System</span></span>
-                        </span>
-                        <span id="updatedMeta" style="display: none;">
-                            <i class="fa-solid fa-pen-to-square" style="color: #059669; margin-right: 6px;"></i>
-                            <span style="font-weight: 600; color: var(--text-main);">Last Update:</span>
+                            <span class="audit-separator">|</span>
+                            <span>by <span id="createdBy" class="audit-author">System</span></span>
+                        </div>
+                        <div class="audit-item" id="updatedMeta" style="display: none;" title="Modification Details">
+                            <i class="fa-solid fa-pen-to-square" style="color: #059669;"></i>
+                            <span class="audit-label">Last Update:</span>
                             <span id="updatedAt">-</span>
-                            <span style="margin: 0 4px; opacity: 0.5;">|</span>
-                            <span>by <span id="updatedBy" style="font-weight: 600; color: #059669;">System</span></span>
-                        </span>
+                            <span class="audit-separator">|</span>
+                            <span>by <span id="updatedBy" class="audit-author update">System</span></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -659,6 +699,7 @@
                     const heroImg = document.getElementById('categoryHeroImg');
                     const heroPlaceholder = document.getElementById('categoryHeroPlaceholder');
                     heroImg.onload = () => {
+                        heroImg.style.display = 'block';
                         heroImg.style.opacity = '1';
                         if (heroPlaceholder) heroPlaceholder.style.display = 'none';
                     };
