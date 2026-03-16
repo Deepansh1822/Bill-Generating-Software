@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | SFP Billing</title>
+    <!-- CSS and Utils loaded via components.js or manually -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/utils.js"></script>
+    <script src="/js/components.js"></script>
+    <style>
+        /* [Existing Styles Kept Exactly the Same as before] */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+            --primary: #6366f1;
+            --primary-light: #eef2ff;
+            --border: #e2e8f0;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2.5rem;
+            min-height: 100vh;
+        }
+
+        .profile-container { max-width: 900px; margin: 0 auto; }
+        
+        .profile-header {
+            background: white; border-radius: 32px; padding: 48px; border: 1px solid var(--border);
+            display: flex; align-items: center; gap: 40px; margin-bottom: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); position: relative;
+        }
+
+        .profile-avatar-wrapper { position: relative; }
+        .profile-avatar {
+            width: 160px; height: 160px; border-radius: 40px; background: var(--primary-gradient);
+            display: flex; align-items: center; justify-content: center; font-size: 4rem;
+            color: white; font-weight: 800; background-size: cover; background-position: center;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .profile-info h1 { font-size: 2.25rem; font-weight: 800; color: #1e293b; letter-spacing: -0.025em; margin-bottom: 8px; }
+        .profile-info p { font-size: 1.125rem; color: #64748b; font-weight: 500; }
+        
+        .role-pill {
+            display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 100px;
+            font-size: 0.8125rem; font-weight: 800; margin-top: 16px; text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .role-admin { background: #fff1f2; color: #e11d48; border: 1px solid #ffe4e6; }
+        .role-client { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
+
+        .details-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .detail-card {
+            background: white; border-radius: 24px; padding: 24px 32px; border: 1px solid var(--border);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02); transition: all 0.2s;
+        }
+        .detail-card:hover { border-color: #6366f1; transform: translateY(-2px); }
+        .detail-card label { display: block; font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+        .detail-card .value { font-size: 1.05rem; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 12px; }
+        .detail-card i { color: #6366f1; width: 20px; }
+
+        .actions-section { margin-top: 48px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .logout-btn {
+            padding: 14px 40px; background: white; color: #ef4444; border: 2px solid #fee2e2;
+            border-radius: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px;
+            cursor: pointer; transition: all 0.2s; text-decoration: none;
+        }
+        .logout-btn:hover { background: #fef2f2; border-color: #f87171; transform: translateY(-5px); box-shadow: 0 8px 15px -3px rgba(239, 68, 68, 0.1); }
+
+        .edit-profile-btn {
+            position: absolute; top: 48px; right: 48px; padding: 10px 20px; background: #f8fafc;
+            border: 1px solid var(--border); border-radius: 12px; font-weight: 600;
+            color: #64748b; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 10000;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-card {
+            background: white; width: 100%; max-width: 500px; border-radius: 24px; padding: 32px;
+            position: relative; animation: modalSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalSlide { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.875rem; font-weight: 600; color: #475569; margin-bottom: 8px; }
+        .form-group input, .form-group select { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 0.95rem; }
+        
+        .modal-footer { margin-top: 32px; display: flex; gap: 12px; }
+        .btn-primary { flex: 1; padding: 12px; background: var(--primary-gradient); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .btn-secondary { flex: 1; padding: 12px; background: #f1f5f9; color: #475569; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+
+        .business-logo-preview {
+            width: 240px; height: 140px; margin: 0 auto; border-radius: 20px; border: 2px dashed #e2e8f0;
+            background: #f8fafc; background-size: cover; background-repeat: no-repeat; background-position: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8;
+        }
+        
+        .edit-image-btn {
+            position: absolute; bottom: -5px; right: -5px; width: 40px; height: 40px;
+            background: white; border: 1px solid var(--border); border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b;
+        }
+
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #64748b; font-weight: 600; margin-bottom: 24px; }
+        
+        /* Shimmer loading effect */
+        .shimmer {
+            background: #f6f7f8;
+            background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+            background-repeat: no-repeat;
+            background-size: 800px 104px;
+            display: inline-block;
+            position: relative;
+            animation: shimmerEffect 1s linear infinite forwards;
+        }
+        @keyframes shimmerEffect { 0% { background-position: -468px 0; } 100% { background-position: 468px 0; } }
+
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="profile-container">
+            <a href="/billing-app/api/Dashboard" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Overview
+            </a>
+
+            <div id="profile-loader" style="text-align: center; padding: 100px;">
+                <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: var(--primary);"></i>
+                <p style="margin-top: 20px; color: #64748b; font-weight: 600;">Loading secure profile...</p>
+            </div>
+
+            <div id="profile-content" style="display: none;">
+                <div class="profile-header">
+                    <button class="edit-profile-btn" onclick="openEditModal()">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        Update Profile
+                    </button>
+                    <div class="profile-avatar-wrapper">
+                        <div id="user-avatar" class="profile-avatar">U</div>
+                        <label class="edit-image-btn" for="profileImageInput">
+                            <i class="fa-solid fa-camera"></i>
+                        </label>
+                        <input type="file" id="profileImageInput" style="display: none;" accept="image/*">
+                    </div>
+                    <div class="profile-info">
+                        <h1 id="user-name-display">User Name</h1>
+                        <p id="user-designation-display">Business Professional</p>
+                        <div id="user-role-badge" class="role-pill role-client">OWNER</div>
+                    </div>
+                </div>
+
+                <div class="business-banner" style="background: white; border-radius: 32px; padding: 24px; border: 1px solid var(--border); margin-bottom: 32px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                         <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 32px; height: 32px; background: #eef2ff; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-briefcase" style="color: #6366f1; font-size: 0.9rem;"></i>
+                            </div>
+                            <div>
+                                <h3 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #1e293b; text-transform: uppercase; letter-spacing: 0.05em;">Business Branding</h3>
+                                <p style="margin: 0; font-size: 0.7rem; color: #64748b;">Official logo for your invoices and forms</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="position: relative; width: 240px; margin: 0 auto;">
+                        <label for="businessLogoInput" id="businessLogoPreview" class="business-logo-preview" style="cursor: pointer;">
+                            <i class="fa-solid fa-image" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.3;"></i>
+                            <span style="font-size: 0.85rem; font-weight: 600;">No Official Logo Found</span>
+                        </label>
+                        <label for="businessLogoInput" class="edit-image-btn" style="position: absolute; bottom: -5px; right: -5px;">
+                            <i class="fa-solid fa-camera"></i>
+                        </label>
+                    </div>
+                    <input type="file" id="businessLogoInput" style="display: none;" accept="image/*">
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-card">
+                        <label>Company Name</label>
+                        <div class="value"><i class="fa-solid fa-building"></i><span id="display-company-name">Not Provided</span></div>
+                    </div>
+                    <div class="detail-card">
+                        <label>Company Type</label>
+                        <div class="value"><i class="fa-solid fa-industry"></i><span id="display-company-type">Not Specified</span></div>
+                    </div>
+                    <div class="detail-card">
+                        <label>Email Address</label>
+                        <div class="value"><i class="fa-solid fa-envelope"></i><span id="display-email">user@example.com</span></div>
+                    </div>
+                    <div class="detail-card">
+                        <label>Phone Number</label>
+                        <div class="value"><i class="fa-solid fa-phone"></i><span id="display-phone">N/A</span></div>
+                    </div>
+                    <div class="detail-card">
+                        <label>Username (System ID)</label>
+                        <div class="value"><i class="fa-solid fa-id-badge"></i><span id="display-username">N/A</span></div>
+                    </div>
+                    <div class="detail-card">
+                        <label>Account Password</label>
+                        <div class="value"><i class="fa-solid fa-lock"></i><span>********</span>
+                            <button style="margin-left: auto; background: none; border: none; color: #6366f1; font-weight: 700; cursor: pointer; font-size: 0.8rem;" onclick="openPassModal()">Update</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions-section">
+                    <button class="logout-btn" onclick="confirmLogout()">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Logout from System
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal (Simplified for demo) -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header"><h2>Edit Details</h2></div>
+            <div class="form-group"><label>Full Name</label><input type="text" id="editFullName"></div>
+            <div class="form-group"><label>Designation</label><input type="text" id="editDesignation"></div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModals()">Cancel</button>
+                <button class="btn-primary" onclick="saveDetails()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUserData = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Load Shared Sidebar
+            UIComponents.loadSidebar('profile');
+            
+            // Load Profile Data
+            loadProfile();
+        });
+
+        async function loadProfile() {
+            try {
+                const res = await fetch('/api/user/profile-details');
+                const data = await res.json();
+                
+                if (data && data.user) {
+                    currentUserData = data.user;
+                    populateUI(data.user);
+                    
+                    // After main data, load images
+                    loadImages();
+                }
+            } catch (err) {
+                console.error("Profile load error", err);
+            } finally {
+                document.getElementById('profile-loader').style.display = 'none';
+                document.getElementById('profile-content').style.display = 'block';
+            }
+        }
+
+        function populateUI(user) {
+            document.getElementById('user-name-display').innerText = user.fullName || "User Profile";
+            document.getElementById('user-designation-display').innerText = user.designation || "Business Professional";
+            document.getElementById('display-company-name').innerText = user.companyName || "Not Provided";
+            document.getElementById('display-company-type').innerText = user.companyType || "Not Specified";
+            document.getElementById('display-email').innerText = user.email || "N/A";
+            document.getElementById('display-phone').innerText = user.mobileNumber || "N/A";
+            document.getElementById('display-username').innerText = user.username || "N/A";
+            
+            const badge = document.getElementById('user-role-badge');
+            const role = user.role || 'CLIENT';
+            badge.innerText = role === 'CLIENT' ? 'OWNER' : role;
+            badge.className = 'role-pill ' + (role === 'ADMIN' ? 'role-admin' : 'role-client');
+            
+            const avatar = document.getElementById('user-avatar');
+            avatar.innerText = (user.fullName || user.username || 'U').charAt(0).toUpperCase();
+
+            // Populate Modal
+            document.getElementById('editFullName').value = user.fullName || '';
+            document.getElementById('editDesignation').value = user.designation || '';
+        }
+
+        async function loadImages() {
+            // Async fetch of images to keep JSON small
+            fetch('/billing-app/api/profile-image')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.profileImage) {
+                        const avatar = document.getElementById('user-avatar');
+                        avatar.style.backgroundImage = `url(${data.profileImage})`;
+                        avatar.innerText = '';
+                    }
+                });
+
+            fetch('/billing-app/api/business-logo')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.clientImage) {
+                        const preview = document.getElementById('businessLogoPreview');
+                        preview.style.backgroundImage = `url(${data.clientImage})`;
+                        preview.innerHTML = '';
+                    }
+                });
+        }
+
+        function openEditModal() { document.getElementById('editModal').style.display = 'flex'; }
+        function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+        
+        function confirmLogout() {
+            if (confirm("Are you sure you want to logout?")) {
+                window.location.href = "/billing-app/api/logout";
+            }
+        }
+
+        async function saveDetails() {
+            // Logic to send JSON back to server...
+            alert("This will now send a clean JSON payload to /api/update-profile!");
+            closeModals();
+        }
+    </script>
+</body>
+</html>
