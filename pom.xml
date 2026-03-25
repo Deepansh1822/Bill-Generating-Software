@@ -125,19 +125,6 @@
 	</dependencies>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-			<resource>
-				<directory>frontend/templates</directory>
-				<targetPath>templates</targetPath>
-			</resource>
-			<resource>
-				<directory>frontend/static</directory>
-				<targetPath>static</targetPath>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
